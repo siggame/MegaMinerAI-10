@@ -24,10 +24,9 @@ class Match(DefaultGameWorld):
     self.scribe = Scribe(self.logPath())
     self.addPlayer(self.scribe, "spectator")
 
-    #TODO: INITIALIZE THESE!
-    self.turnNumber = None
-    self.playerID = None
-    self.mapSize = None
+    self.turnNumber = -1
+    self.playerID = -1
+    self.mapSize = self.mapSize
 
   def addPlayer(self, connection, type="player"):
     connection.type = type
@@ -64,6 +63,9 @@ class Match(DefaultGameWorld):
     #TODO: START STUFF
     self.turn = self.players[-1]
     self.turnNumber = -1
+    
+    #TODO: Spawn initial creatures with semi-random stats
+    #TODO: Spawn initial plant life 
 
     self.nextTurn()
     return True
