@@ -107,17 +107,17 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetHerbivorism(ptr);
   }
-  ///The spped of the creature
+  ///The speed of the creature
   public int getSpeed()
   {
     validify();
     return Client.INSTANCE.creatureGetSpeed(ptr);
   }
-  ///The stamina of the creature
-  public int getStamina()
+  ///The max stamina of the creature
+  public int getMaxStamina()
   {
     validify();
-    return Client.INSTANCE.creatureGetStamina(ptr);
+    return Client.INSTANCE.creatureGetMaxStamina(ptr);
   }
   ///The defense of the creature
   public int getDefense()

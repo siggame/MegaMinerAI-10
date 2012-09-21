@@ -22,7 +22,7 @@ struct _Creature
   int carnivorism;
   int herbivorism;
   int speed;
-  int stamina;
+  int maxStamina;
   int defense;
   int age;
 };

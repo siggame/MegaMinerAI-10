@@ -1,5 +1,5 @@
 class Creature:
-  def __init__(self, game, id, owner, x, y, health, hunger, carnivorism, herbivorism, speed, stamina, defense, age):
+  def __init__(self, game, id, owner, x, y, health, hunger, carnivorism, herbivorism, speed, maxStamina, defense, age):
     self.game = game
     self.id = id
     self.owner = owner
@@ -10,7 +10,7 @@ class Creature:
     self.carnivorism = carnivorism
     self.herbivorism = herbivorism
     self.speed = speed
-    self.stamina = stamina
+    self.maxStamina = maxStamina
     self.defense = defense
     self.age = age
 
@@ -25,7 +25,7 @@ class Creature:
       self.carnivorism,
       self.herbivorism,
       self.speed,
-      self.stamina,
+      self.maxStamina,
       self.defense,
       self.age,
       ]

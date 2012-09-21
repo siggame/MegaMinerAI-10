@@ -59,9 +59,9 @@ int Creature::speed()
   return ((_Creature*)ptr)->speed;
 }
 
-int Creature::stamina()
+int Creature::maxStamina()
 {
-  return ((_Creature*)ptr)->stamina;
+  return ((_Creature*)ptr)->maxStamina;
 }
 
 int Creature::defense()
@@ -108,7 +108,7 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "carnivorism: " << ((_Creature*)ob.ptr)->carnivorism  <<'\n';
   stream << "herbivorism: " << ((_Creature*)ob.ptr)->herbivorism  <<'\n';
   stream << "speed: " << ((_Creature*)ob.ptr)->speed  <<'\n';
-  stream << "stamina: " << ((_Creature*)ob.ptr)->stamina  <<'\n';
+  stream << "maxStamina: " << ((_Creature*)ob.ptr)->maxStamina  <<'\n';
   stream << "defense: " << ((_Creature*)ob.ptr)->defense  <<'\n';
   stream << "age: " << ((_Creature*)ob.ptr)->age  <<'\n';
   return stream;

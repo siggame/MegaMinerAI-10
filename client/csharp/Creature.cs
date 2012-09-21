@@ -123,18 +123,18 @@ public class Creature
     int value = Client.creatureGetHerbivorism(ptr);
     return value;
   }
-  ///The spped of the creature
+  ///The speed of the creature
   public int getSpeed()
   {
     validify();
     int value = Client.creatureGetSpeed(ptr);
     return value;
   }
-  ///The stamina of the creature
-  public int getStamina()
+  ///The max stamina of the creature
+  public int getMaxStamina()
   {
     validify();
-    int value = Client.creatureGetStamina(ptr);
+    int value = Client.creatureGetMaxStamina(ptr);
     return value;
   }
   ///The defense of the creature

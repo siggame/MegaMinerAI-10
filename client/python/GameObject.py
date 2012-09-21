@@ -131,16 +131,16 @@ class Creature(GameObject):
     self.validify()
     return library.creatureGetSpeed(self._ptr)
   #\endcond
-  ##The spped of the creature
+  ##The speed of the creature
   speed = property(getSpeed)
 
   #\cond
-  def getStamina(self):
+  def getMaxStamina(self):
     self.validify()
-    return library.creatureGetStamina(self._ptr)
+    return library.creatureGetMaxStamina(self._ptr)
   #\endcond
-  ##The stamina of the creature
-  stamina = property(getStamina)
+  ##The max stamina of the creature
+  maxStamina = property(getMaxStamina)
 
   #\cond
   def getDefense(self):
@@ -171,7 +171,7 @@ class Creature(GameObject):
     ret += "carnivorism: %s\n" % self.getCarnivorism()
     ret += "herbivorism: %s\n" % self.getHerbivorism()
     ret += "speed: %s\n" % self.getSpeed()
-    ret += "stamina: %s\n" % self.getStamina()
+    ret += "maxStamina: %s\n" % self.getMaxStamina()
     ret += "defense: %s\n" % self.getDefense()
     ret += "age: %s\n" % self.getAge()
     return ret

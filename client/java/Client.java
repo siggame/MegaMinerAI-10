@@ -47,7 +47,7 @@ public interface Client extends Library {
   int creatureGetCarnivorism(Pointer ptr);
   int creatureGetHerbivorism(Pointer ptr);
   int creatureGetSpeed(Pointer ptr);
-  int creatureGetStamina(Pointer ptr);
+  int creatureGetMaxStamina(Pointer ptr);
   int creatureGetDefense(Pointer ptr);
   int creatureGetAge(Pointer ptr);
 

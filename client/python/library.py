@@ -116,8 +116,8 @@ library.creatureGetHerbivorism.argtypes = [c_void_p]
 library.creatureGetSpeed.restype = c_int
 library.creatureGetSpeed.argtypes = [c_void_p]
 
-library.creatureGetStamina.restype = c_int
-library.creatureGetStamina.argtypes = [c_void_p]
+library.creatureGetMaxStamina.restype = c_int
+library.creatureGetMaxStamina.argtypes = [c_void_p]
 
 library.creatureGetDefense.restype = c_int
 library.creatureGetDefense.argtypes = [c_void_p]

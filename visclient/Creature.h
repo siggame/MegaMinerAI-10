@@ -36,10 +36,10 @@ class Creature {
   int carnivorism();
   ///The herbivore level of the creature
   int herbivorism();
-  ///The spped of the creature
+  ///The speed of the creature
   int speed();
-  ///The stamina of the creature
-  int stamina();
+  ///The max stamina of the creature
+  int maxStamina();
   ///The defense of the creature
   int defense();
   ///The age of the creature

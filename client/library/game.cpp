@@ -293,7 +293,7 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->speed = atoi(sub->val);
   sub = sub->next;
-  object->stamina = atoi(sub->val);
+  object->maxStamina = atoi(sub->val);
   sub = sub->next;
   object->defense = atoi(sub->val);
   sub = sub->next;

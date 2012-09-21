@@ -24,7 +24,7 @@ DLLEXPORT int creatureGetHunger(_Creature* ptr);
 DLLEXPORT int creatureGetCarnivorism(_Creature* ptr);
 DLLEXPORT int creatureGetHerbivorism(_Creature* ptr);
 DLLEXPORT int creatureGetSpeed(_Creature* ptr);
-DLLEXPORT int creatureGetStamina(_Creature* ptr);
+DLLEXPORT int creatureGetMaxStamina(_Creature* ptr);
 DLLEXPORT int creatureGetDefense(_Creature* ptr);
 DLLEXPORT int creatureGetAge(_Creature* ptr);
 

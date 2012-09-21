@@ -39,9 +39,9 @@ DLLEXPORT int creatureGetSpeed(_Creature* ptr)
 {
   return ptr->speed;
 }
-DLLEXPORT int creatureGetStamina(_Creature* ptr)
+DLLEXPORT int creatureGetMaxStamina(_Creature* ptr)
 {
-  return ptr->stamina;
+  return ptr->maxStamina;
 }
 DLLEXPORT int creatureGetDefense(_Creature* ptr)
 {

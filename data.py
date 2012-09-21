@@ -36,8 +36,8 @@ Creature = Model('Creature',
     Variable('hunger', int, 'The current hunger of the creature'),
     Variable('carnivorism', int, 'The carnivore level of the creature'),
     Variable('herbivorism', int, 'The herbivore level of the creature'),
-    Variable('speed', int, 'The spped of the creature'),
-    Variable('stamina', int, 'The stamina of the creature'),
+    Variable('speed', int, 'The speed of the creature'),
+    Variable('maxStamina', int, 'The max stamina of the creature'),
     Variable('defense', int, 'The defense of the creature'),
     Variable('age', int, 'The age of the creature'),
   ],
@@ -79,5 +79,12 @@ playerTalk = Animation('playerTalk',
   data=[
   Variable('actingID', int),
   Variable('message', str),
+  ],
+)
+
+breed = Animation('breed',
+  data=[
+  Variable('actingID', int),
+  Variable('targetID', str),
   ],
 )

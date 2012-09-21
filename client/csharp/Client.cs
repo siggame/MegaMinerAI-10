@@ -77,7 +77,7 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureGetSpeed(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetStamina(IntPtr ptr);
+  public static extern int creatureGetMaxStamina(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetDefense(IntPtr ptr);
   [DllImport("client")]
