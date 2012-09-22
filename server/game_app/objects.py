@@ -161,7 +161,7 @@ class Creature:
   def makeBaby(self, mate, x, y):
     #TODO: Figure out breeding algorithm
     
-    newBaby = new Creature(x, y, 1, 1, 1, 1, 1, 1, 1, 0)
+    newBaby = Creature(x, y, 1, 1, 1, 1, 1, 1, 1, 0)
     
     newBaby.health = self.object.maxHealth
     newBaby.hunger = self.object.maxHunger
