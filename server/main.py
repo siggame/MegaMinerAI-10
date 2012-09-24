@@ -126,12 +126,12 @@ class GameApp(AccountsAppMixin, BaseApp):
   @protocolmethod
   @errorBuffer
   @requireTurn
-  @requireTypes(None, int, int)
-  def gameEat(self, creature, plant):
-    """Command a creature to eat a specified plant"""
+  @requireTypes(None, int, int, int)
+  def gameEat(self, creature, x, y):
+    """Eat plant or creature at input location"""
     if self.game.turn is not self:
       return "Not your turn."
-    return self.game.eat(creature, plant)
+    return self.game.eat(creature, x, y)
 
   @protocolmethod
   @errorBuffer
@@ -142,16 +142,6 @@ class GameApp(AccountsAppMixin, BaseApp):
     if self.game.turn is not self:
       return "Not your turn."
     return self.game.breed(creature, mate, x, y)
-
-  @protocolmethod
-  @errorBuffer
-  @requireTurn
-  @requireTypes(None, int, int)
-  def gameEat(self, creature, target):
-    """Attack and try to eat target creature"""
-    if self.game.turn is not self:
-      return "Not your turn."
-    return self.game.eat(creature, target)
 
   @protocolmethod
   @errorBuffer

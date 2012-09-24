@@ -24,9 +24,10 @@ class Match(DefaultGameWorld):
     self.scribe = Scribe(self.logPath())
     self.addPlayer(self.scribe, "spectator")
 
-    self.turnNumber = -1
-    self.playerID = -1
-    self.mapSize = self.mapSize
+    #TODO: INITIALIZE THESE!
+    self.turnNumber = None
+    self.playerID = None
+    self.mapSize = None
 
   def addPlayer(self, connection, type="player"):
     connection.type = type
@@ -63,9 +64,6 @@ class Match(DefaultGameWorld):
     #TODO: START STUFF
     self.turn = self.players[-1]
     self.turnNumber = -1
-    
-    #TODO: Spawn initial creatures with semi-random stats
-    #TODO: Spawn initial plant life 
 
     self.nextTurn()
     return True
@@ -123,17 +121,13 @@ class Match(DefaultGameWorld):
   def move(self, object, x, y):
     return object.move(x, y, )
 
-  @derefArgs(Creature, Plant)
-  def eat(self, object, plant):
-    return object.eat(plant, )
+  @derefArgs(Creature, None, None)
+  def eat(self, object, x, y):
+    return object.eat(x, y, )
 
   @derefArgs(Creature, Creature, None, None)
   def breed(self, object, mate, x, y):
     return object.breed(mate, x, y, )
-
-  @derefArgs(Creature, Creature)
-  def eat(self, object, target):
-    return object.eat(target, )
 
   @derefArgs(Player, None)
   def talk(self, object, message):

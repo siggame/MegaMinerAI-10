@@ -63,12 +63,10 @@ extern "C"
 
   ///Command a creature to move to a specified position
   DLLEXPORT int creatureMove(_Creature* object, int x, int y);
-  ///Command a creature to eat a specified plant
-  DLLEXPORT int creatureEat(_Creature* object, _Plant* plant);
+  ///Eat plant or creature at input location
+  DLLEXPORT int creatureEat(_Creature* object, int x, int y);
   ///Breed with target adjacent creature. Spawn new creature at input location
   DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate, int x, int y);
-  ///Attack and try to eat target creature
-  DLLEXPORT int creatureEat(_Creature* object, _Creature* target);
   ///Allows a player to display messages on the screen
   DLLEXPORT int playerTalk(_Player* object, char* message);
 

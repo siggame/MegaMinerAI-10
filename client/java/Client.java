@@ -19,9 +19,8 @@ public interface Client extends Library {
 
     //commands
   int creatureMove(Pointer object, int x, int y);
-  int creatureEat(Pointer object, Pointer plant);
+  int creatureEat(Pointer object, int x, int y);
   int creatureBreed(Pointer object, Pointer mate, int x, int y);
-  int creatureEat(Pointer object, Pointer target);
   int playerTalk(Pointer object, String message);
 
     //accessors
@@ -42,20 +41,18 @@ public interface Client extends Library {
   int creatureGetOwner(Pointer ptr);
   int creatureGetX(Pointer ptr);
   int creatureGetY(Pointer ptr);
-  int creatureGetHealth(Pointer ptr);
-  int creatureGetHunger(Pointer ptr);
+  int creatureGetMaxEnergy(Pointer ptr);
+  int creatureGetEnergyLeft(Pointer ptr);
   int creatureGetCarnivorism(Pointer ptr);
   int creatureGetHerbivorism(Pointer ptr);
   int creatureGetSpeed(Pointer ptr);
-  int creatureGetMaxStamina(Pointer ptr);
+  int creatureGetMovementLeft(Pointer ptr);
   int creatureGetDefense(Pointer ptr);
-  int creatureGetAge(Pointer ptr);
 
   int plantGetId(Pointer ptr);
   int plantGetX(Pointer ptr);
   int plantGetY(Pointer ptr);
   int plantGetSize(Pointer ptr);
-  int plantGetAge(Pointer ptr);
 
   int playerGetId(Pointer ptr);
   String playerGetPlayerName(Pointer ptr);

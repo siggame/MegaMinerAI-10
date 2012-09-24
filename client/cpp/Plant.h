@@ -22,8 +22,6 @@ class Plant {
   int y();
   ///The size of the plant
   int size();
-  ///The age of the plant
-  int age();
 
   // Actions
 

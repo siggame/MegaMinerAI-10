@@ -56,11 +56,5 @@ class Plant
     validify();
     return Client.INSTANCE.plantGetSize(ptr);
   }
-  ///The age of the plant
-  public int getAge()
-  {
-    validify();
-    return Client.INSTANCE.plantGetAge(ptr);
-  }
 
 }

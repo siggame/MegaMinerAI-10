@@ -38,13 +38,10 @@ class Creature(GameObject):
     self.validify()
     return library.creatureMove(self._ptr, x, y)
 
-  ##Command a creature to eat a specified plant
-  def eat(self, plant):
+  ##Eat plant or creature at input location
+  def eat(self, x, y):
     self.validify()
-    if not isinstance(plant, Plant):
-      raise TypeError('plant should be of [Plant]')
-    plant.validify()
-    return library.creatureEat(self._ptr, plant._ptr)
+    return library.creatureEat(self._ptr, x, y)
 
   ##Breed with target adjacent creature. Spawn new creature at input location
   def breed(self, mate, x, y):
@@ -53,14 +50,6 @@ class Creature(GameObject):
       raise TypeError('mate should be of [Creature]')
     mate.validify()
     return library.creatureBreed(self._ptr, mate._ptr, x, y)
-
-  ##Attack and try to eat target creature
-  def eat(self, target):
-    self.validify()
-    if not isinstance(target, Creature):
-      raise TypeError('target should be of [Creature]')
-    target.validify()
-    return library.creatureEat(self._ptr, target._ptr)
 
   #\cond
   def getId(self):
@@ -95,20 +84,20 @@ class Creature(GameObject):
   y = property(getY)
 
   #\cond
-  def getHealth(self):
+  def getMaxEnergy(self):
     self.validify()
-    return library.creatureGetHealth(self._ptr)
+    return library.creatureGetMaxEnergy(self._ptr)
   #\endcond
-  ##The health of the creature
-  health = property(getHealth)
+  ##The maximum amount of energy this creature can have
+  maxEnergy = property(getMaxEnergy)
 
   #\cond
-  def getHunger(self):
+  def getEnergyLeft(self):
     self.validify()
-    return library.creatureGetHunger(self._ptr)
+    return library.creatureGetEnergyLeft(self._ptr)
   #\endcond
-  ##The current hunger of the creature
-  hunger = property(getHunger)
+  ##The current amount of energy this creature has.
+  energyLeft = property(getEnergyLeft)
 
   #\cond
   def getCarnivorism(self):
@@ -135,12 +124,12 @@ class Creature(GameObject):
   speed = property(getSpeed)
 
   #\cond
-  def getMaxStamina(self):
+  def getMovementLeft(self):
     self.validify()
-    return library.creatureGetMaxStamina(self._ptr)
+    return library.creatureGetMovementLeft(self._ptr)
   #\endcond
-  ##The max stamina of the creature
-  maxStamina = property(getMaxStamina)
+  ##The amount of moves this creature has left this turn
+  movementLeft = property(getMovementLeft)
 
   #\cond
   def getDefense(self):
@@ -150,14 +139,6 @@ class Creature(GameObject):
   ##The defense of the creature
   defense = property(getDefense)
 
-  #\cond
-  def getAge(self):
-    self.validify()
-    return library.creatureGetAge(self._ptr)
-  #\endcond
-  ##The age of the creature
-  age = property(getAge)
-
 
   def __str__(self):
     self.validify()
@@ -166,14 +147,13 @@ class Creature(GameObject):
     ret += "owner: %s\n" % self.getOwner()
     ret += "x: %s\n" % self.getX()
     ret += "y: %s\n" % self.getY()
-    ret += "health: %s\n" % self.getHealth()
-    ret += "hunger: %s\n" % self.getHunger()
+    ret += "maxEnergy: %s\n" % self.getMaxEnergy()
+    ret += "energyLeft: %s\n" % self.getEnergyLeft()
     ret += "carnivorism: %s\n" % self.getCarnivorism()
     ret += "herbivorism: %s\n" % self.getHerbivorism()
     ret += "speed: %s\n" % self.getSpeed()
-    ret += "maxStamina: %s\n" % self.getMaxStamina()
+    ret += "movementLeft: %s\n" % self.getMovementLeft()
     ret += "defense: %s\n" % self.getDefense()
-    ret += "age: %s\n" % self.getAge()
     return ret
 
 ##A basic plant!
@@ -230,14 +210,6 @@ class Plant(GameObject):
   ##The size of the plant
   size = property(getSize)
 
-  #\cond
-  def getAge(self):
-    self.validify()
-    return library.plantGetAge(self._ptr)
-  #\endcond
-  ##The age of the plant
-  age = property(getAge)
-
 
   def __str__(self):
     self.validify()
@@ -246,7 +218,6 @@ class Plant(GameObject):
     ret += "x: %s\n" % self.getX()
     ret += "y: %s\n" % self.getY()
     ret += "size: %s\n" % self.getSize()
-    ret += "age: %s\n" % self.getAge()
     return ret
 
 ##

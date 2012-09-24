@@ -29,11 +29,6 @@ int Plant::size()
   return ((_Plant*)ptr)->size;
 }
 
-int Plant::age()
-{
-  return ((_Plant*)ptr)->age;
-}
-
 
 
 
@@ -43,6 +38,5 @@ std::ostream& operator<<(std::ostream& stream,Plant ob)
   stream << "x: " << ((_Plant*)ob.ptr)->x  <<'\n';
   stream << "y: " << ((_Plant*)ob.ptr)->y  <<'\n';
   stream << "size: " << ((_Plant*)ob.ptr)->size  <<'\n';
-  stream << "age: " << ((_Plant*)ob.ptr)->age  <<'\n';
   return stream;
 }

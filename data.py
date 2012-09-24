@@ -23,7 +23,6 @@ Plant = Model('Plant',
   data=[ Variable('x', int, 'X position of the plant'),
     Variable('y', int, 'Y position of the plant'),
     Variable('size', int, 'The size of the plant'),
-    Variable('age', int, 'The age of the plant'),
   ],
   doc="A basic plant!",
 )  
@@ -32,20 +31,19 @@ Creature = Model('Creature',
   data=[ Variable('owner', int, 'The owner of the creature'),
     Variable('x', int, 'X position of the creature'),
     Variable('y', int, 'Y position of the creature'),
-    Variable('health', int, 'The health of the creature'),
-    Variable('hunger', int, 'The current hunger of the creature'),
+    Variable('maxEnergy', int, 'The maximum amount of energy this creature can have'),
+	Variable('energyLeft', int, 'The current amount of energy this creature has.'),
     Variable('carnivorism', int, 'The carnivore level of the creature'),
     Variable('herbivorism', int, 'The herbivore level of the creature'),
     Variable('speed', int, 'The speed of the creature'),
-    Variable('maxStamina', int, 'The max stamina of the creature'),
+    Variable('movementLeft', int, 'The amount of moves this creature has left this turn'),
     Variable('defense', int, 'The defense of the creature'),
-    Variable('age', int, 'The age of the creature'),
   ],
   functions=[ 
     Function('move', [Variable('x', int), Variable('y', int)], 
     doc='Command a creature to move to a specified position'),
-    Function('eat', [Variable('plant', Plant)], 
-    doc='Command a creature to eat a specified plant'),
+    Function('eat', [Variable('x', int), Variable('y', int)], 
+    doc='Eat plant or creature at input location'),
   ],
   doc="A basic creature!",
 )
@@ -54,8 +52,6 @@ Creature.addFunctions(
   [
     Function ('breed', [Variable('mate', Creature), Variable('x', int), Variable('y', int)], 
     doc='Breed with target adjacent creature. Spawn new creature at input location'),
-    Function ('eat', [Variable('target', Creature)], 
-    doc='Attack and try to eat target creature'),  
   ]
 )
 

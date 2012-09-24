@@ -35,12 +35,11 @@ class Creature
     validify();
     return Client.INSTANCE.creatureMove(ptr, x, y);
   }
-  ///Command a creature to eat a specified plant
-  int eat(Plant plant)
+  ///Eat plant or creature at input location
+  int eat(int x, int y)
   {
     validify();
-    plant.validify();
-    return Client.INSTANCE.creatureEat(ptr, plant.ptr);
+    return Client.INSTANCE.creatureEat(ptr, x, y);
   }
   ///Breed with target adjacent creature. Spawn new creature at input location
   int breed(Creature mate, int x, int y)
@@ -48,13 +47,6 @@ class Creature
     validify();
     mate.validify();
     return Client.INSTANCE.creatureBreed(ptr, mate.ptr, x, y);
-  }
-  ///Attack and try to eat target creature
-  int eat(Creature target)
-  {
-    validify();
-    target.validify();
-    return Client.INSTANCE.creatureEat(ptr, target.ptr);
   }
 
     //getters
@@ -83,17 +75,17 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetY(ptr);
   }
-  ///The health of the creature
-  public int getHealth()
+  ///The maximum amount of energy this creature can have
+  public int getMaxEnergy()
   {
     validify();
-    return Client.INSTANCE.creatureGetHealth(ptr);
+    return Client.INSTANCE.creatureGetMaxEnergy(ptr);
   }
-  ///The current hunger of the creature
-  public int getHunger()
+  ///The current amount of energy this creature has.
+  public int getEnergyLeft()
   {
     validify();
-    return Client.INSTANCE.creatureGetHunger(ptr);
+    return Client.INSTANCE.creatureGetEnergyLeft(ptr);
   }
   ///The carnivore level of the creature
   public int getCarnivorism()
@@ -113,23 +105,17 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetSpeed(ptr);
   }
-  ///The max stamina of the creature
-  public int getMaxStamina()
+  ///The amount of moves this creature has left this turn
+  public int getMovementLeft()
   {
     validify();
-    return Client.INSTANCE.creatureGetMaxStamina(ptr);
+    return Client.INSTANCE.creatureGetMovementLeft(ptr);
   }
   ///The defense of the creature
   public int getDefense()
   {
     validify();
     return Client.INSTANCE.creatureGetDefense(ptr);
-  }
-  ///The age of the creature
-  public int getAge()
-  {
-    validify();
-    return Client.INSTANCE.creatureGetAge(ptr);
   }
 
 }

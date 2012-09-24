@@ -27,11 +27,9 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureMove(IntPtr self, int x, int y);
   [DllImport("client")]
-  public static extern int creatureEat(IntPtr self, IntPtr plant);
+  public static extern int creatureEat(IntPtr self, int x, int y);
   [DllImport("client")]
   public static extern int creatureBreed(IntPtr self, IntPtr mate, int x, int y);
-  [DllImport("client")]
-  public static extern int creatureEat(IntPtr self, IntPtr target);
   [DllImport("client")]
   public static extern int playerTalk(IntPtr self, string message);
 
@@ -67,9 +65,9 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureGetY(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetHealth(IntPtr ptr);
+  public static extern int creatureGetMaxEnergy(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetHunger(IntPtr ptr);
+  public static extern int creatureGetEnergyLeft(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetCarnivorism(IntPtr ptr);
   [DllImport("client")]
@@ -77,11 +75,9 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureGetSpeed(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetMaxStamina(IntPtr ptr);
+  public static extern int creatureGetMovementLeft(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetDefense(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int creatureGetAge(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int plantGetId(IntPtr ptr);
@@ -91,8 +87,6 @@ public class Client {
   public static extern int plantGetY(IntPtr ptr);
   [DllImport("client")]
   public static extern int plantGetSize(IntPtr ptr);
-  [DllImport("client")]
-  public static extern int plantGetAge(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int playerGetId(IntPtr ptr);

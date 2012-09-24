@@ -19,13 +19,13 @@ DLLEXPORT int creatureGetY(_Creature* ptr)
 {
   return ptr->y;
 }
-DLLEXPORT int creatureGetHealth(_Creature* ptr)
+DLLEXPORT int creatureGetMaxEnergy(_Creature* ptr)
 {
-  return ptr->health;
+  return ptr->maxEnergy;
 }
-DLLEXPORT int creatureGetHunger(_Creature* ptr)
+DLLEXPORT int creatureGetEnergyLeft(_Creature* ptr)
 {
-  return ptr->hunger;
+  return ptr->energyLeft;
 }
 DLLEXPORT int creatureGetCarnivorism(_Creature* ptr)
 {
@@ -39,17 +39,13 @@ DLLEXPORT int creatureGetSpeed(_Creature* ptr)
 {
   return ptr->speed;
 }
-DLLEXPORT int creatureGetMaxStamina(_Creature* ptr)
+DLLEXPORT int creatureGetMovementLeft(_Creature* ptr)
 {
-  return ptr->maxStamina;
+  return ptr->movementLeft;
 }
 DLLEXPORT int creatureGetDefense(_Creature* ptr)
 {
   return ptr->defense;
-}
-DLLEXPORT int creatureGetAge(_Creature* ptr)
-{
-  return ptr->age;
 }
 DLLEXPORT int plantGetId(_Plant* ptr)
 {
@@ -66,10 +62,6 @@ DLLEXPORT int plantGetY(_Plant* ptr)
 DLLEXPORT int plantGetSize(_Plant* ptr)
 {
   return ptr->size;
-}
-DLLEXPORT int plantGetAge(_Plant* ptr)
-{
-  return ptr->age;
 }
 DLLEXPORT int playerGetId(_Player* ptr)
 {

@@ -68,12 +68,5 @@ public class Plant
     int value = Client.plantGetSize(ptr);
     return value;
   }
-  ///The age of the plant
-  public int getAge()
-  {
-    validify();
-    int value = Client.plantGetAge(ptr);
-    return value;
-  }
 
 }

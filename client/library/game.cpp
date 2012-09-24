@@ -214,11 +214,12 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   return 1;
 }
 
-DLLEXPORT int creatureEat(_Creature* object, _Plant* plant)
+DLLEXPORT int creatureEat(_Creature* object, int x, int y)
 {
   stringstream expr;
   expr << "(game-eat " << object->id
-      << " " << plant->id
+       << " " << x
+       << " " << y
        << ")";
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
@@ -233,18 +234,6 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate, int x, int y)
       << " " << mate->id
        << " " << x
        << " " << y
-       << ")";
-  LOCK( &object->_c->mutex);
-  send_string(object->_c->socket, expr.str().c_str());
-  UNLOCK( &object->_c->mutex);
-  return 1;
-}
-
-DLLEXPORT int creatureEat(_Creature* object, _Creature* target)
-{
-  stringstream expr;
-  expr << "(game-eat " << object->id
-      << " " << target->id
        << ")";
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
@@ -283,9 +272,9 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->y = atoi(sub->val);
   sub = sub->next;
-  object->health = atoi(sub->val);
+  object->maxEnergy = atoi(sub->val);
   sub = sub->next;
-  object->hunger = atoi(sub->val);
+  object->energyLeft = atoi(sub->val);
   sub = sub->next;
   object->carnivorism = atoi(sub->val);
   sub = sub->next;
@@ -293,11 +282,9 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->speed = atoi(sub->val);
   sub = sub->next;
-  object->maxStamina = atoi(sub->val);
+  object->movementLeft = atoi(sub->val);
   sub = sub->next;
   object->defense = atoi(sub->val);
-  sub = sub->next;
-  object->age = atoi(sub->val);
   sub = sub->next;
 
 }
@@ -315,8 +302,6 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   object->y = atoi(sub->val);
   sub = sub->next;
   object->size = atoi(sub->val);
-  sub = sub->next;
-  object->age = atoi(sub->val);
   sub = sub->next;
 
 }

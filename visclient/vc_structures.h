@@ -20,14 +20,13 @@ struct _Creature
   int owner;
   int x;
   int y;
-  int health;
-  int hunger;
+  int maxEnergy;
+  int energyLeft;
   int carnivorism;
   int herbivorism;
   int speed;
-  int maxStamina;
+  int movementLeft;
   int defense;
-  int age;
 };
 struct _Plant
 {
@@ -36,7 +35,6 @@ struct _Plant
   int x;
   int y;
   int size;
-  int age;
 };
 struct _Player
 {

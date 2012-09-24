@@ -10,7 +10,6 @@
 namespace client
 {
 
-class Plant;
 class Creature;
 
 ///A basic creature!
@@ -28,32 +27,28 @@ class Creature {
   int x();
   ///Y position of the creature
   int y();
-  ///The health of the creature
-  int health();
-  ///The current hunger of the creature
-  int hunger();
+  ///The maximum amount of energy this creature can have
+  int maxEnergy();
+  ///The current amount of energy this creature has.
+  int energyLeft();
   ///The carnivore level of the creature
   int carnivorism();
   ///The herbivore level of the creature
   int herbivorism();
   ///The speed of the creature
   int speed();
-  ///The max stamina of the creature
-  int maxStamina();
+  ///The amount of moves this creature has left this turn
+  int movementLeft();
   ///The defense of the creature
   int defense();
-  ///The age of the creature
-  int age();
 
   // Actions
   ///Command a creature to move to a specified position
   int move(int x, int y);
-  ///Command a creature to eat a specified plant
-  int eat(Plant& plant);
+  ///Eat plant or creature at input location
+  int eat(int x, int y);
   ///Breed with target adjacent creature. Spawn new creature at input location
   int breed(Creature& mate, int x, int y);
-  ///Attack and try to eat target creature
-  int eat(Creature& target);
 
   // Properties
 

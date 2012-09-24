@@ -45,13 +45,10 @@ library.creatureMove.restype = c_int
 library.creatureMove.argtypes = [c_void_p, c_int, c_int]
 
 library.creatureEat.restype = c_int
-library.creatureEat.argtypes = [c_void_p, c_void_p]
+library.creatureEat.argtypes = [c_void_p, c_int, c_int]
 
 library.creatureBreed.restype = c_int
 library.creatureBreed.argtypes = [c_void_p, c_void_p, c_int, c_int]
-
-library.creatureEat.restype = c_int
-library.creatureEat.argtypes = [c_void_p, c_void_p]
 
 library.playerTalk.restype = c_int
 library.playerTalk.argtypes = [c_void_p, c_char_p]
@@ -101,11 +98,11 @@ library.creatureGetX.argtypes = [c_void_p]
 library.creatureGetY.restype = c_int
 library.creatureGetY.argtypes = [c_void_p]
 
-library.creatureGetHealth.restype = c_int
-library.creatureGetHealth.argtypes = [c_void_p]
+library.creatureGetMaxEnergy.restype = c_int
+library.creatureGetMaxEnergy.argtypes = [c_void_p]
 
-library.creatureGetHunger.restype = c_int
-library.creatureGetHunger.argtypes = [c_void_p]
+library.creatureGetEnergyLeft.restype = c_int
+library.creatureGetEnergyLeft.argtypes = [c_void_p]
 
 library.creatureGetCarnivorism.restype = c_int
 library.creatureGetCarnivorism.argtypes = [c_void_p]
@@ -116,14 +113,11 @@ library.creatureGetHerbivorism.argtypes = [c_void_p]
 library.creatureGetSpeed.restype = c_int
 library.creatureGetSpeed.argtypes = [c_void_p]
 
-library.creatureGetMaxStamina.restype = c_int
-library.creatureGetMaxStamina.argtypes = [c_void_p]
+library.creatureGetMovementLeft.restype = c_int
+library.creatureGetMovementLeft.argtypes = [c_void_p]
 
 library.creatureGetDefense.restype = c_int
 library.creatureGetDefense.argtypes = [c_void_p]
-
-library.creatureGetAge.restype = c_int
-library.creatureGetAge.argtypes = [c_void_p]
 
 library.plantGetId.restype = c_int
 library.plantGetId.argtypes = [c_void_p]
@@ -136,9 +130,6 @@ library.plantGetY.argtypes = [c_void_p]
 
 library.plantGetSize.restype = c_int
 library.plantGetSize.argtypes = [c_void_p]
-
-library.plantGetAge.restype = c_int
-library.plantGetAge.argtypes = [c_void_p]
 
 library.playerGetId.restype = c_int
 library.playerGetId.argtypes = [c_void_p]
