@@ -170,7 +170,8 @@ class Creature:
     # #TODO increment best stat by one, make sure it doesn't go over self.objects.maxStat
     
     # return newBaby
-
+    pass
+    
 class Plant:
   def __init__(self, game, id, x, y, size):
     self.game = game
