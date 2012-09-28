@@ -1,0 +1,65 @@
+<options>
+  <option>
+    <key>Display Game Number</key>
+    <type>Integer</type>
+    <value>1</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Display Round Winner</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Display Ships' Range</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Display Ships' Sheild</key>
+    <type>Integer</type>
+    <value>1</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Display Unit IDs</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Ship Render Size</key>
+    <type>Float</type>
+    <value>100</value>
+    <minvalue>0</minvalue>
+    <maxvalue>100</maxvalue>
+  </option>
+  <option>
+    <key>Show Grid</key>
+    <type>Integer</type>
+    <value>1</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Show Round's Ship Types</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Unit ID Distance</key>
+    <type>Integer</type>
+    <value>20</value>
+    <minvalue>14</minvalue>
+    <maxvalue>100</maxvalue>
+  </option>
+</options>
