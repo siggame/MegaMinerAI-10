@@ -16,3 +16,4 @@ Main.class: $(JAVAFILES) libclient.so
 clean:
 	rm -f *.class
 	rm -f libclient.so
+	make -C ../library clean

@@ -56,7 +56,9 @@ DLLEXPORT Connection* createConnection()
 
   c->turnNumber = 0;
   c->playerID = 0;
-  c->mapSize = 0;
+  c->gameNumber = 0;
+  c->mapWidth = 0;
+  c->mapHeight = 0;
   c->Creatures = NULL;
   c->CreatureCount = 0;
   c->Plants = NULL;
@@ -397,7 +399,13 @@ DLLEXPORT int networkLoop(Connection* c)
           c->playerID = atoi(sub->val);
           sub = sub->next;
 
-          c->mapSize = atoi(sub->val);
+          c->gameNumber = atoi(sub->val);
+          sub = sub->next;
+
+          c->mapWidth = atoi(sub->val);
+          sub = sub->next;
+
+          c->mapHeight = atoi(sub->val);
           sub = sub->next;
 
         }
@@ -503,7 +511,15 @@ DLLEXPORT int getPlayerID(Connection* c)
 {
   return c->playerID;
 }
-DLLEXPORT int getMapSize(Connection* c)
+DLLEXPORT int getGameNumber(Connection* c)
 {
-  return c->mapSize;
+  return c->gameNumber;
+}
+DLLEXPORT int getMapWidth(Connection* c)
+{
+  return c->mapWidth;
+}
+DLLEXPORT int getMapHeight(Connection* c)
+{
+  return c->mapHeight;
 }

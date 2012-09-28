@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding: iso-8859-1 -*-
 from networking.sexpr.sexpr import sexpr2str
 from networking.dispatch import SexpProtocol

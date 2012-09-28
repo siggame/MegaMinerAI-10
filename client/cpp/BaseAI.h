@@ -29,8 +29,12 @@ public:
   int turnNumber();
   ///Player Number; either 0 or 1
   int playerID();
-  ///X and Y size of the map
-  int mapSize();
+  ///What number game this is for the server
+  int gameNumber();
+  ///The width of the map
+  int mapWidth();
+  ///The height of the map
+  int mapHeight();
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

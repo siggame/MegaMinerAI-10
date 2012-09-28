@@ -13,9 +13,17 @@ int BaseAI::playerID()
 {
   return getPlayerID(c);
 }
-int BaseAI::mapSize()
+int BaseAI::gameNumber()
 {
-  return getMapSize(c);
+  return getGameNumber(c);
+}
+int BaseAI::mapWidth()
+{
+  return getMapWidth(c);
+}
+int BaseAI::mapHeight()
+{
+  return getMapHeight(c);
 }
 
 bool BaseAI::startTurn()

@@ -9,5 +9,6 @@ libclient.so
 *.exe
 *.gamelog
 *.glog
+Makefile.dependencies
 client
 !jna.jar

@@ -1,11 +1,11 @@
 sources = $(wildcard *.cpp)
 headers = $(wildcard *.h)
 objects = $(sources:%.cpp=%.o)
-deps = $(sources:%.cpp=%.d)
+dependency = Makefile.dependencies
 CFLAGS += -g
 CXXFLAGS += -g
 
-#Uncomment this line  to get a boatload of debug output.
+#Uncomment this line to get a boatload of debug output.
 #CPPFLAGS = -DSHOW_NETWORK
 #override CPPFLAGS += -DSHOW_WARNINGS
 
@@ -35,4 +35,7 @@ client.a: $(objects)
 sexp/sexp.a sexp/libclient_sexp.a:
 	$(MAKE) -C $(dir $@) $(notdir $@)
 
--include $(deps)
+$(dependency): $(sources) $(headers)
+	$(CXX) -MM $(sources) $(CXXFLAGS) > $@
+
+-include $(dependency)

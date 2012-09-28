@@ -5,34 +5,40 @@ aspects = ['timer']
 
 gameName = "Galapagos"
 
-globals = [ Variable('turnNumber', int, 'How many turns it has been since the beginning of the round'),
+globals = [
+  Variable('turnNumber', int, 'How many turns it has been since the beginning of the round'),
   Variable('playerID', int, 'Player Number; either 0 or 1'),
-  Variable('mapSize', int, 'X and Y size of the map')
+  Variable('gameNumber', int, 'What number game this is for the server'),
+  Variable('mapWidth', int, 'The width of the map'),
+  Variable('mapHeight', int, 'The height of the map')
 ]
 
 constants = [
-  ]
-  
-playerData = []
+]
+
+playerData = [
+]
 
 playerFunctions = [
   Function('talk', [Variable('message', str)], doc='Allows a player to display messages on the screen'),
-  ]
+]
 
 Plant = Model('Plant',
-  data=[ Variable('x', int, 'X position of the plant'),
+  data=[
+    Variable('x', int, 'X position of the plant'),
     Variable('y', int, 'Y position of the plant'),
     Variable('size', int, 'The size of the plant'),
   ],
   doc="A basic plant!",
-)  
-  
+)
+
 Creature = Model('Creature',
-  data=[ Variable('owner', int, 'The owner of the creature'),
+  data=[
+    Variable('owner', int, 'The owner of the creature'),
     Variable('x', int, 'X position of the creature'),
     Variable('y', int, 'Y position of the creature'),
     Variable('maxEnergy', int, 'The maximum amount of energy this creature can have'),
-	Variable('energyLeft', int, 'The current amount of energy this creature has.'),
+    Variable('energyLeft', int, 'The current amount of energy this creature has.'),
     Variable('carnivorism', int, 'The carnivore level of the creature'),
     Variable('herbivorism', int, 'The herbivore level of the creature'),
     Variable('speed', int, 'The speed of the creature'),
@@ -55,32 +61,40 @@ Creature.addFunctions(
   ]
 )
 
+playerTalk = Animation('playerTalk',
+  data=[
+    Variable('actingID', int),
+    Variable('message', str),
+  ],
+)
+
 move = Animation('move',
-  data=[Variable('actingID', int),
+  data=[
+    Variable('actingID', int),
     Variable('fromX', int),
     Variable('fromY', int),
     Variable('toX', int),
     Variable('toY', int),
-    ],
-  )
+  ],
+)
 
 eat = Animation('eat',
   data=[
     Variable('actingID', int),
     Variable('targetID', int),
-    ],
-  )
-  
-playerTalk = Animation('playerTalk',
+  ],
+)
+
+death = Animation('death',
   data=[
-  Variable('actingID', int),
-  Variable('message', str),
+    Variable('actingID', int)
   ],
 )
 
 breed = Animation('breed',
   data=[
-  Variable('actingID', int),
-  Variable('targetID', str),
+    Variable('actingID', int),
+    Variable('targetID', int),
+    Variable('childID', int)
   ],
 )

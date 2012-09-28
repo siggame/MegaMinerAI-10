@@ -33,7 +33,9 @@ struct Connection
   
   int turnNumber;
   int playerID;
-  int mapSize;
+  int gameNumber;
+  int mapWidth;
+  int mapHeight;
 
   _Creature* Creatures;
   int CreatureCount;
@@ -78,7 +80,9 @@ extern "C"
 
 DLLEXPORT int getTurnNumber(Connection* c);
 DLLEXPORT int getPlayerID(Connection* c);
-DLLEXPORT int getMapSize(Connection* c);
+DLLEXPORT int getGameNumber(Connection* c);
+DLLEXPORT int getMapWidth(Connection* c);
+DLLEXPORT int getMapHeight(Connection* c);
 
 DLLEXPORT _Creature* getCreature(Connection* c, int num);
 DLLEXPORT int getCreatureCount(Connection* c);

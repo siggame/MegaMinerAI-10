@@ -27,7 +27,9 @@ class Match(DefaultGameWorld):
     #TODO: INITIALIZE THESE!
     self.turnNumber = None
     self.playerID = None
-    self.mapSize = None
+    self.gameNumber = id
+    self.mapWidth = None
+    self.mapHeight = None
 
   def addPlayer(self, connection, type="player"):
     connection.type = type
@@ -36,7 +38,7 @@ class Match(DefaultGameWorld):
     if type == "player":
       self.players.append(connection)
       try:
-        self.addObject(Player, [connection.screenName])
+        self.addObject(Player, [connection.screenName, self.startTime])
       except TypeError:
         raise TypeError("Someone forgot to add the extra attributes to the Player object initialization")
     elif type == "spectator":
@@ -94,7 +96,9 @@ class Match(DefaultGameWorld):
 
   def checkWinner(self):
     #TODO: Make this check if a player won, and call declareWinner with a player if they did
-    pass
+    if self.turnNumber >= self.turnLimit:
+       self.declareWinner(self.players[0], "Because I said so, this shold be removed")
+    
 
   def declareWinner(self, winner, reason=''):
     print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
@@ -160,7 +164,7 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.turnNumber, self.playerID, self.mapSize])
+    msg.append(["game", self.turnNumber, self.playerID, self.gameNumber, self.mapWidth, self.mapHeight])
 
     typeLists = []
     typeLists.append(["Creature"] + [i.toList() for i in self.objects.values() if i.__class__ is Creature])

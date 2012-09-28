@@ -62,8 +62,14 @@ library.getTurnNumber.argtypes = [c_void_p]
 library.getPlayerID.restype = c_int
 library.getPlayerID.argtypes = [c_void_p]
 
-library.getMapSize.restype = c_int
-library.getMapSize.argtypes = [c_void_p]
+library.getGameNumber.restype = c_int
+library.getGameNumber.argtypes = [c_void_p]
+
+library.getMapWidth.restype = c_int
+library.getMapWidth.argtypes = [c_void_p]
+
+library.getMapHeight.restype = c_int
+library.getMapHeight.argtypes = [c_void_p]
 
 library.getCreature.restype = c_void_p
 library.getCreature.argtypes = [c_void_p, c_int]

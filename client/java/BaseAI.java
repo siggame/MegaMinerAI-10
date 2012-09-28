@@ -81,9 +81,19 @@ public abstract class BaseAI
   {
     return Client.INSTANCE.getPlayerID(connection);
   }
-  ///X and Y size of the map
-  int mapSize()
+  ///What number game this is for the server
+  int gameNumber()
   {
-    return Client.INSTANCE.getMapSize(connection);
+    return Client.INSTANCE.getGameNumber(connection);
+  }
+  ///The width of the map
+  int mapWidth()
+  {
+    return Client.INSTANCE.getMapWidth(connection);
+  }
+  ///The height of the map
+  int mapHeight()
+  {
+    return Client.INSTANCE.getMapHeight(connection);
   }
 }

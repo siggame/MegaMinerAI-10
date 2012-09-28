@@ -14,6 +14,7 @@ submit: client
 
 clean:
 	rm -f $(objects) client $(dependency)
+	make -C ../library clean
 
 client: $(objects) ../library/client.a ../library/sexp/sexp.a
 	$(CXX) $(LDFLAGS) $(LOADLIBES) $(LDLIBS) $^ -g -o client

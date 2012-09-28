@@ -39,7 +39,7 @@ class Creature:
     elif self.movesLeft <= 0:
       return "That creature has no more stamina"
     #You can't move off the edge, the world is flat
-    elif not (0 <= x < self.game.mapSize) or not (0 <= y < self.game.mapSize):
+    elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
       return "Don't move off of the map"
     #You can't move more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:

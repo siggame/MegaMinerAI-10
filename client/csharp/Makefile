@@ -16,3 +16,4 @@ client.exe: $(CSFILES) libclient.so
 clean:
 	rm -f client.exe
 	rm -f libclient.so
+	make -C ../library clean

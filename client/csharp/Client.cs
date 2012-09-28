@@ -39,7 +39,11 @@ public class Client {
   [DllImport("client")]
   public static extern int getPlayerID(IntPtr connection);
   [DllImport("client")]
-  public static extern int getMapSize(IntPtr connection);
+  public static extern int getGameNumber(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getMapWidth(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getMapHeight(IntPtr connection);
 
   [DllImport("client")]
   public static extern IntPtr getCreature(IntPtr connection, int num);

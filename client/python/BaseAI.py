@@ -54,9 +54,19 @@ class BaseAI:
   #\endcond
   playerID = property(getPlayerID)
   #\cond
-  def getMapSize(self):
-    return library.getMapSize(self.connection)
+  def getGameNumber(self):
+    return library.getGameNumber(self.connection)
   #\endcond
-  mapSize = property(getMapSize)
+  gameNumber = property(getGameNumber)
+  #\cond
+  def getMapWidth(self):
+    return library.getMapWidth(self.connection)
+  #\endcond
+  mapWidth = property(getMapWidth)
+  #\cond
+  def getMapHeight(self):
+    return library.getMapHeight(self.connection)
+  #\endcond
+  mapHeight = property(getMapHeight)
   def __init__(self, connection):
     self.connection = connection

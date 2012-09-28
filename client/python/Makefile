@@ -12,3 +12,4 @@ libclient.so: ../library/*.cpp ../library/*.h
 clean:
 	rm -f libclient.so
 	rm -f *.pyc
+	make -C ../library clean

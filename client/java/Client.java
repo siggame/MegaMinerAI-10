@@ -26,7 +26,9 @@ public interface Client extends Library {
     //accessors
   int getTurnNumber(Pointer connection);
   int getPlayerID(Pointer connection);
-  int getMapSize(Pointer connection);
+  int getGameNumber(Pointer connection);
+  int getMapWidth(Pointer connection);
+  int getMapHeight(Pointer connection);
 
   Pointer getCreature(Pointer connection, int num);
   int getCreatureCount(Pointer connection);
