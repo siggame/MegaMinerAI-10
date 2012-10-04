@@ -67,6 +67,12 @@ class Match(DefaultGameWorld):
     self.turn = self.players[-1]
     self.turnNumber = -1
 
+    #TODO: Mirror the output, make this more pretty???
+    plants = 0
+    while plants < startPlantsPerSide:
+      plants += 1
+    self.game.addObject
+
     self.nextTurn()
     return True
 
