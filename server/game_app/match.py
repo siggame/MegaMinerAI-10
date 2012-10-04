@@ -67,9 +67,18 @@ class Match(DefaultGameWorld):
     self.turn = self.players[-1]
     self.turnNumber = -1
 
-    #TODO: Mirror the output, make this more pretty???
+    #TODO: Better formula? [uses cosine currently]
     plants = 0
-    while plants < startPlantsPerSide:
+    while plants < self.objects.startPlantsPerSide:
+      #generates a number 0 to 1 and then multiply be the map size
+      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * mapSize
+      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * mapSize
+      #get a better thing for distance
+      plantSize = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.plantMaxSize
+      #I don't know if this is generating a plant correctly [what do I put for ID?]
+      self.game.addObject(Plant,[self, self.game, 0, plantGenx, plantGeny, plantSize])
+      #mirror this object
+      self.game.addObject(Plant,[self, self.game, 0, -plantGenx, -plantGeny, plantSize])
       plants += 1
     self.game.addObject
 
