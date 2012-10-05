@@ -7,6 +7,7 @@ from networking.sexpr.sexpr import *
 import os
 import itertools
 import scribe
+import random
 
 Scribe = scribe.Scribe
 
@@ -84,7 +85,24 @@ class Match(DefaultGameWorld):
 
     self.nextTurn()
     return True
-
+  
+  def initialStats(self):
+   stats = self.totalStartStats
+   count = 0
+   list = [1, 1, 1, 1, 1]
+   while stats > 0:
+      position = count % 5
+      remaining = self.maxStat - list[position]
+      # Random integer of stats to be added to current number. Can never exceed maxStat
+      temp = random.randint(0, stats) % (remaining + 1)
+      list[position] += temp
+      # Decrementing stats, reflecting how many available stats are left
+      stats -= temp
+      # Incrementing count so as to step through each position in the list
+      count += 1
+   
+   return list
+   
 
   def nextTurn(self):
     self.turnNumber += 1
