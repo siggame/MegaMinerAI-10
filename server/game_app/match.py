@@ -289,8 +289,8 @@ class Match(DefaultGameWorld):
     #end while
         
     #TODO: call creature stats generator instead of all 1's
-        self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1, 1])  
-        self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1, 1])
+        self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1])  
+        self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1])
         
         return
 
