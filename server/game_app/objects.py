@@ -57,57 +57,50 @@ class Creature:
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
     return True
 
-  def eat(self, x, y):  
-    #You can only move your creature
-     if self.owner != self.id:
-       return "You cannot eat with your oppenent's creature."
-    #You can't move if you have no moves left
-     elif self.movementLeft <= 0:
-       return "That creature has no more moves left."
+  def eat(self, x, y): 
+    # #You can only move your creature
+    if self.owner != self.game.playerID:
+      return "You cannot eat with your oppenent's creature"
+    # #You can't move if you have no moves left
+    elif self.energyLeft <= 0:
+      return "That creature has no more stamina"
     # #You can't eat more than one space away
+    elif abs(self.x-x) + abs(self.y-y) != 1:
+      return "Units can only move to adjacent locations"
     # elif abs(self.x-plant.x) + abs(self.y-plant.y) != 1:
       # return "You can only eat adjacent plants"
-    
-    # #TODO: Tweak this value
-    # #TODO: 0 Hunger = Starvation or full?
-    # #TODO: Check hunger is not greater than config max OR smaller than config min
-    # self.hunger += 5*self.herbivorism
-    # if self.hunger > self.objects.maxHunger:
-      # self.hunger = self.objects.maxHunger
-    # plant.size -= 1
-    
-    # #Remove the plant if needed
-    # if plant.size == 0:
-      # self.game.removeObject(plant)
-    # self.game.animations.append(['eat', self.id, plant.id])
-    # return True
-	
-	# #You can only eat with your creature
-    # if self.owner != self.game.playerID:
-      # return "You cannot eat with your oppenent's creature"
-    # #You can't eat if you have no moves left
-    # elif self.stamina <= 0:
-      # return "That creature has no more stamina"
-    # #You can't eat more than one space away
-    # elif abs(self.x-target.x) + abs(self.y-target.y) != 1:
-      # return "You can only eat adjacent animals"
-      
-    # #TODO damage
-    # damage = self.carnivorism - target.defense
-    # if damage < 1:
-      # damage = 1
-    # target.health -= damage
-    
-    # if target.health<=0:
-      # self.game.removeObject(target)
-      # #TODO adjust this hungry stuff
-      # self.hunger += 25 + self.carnivorism * 5
-      # if self.hunger > self.objects.maxHunger:
-        # self.hunger = self.objects.maxHunger
-    
-    # self.game.animations.append(['eat', self.id, target.id])
-    # return True
-     pass
+    targetId = -1 
+    for lifeform in self.game.objects:
+      if lifeform.x == x and lifeform.y == y:
+        targetId = lifeform.id
+        break
+    if targetId > -1:
+      return "No lifeforms at that location."  
+    if isinstance(self.game.objects[targetId], Plant):
+      plant = self.game.objects[targetId]
+      if size == 0:
+        return "That plant is too small to eat."
+      self.energyLeft += self.herbivorism * 5
+      if self.energyLeft > self.maxEnergy:
+        self.energyLeft = self.maxEnergy
+      plant.size -= 1
+      self.game.animations.append(['eat', self.id, plant.id])
+    else:
+      creature = self.game.objects[targetId]
+      damage = self.carnivorism - creature.defense
+      if damage < 1:
+        damage = 1
+      creature.health -= damage
+     
+      if creature.health <= 0:
+        self.game.removeObject(creature)
+      self.energyLeft += self.carnivorism * 5
+
+      if self.energyLeft > self.maxEnergy:
+        self.energyLeft = self.maxEnergy
+
+      self.game.animations.append(['eat', self.id, creature.id])
+    return True
 
   def breed(self, mate, x, y):
     #You can only breed your creature
