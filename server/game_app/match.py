@@ -7,6 +7,8 @@ from networking.sexpr.sexpr import *
 import os
 import itertools
 import scribe
+import math
+import random
 
 Scribe = scribe.Scribe
 
@@ -80,18 +82,18 @@ class Match(DefaultGameWorld):
 
     #TODO: Better formula? [uses cosine currently]
     plants = 0
-    while plants < self.objects.startPlantsPerSide:
+    while plants < self.startingPlantsPerSide:
       #generates a number 0 to 1 and then multiply be the map size
-      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
-      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
+      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.MapWidth
+      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.MapHeight
       #get a better thing for distance [actually based on distance]
-      plantSize = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.plantMaxSize
+      plantSize = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.plantMaxSize
       #I don't know if this is generating a plant correctly [what do I put for ID?]
-      self.game.addObject(Plant,[self, self.game, 0, plantGenx, plantGeny, plantSize])
+      self.addObject(Plant,[plantGenx, plantGeny, plantSize])
       #mirror this object
-      self.game.addObject(Plant,[self, self.game, 0, self.objects.mapSize/2 - plantGenx, self.objects.mapSize/2 - plantGeny, plantSize])
+      self.addObject(Plant,[self.MapWidth/2 - plantGenx, self.MapHeight/2 - plantGeny, plantSize])
       plants += 1
-    self.game.addObject
+    #self.game.addObject
 
     self.nextTurn()
     return True
