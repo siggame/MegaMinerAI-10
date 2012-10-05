@@ -7,6 +7,7 @@ codegen/output
 
 #Game logs don't go in the repository
 *.gamelog
+*.glog
 
 #Visual studio files don't go in the repository
 #Visual Studio files
