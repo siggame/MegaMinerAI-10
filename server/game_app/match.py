@@ -158,9 +158,30 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    #TODO: Make this check if a player won, and call declareWinner with a player if they did
+    #Defaults player 1 as winner if both players have same number of creatures at end
+    player1 = self.objects.players[0]
+    player2 = self.objects.players[1]
+    winner = player1
+    # number of player 1's creatures and player 2's creatures
+    p1C = 0
+    p2C = 0
+    
+    for Creature in self.objects.Creatures:
+      if Creature.owner == player1.id:
+         p1C += 1
+      else:
+         p2C += 1
+         
+    if p1C > p2C:
+      winner = p1C
+      if p2C == 0:
+         self.declareWinner(winner, "Player 2's creatures are all died")
+    elif p2C > p1C:
+      winner = p2C
+      if p1C == 0:
+         self.declareWinner(winner, "Player 1's creatures are all died")
     if self.turnNumber >= self.turnLimit:
-       self.declareWinner(self.players[0], "Because I said so, this shold be removed")
+      self.declareWinner(winner, "Game is over and this guy had more creatures")
     
 
   def declareWinner(self, winner, reason=''):
