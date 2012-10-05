@@ -130,7 +130,39 @@ class Creature:
          return "Invalid location to spawn baby"
     #TODO make baby better than parents
      # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
-     newbaby = self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
+	 
+	 # by default set all stats to average of parents
+     newEnergy = (self.maxEnergy + mate.maxEnergy) / 2
+     newDefense = (self.defense + mate.defense) / 2
+     newCarnivorism = (self.carnivorism + mate.canivorism) / 2
+     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
+     newSpeed = (self.speed + mate.speed) / 2
+     newDefense = (self.defense + mate.defense) / 2
+ 
+     totalStatsSoFar = newEnergy + newDefense + newCarnivorism + newHerbivorishm + newSpeed
+	 
+	 # The child will have a total stat of the best parent's total plus one
+     parentSumStat1 = self.energy + self.defense + self.carnivorism + self.herbivorism + self.speed
+     parentSumStat2 = mate.energy + mate.defense + mate.carnivorism + mate.herbivorism + mate.speed
+     targetStat = max(parentSumStat1, parentSumStat2) + 1
+	 
+	 # This loop will add all the unallocated stat points
+	 # TODO - finish this while loop
+     while totalStatsSoFar < targetStat:
+       totalSoFar += 1
+	 
+     newbaby = self.game.addObject(Creature,[
+       self.owner, 
+       x, 
+       y, 
+       newEnergy, 
+       newEnergy/3, 
+       newCarnivorism, 
+       newHerbivorism, 
+       newSpeed, 
+       0, 
+       newDefense])
+#     newbaby = self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
      self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
     #TODO amount of stamina necessary to breed
      self.energyLeft -= (self.maxEnergy / 3)
