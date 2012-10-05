@@ -1,0 +1,20 @@
+[Match]
+turnLimit = 499
+startTime = 10
+timeInc = 1
+mapSize = 20
+startingCreatures = 5
+maxHunger = 100
+maxHealth = 10
+maxStat = 10
+maxAge = 100
+hungerPerTurn = 3
+hungerPerBreed = 40
+plantGrowthRate = 20
+plantMaxSize = 10
+<<<<<<< HEAD
+plantModifier = .25
+=======
+MapHeight = 20
+MapWidth = 40
+>>>>>>> e387c39232ea3dfee6f2eb4b03e927c1fc388965
