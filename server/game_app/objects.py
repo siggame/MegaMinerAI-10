@@ -52,18 +52,18 @@ class Creature:
     #TODO Restrictions for movement when breeding
     self.x = x
     self.y = y
-    self.movesLeft -= 1
+    self.movementLeft -= 1
     #TODO Hunger cost of movement will be defined in a config file
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
     return True
 
   def eat(self, x, y):  
-    # #You can only move your creature
-    # if self.owner != self.game.playerID:
-      # return "You cannot eat with your oppenent's creature"
-    # #You can't move if you have no moves left
-    # elif self.stamina <= 0:
-      # return "That creature has no more stamina"
+    #You can only move your creature
+     if self.owner != self.id:
+       return "You cannot eat with your oppenent's creature."
+    #You can't move if you have no moves left
+     elif self.movementLeft <= 0:
+       return "That creature has no more moves left."
     # #You can't eat more than one space away
     # elif abs(self.x-plant.x) + abs(self.y-plant.y) != 1:
       # return "You can only eat adjacent plants"
@@ -110,45 +110,44 @@ class Creature:
 	pass
 
   def breed(self, mate, x, y):
-    # #You can only breed your creature
-    # if self.owner != self.game.playerID:
-      # return "You cannot breed using your oppenent's creature"
-    # #You can't breed if you have no stamina left
-    # elif self.stamina <= 0:
-      # return "That creature has no more stamina"
-    # #You can't breed more than one space away
-    # elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
-      # return "You can only breed with adjacent creatures"
-    # #Check to make sure you're not breeding with an opponent's creature
-    # elif mate.owner != self.game.playerID:
-      # return "No fraternizing with the enemy"
-    # #Check to make sure baby is adjacent to parents
-    # elif not (abs(self.x-x) + abs(self.y-y) != 1 or abs(mate.x-x) + abs(mate.y-y) != 1):
-      # return "You spawned your baby too far away"
-    # #You can't spawn the baby off the edge, the world is flat
-    # elif not (0 <= x < self.game.mapSize) or not (0 <= y < self.game.mapSize):
-      # return "Don't spawn the baby off of the map"
-    # #Check that baby spawn location is empty    
-    # for object in self.game.objects:
-      # if object.x == x and object.y == y:
-        # return "Invalid location to spawn baby"
-    
-    
-    # #TODO make baby better than parents
-    # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
-    # #self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
-    # self.game.animations.append(['Breed', self.id, mate.id])
-    # #TODO amount of stamina necessary to breed
-    # self.stamina -= (self.stamina / 3)
-    # mate.stamina -= (mate.stamina / 3)
-    # self.hunger -= self.objects.hungerPerBreed
-    # mate.hunger -= self.objects.hungerPerBreed
-    # if self.hunger <= 0:
-      # self.game.removeObject(self)
-    # if mate.hunger <= 0:
-      # self.game.removeObject(mate)
+    #You can only breed your creature
+     if self.owner != self.id:
+       return "You cannot breed using your oppenent's creature!"
+    #You can't breed if you don't have enough energy
+     elif self.energyLeft <= self.maxEnergy/3:
+       return "That creature doesn't have enough energy to breed!"
+    #You can't breed if your mate doesn't have enough energy
+     elif mate.energyLeft <= mate.maxEnergy/3:
+       return "Your mate doesn't have enough energy to breed!"
+    #You can't breed more than one space away
+     elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
+       return "You can only breed with adjacent creatures"
+    #Check to make sure you're not breeding with an opponent's creature
+     elif mate.owner != self.id:
+       return "No fraternizing with the enemy" 
+    #Check to make sure baby is adjacent to parents
+     elif not (abs(self.x-x) + abs(self.y-y) != 1 or abs(mate.x-x) + abs(mate.y-y) != 1):
+       return "Your baby must be within 1 tile of one of the parents."
+    #You can't spawn the baby off the edge, the world is flat
+     elif not (0 <= x < self.game.mapSize) or not (0 <= y < self.game.mapSize):
+       return "Don't spawn the baby off of the map"
+    #Check that baby spawn location is empty    
+     for object in self.game.objects:
+       if object.x == x and object.y == y:
+         return "Invalid location to spawn baby"
+    #TODO make baby better than parents
+     # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
+     newbaby = self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
+     self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
+    #TODO amount of stamina necessary to breed
+     self.energyLeft -= (self.maxEnergy / 3)
+     mate.energyLeft -= (mate.maxEnergy / 3)
+     if self.energyLeft <= 0:
+       self.game.removeObject(self)
+     if mate.energyLeft <= 0:
+       self.game.removeObject(mate)
       
-    # return True
+     return True
 
 	
 	
