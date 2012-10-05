@@ -71,14 +71,14 @@ class Match(DefaultGameWorld):
     plants = 0
     while plants < self.objects.startPlantsPerSide:
       #generates a number 0 to 1 and then multiply be the map size
-      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * mapSize
-      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * mapSize
-      #get a better thing for distance
+      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
+      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
+      #get a better thing for distance [actually based on distance]
       plantSize = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.plantMaxSize
       #I don't know if this is generating a plant correctly [what do I put for ID?]
       self.game.addObject(Plant,[self, self.game, 0, plantGenx, plantGeny, plantSize])
       #mirror this object
-      self.game.addObject(Plant,[self, self.game, 0, -plantGenx, -plantGeny, plantSize])
+      self.game.addObject(Plant,[self, self.game, 0, self.objects.mapSize/2 - plantGenx, self.objects.mapSize/2 - plantGeny, plantSize])
       plants += 1
     self.game.addObject
 
