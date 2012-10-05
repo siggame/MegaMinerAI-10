@@ -31,6 +31,17 @@ class Match(DefaultGameWorld):
     self.mapWidth = self.MapWidth
     self.mapHeight = self.MapHeight
 
+  #initializes a game map
+  def initGrid(self):
+	self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
+	for creature in self.objects.creatures:
+		self.grid[creature.x][creature.y] = creature
+	for plant in self.objects.plants:
+		self.grid[plant.x][plant.y] = plant
+		
+  def getObject(self, x, y):
+	return self.grid[x][y]
+  
   def addPlayer(self, connection, type="player"):
     connection.type = type
     if len(self.players) >= 2 and type == "player":
