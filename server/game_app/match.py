@@ -25,11 +25,11 @@ class Match(DefaultGameWorld):
     self.addPlayer(self.scribe, "spectator")
 
     #TODO: INITIALIZE THESE!
-    self.turnNumber = None
-    self.playerID = None
+    self.turnNumber = -1
+    self.playerID = -1
     self.gameNumber = id
-    self.mapWidth = None
-    self.mapHeight = None
+    self.mapWidth = self.MapWidth
+    self.mapHeight = self.MapHeight
 
   def addPlayer(self, connection, type="player"):
     connection.type = type

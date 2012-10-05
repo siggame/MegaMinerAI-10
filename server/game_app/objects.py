@@ -107,7 +107,7 @@ class Creature:
     
     # self.game.animations.append(['eat', self.id, target.id])
     # return True
-	pass
+     pass
 
   def breed(self, mate, x, y):
     #You can only breed your creature
