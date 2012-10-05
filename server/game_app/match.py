@@ -40,11 +40,11 @@ class Match(DefaultGameWorld):
     print len(self.grid)
     for creature in self.objects.creatures:
       self.grid[creature.x][creature.y] = creature
-      print 'Creature ' + str(creature.id) + ' added @ ' + str(creature.x) + ',' + str(creature.y)
+      #print 'Creature ' + str(creature.id) + ' added @ ' + str(creature.x) + ',' + str(creature.y)
     for plant in self.objects.plants:
-      print 'Plant ' + str(plant.id) + ' added @ ' + str(plant.x) + ',' + str(plant.y)
+      #print 'Plant ' + str(plant.id) + ' added @ ' + str(plant.x) + ',' + str(plant.y)
       self.grid[plant.x][plant.y] = plant
-    print len(self.objects.plants)
+    print 'Number of plants: ' + str(len(self.objects.plants))
 
   def getObject(self, x, y):
     return self.grid[x][y]
@@ -86,8 +86,11 @@ class Match(DefaultGameWorld):
     y2 = 0
     totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
     prob = (1-distance/totaldistance)*self.plantModifier
+    print prob
     #prob is 0 to 1, make a plant if greater
-    if random.random() > prob:
+    randomNum = random.random()
+    print 'Random nunmber: ' + str(randomNum)
+    if randomNum < prob:
       toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
       if toBeReturned == 0:
         toBeReturned = 1
