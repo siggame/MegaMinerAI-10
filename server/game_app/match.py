@@ -111,7 +111,7 @@ class Match(DefaultGameWorld):
    
       
     plantsx = 0
-    while plantsx < self.mapWidth/2:
+    while plantsx < self.mapWidth:
       plantsy = 0
       while plantsy < self.mapHeight:
         checkMakePlant = self.makePlant(plantsx,plantsy)
@@ -125,6 +125,7 @@ class Match(DefaultGameWorld):
 
     self.initGrid()
     self.nextTurn()
+    self.spawnCreatures()
     return True
   
   
@@ -251,5 +252,26 @@ class Match(DefaultGameWorld):
     return msg
 
 
-loadClassDefaults()
+#SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
+#This function assumes the plants have been spawned symmetrically across the vertical axis
+  def spawnCreatures(self):
+    i = 0
+    while i < self.startingCreatures:
+      i+=1
+    #Generate x,y for creature location
+      while True:
+        newX = int(random.uniform(0,1)*self.mapWidth / 2)
+        newY = int(random.uniform(0,1)*self.mapHeight)
+      #check map if the space is unoccupied, otherwise generate a new X,Y
+        if self.getObject(newX, newY) is None:
+          break
+    #end while
+        
+    #TODO: call creature stats generator instead of all 1's
+        self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1, 1])  
+        self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1, 1])
+        
+        return
 
+
+loadClassDefaults()

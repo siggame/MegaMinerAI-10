@@ -9,8 +9,17 @@
 
 namespace visualizer
 {
-    struct Something: public Animatable
+    struct Map: public Animatable
     {
+        int width;
+        int height;
+    };
+    
+    struct Plant : public Animatable
+    {
+       int x;
+       int y;
+       int size;
     };
 
 } // visualizer

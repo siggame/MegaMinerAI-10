@@ -112,8 +112,8 @@ namespace visualizer
 
     // Setup the renderer as a 4 x 4 map by default
     // TODO: Change board size to something useful
-    renderer->setCamera( 0, 0, 4, 4 );
-    renderer->setGridDimensions( 4, 4 );
+    renderer->setCamera( 0, 0, m_game->states[0].mapWidth, m_game->states[0].mapHeight );
+    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight );
  
     start();
   } // Galapagos::loadGamelog()
@@ -134,9 +134,23 @@ namespace visualizer
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
     {
       Frame turn;  // The frame that will be drawn
-      SmartPointer<Something> something = new Something();
-      something->addKeyFrame( new DrawSomething( something ) );
-      turn.addAnimatable( something );
+      SmartPointer<Map> map = new Map();
+      map->width = m_game->states[state].mapWidth;
+      map->height = m_game->states[state].mapHeight;
+      map->addKeyFrame( new DrawMap( map ) );
+      turn.addAnimatable( map );
+      
+      for( auto& p : m_game->states[ state ].plants )
+      {
+        SmartPointer<Plant> plant = new Plant();
+        plant->x = p.second.x;
+        plant->y = p.second.y;
+        plant->size = p.second.size;
+        plant->addKeyFrame( new DrawPlant( plant ) );
+        turn.addAnimatable( plant );
+      }
+      
+      // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
       addFrame(turn);
       
