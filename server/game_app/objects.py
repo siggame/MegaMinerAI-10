@@ -46,9 +46,8 @@ class Creature:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
 	#Make all objects into a map to reduce check times
-    for object in self.game.objects:
-      if object.x == x and object.y == y:
-        return "There is already an object in that location."
+    if self.game.getObject(x,y) is not None:
+      return "There is already an object in that location."
     #TODO Restrictions for movement when breeding
     self.x = x
     self.y = y
@@ -69,14 +68,11 @@ class Creature:
       return "Units can only move to adjacent locations"
     # elif abs(self.x-plant.x) + abs(self.y-plant.y) != 1:
       # return "You can only eat adjacent plants"
-    targetId = -1 
-    for lifeform in self.game.objects:
-      if lifeform.x == x and lifeform.y == y:
-        targetId = lifeform.id
-        break
-    if targetId > -1:
+    targetId = -1
+    lifeform = self.game.getObject(x,y)
+    if lifeform is not None:
       return "No lifeforms at that location."  
-    if isinstance(self.game.objects[targetId], Plant):
+    if isinstance(lifeform, Plant):
       plant = self.game.objects[targetId]
       if size == 0:
         return "That plant is too small to eat."
@@ -86,7 +82,7 @@ class Creature:
       plant.size -= 1
       self.game.animations.append(['eat', self.id, plant.id])
     else:
-      creature = self.game.objects[targetId]
+      creature = self.game.getObject(x,y)
       damage = self.carnivorism - creature.defense
       if damage < 1:
         damage = 1
@@ -125,9 +121,8 @@ class Creature:
      elif not (0 <= x < self.game.mapSize) or not (0 <= y < self.game.mapSize):
        return "Don't spawn the baby off of the map"
     #Check that baby spawn location is empty    
-     for object in self.game.objects:
-       if object.x == x and object.y == y:
-         return "Invalid location to spawn baby"
+     if self.game.getObject(x,y) is not None:
+      return "Invalid location to spawn baby"
     #TODO make baby better than parents
      # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
 	 
