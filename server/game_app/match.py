@@ -27,12 +27,23 @@ class Match(DefaultGameWorld):
     self.addPlayer(self.scribe, "spectator")
 
     #TODO: INITIALIZE THESE!
-    self.turnNumber = None
-    self.playerID = None
+    self.turnNumber = -1
+    self.playerID = -1
     self.gameNumber = id
-    self.mapWidth = None
-    self.mapHeight = None
+    self.mapWidth = self.MapWidth
+    self.mapHeight = self.MapHeight
 
+  #initializes a game map
+  def initGrid(self):
+	self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
+	for creature in self.objects.creatures:
+		self.grid[creature.x][creature.y] = creature
+	for plant in self.objects.plants:
+		self.grid[plant.x][plant.y] = plant
+		
+  def getObject(self, x, y):
+	return self.grid[x][y]
+  
   def addPlayer(self, connection, type="player"):
     connection.type = type
     if len(self.players) >= 2 and type == "player":
@@ -71,9 +82,9 @@ class Match(DefaultGameWorld):
 
     #this is for testing if a plant should be made
     def makePlant(self,x,y):
-      x1 = self.mapSize
+      x1 = self.MapWidth
       x2 = x
-      y1 = self.mapSize
+      y1 = self.MapHeight
       y2 = y
       distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
       x2 = 0
@@ -81,7 +92,7 @@ class Match(DefaultGameWorld):
       totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
       prob = (1-distance/totaldistance)*self.plantModifier
       #prob is 0 to 1, make a plant if greater
-      if random.random()>prob:
+      if random.random() > prob:
         toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
         if toBeReturned == 0:
           toBeReturned = 1
@@ -90,9 +101,9 @@ class Match(DefaultGameWorld):
       return -1
       
     plantsx = 0
-    while plantsx < self.mapSize:
+    while plantsx < self.MapWidth:
       plantsy = 0
-      while plantsy < self.mapSize:
+      while plantsy < self.MapHeight:
         checkMakePlant = makePlant(self,plantsx,plantsy)
         if not (checkMakePlant == -1):
           #FENERATE [generate] a plant here with checkMake Plant size.
