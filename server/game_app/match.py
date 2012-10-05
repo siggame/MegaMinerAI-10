@@ -33,16 +33,21 @@ class Match(DefaultGameWorld):
     self.mapWidth = self.mapWidth
     self.mapHeight = self.mapHeight
 
-  #initializes a game map
+#initializes a game map
   def initGrid(self):
-	self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
-	for creature in self.objects.creatures:
-		self.grid[creature.x][creature.y] = creature
-	for plant in self.objects.plants:
-		self.grid[plant.x][plant.y] = plant
-		
+    self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
+    print len(self.grid[0])
+    print len(self.grid)
+    for creature in self.objects.creatures:
+      self.grid[creature.x][creature.y] = creature
+      print 'Creature ' + str(creature.id) + ' added @ ' + str(creature.x) + ',' + str(creature.y)
+    for plant in self.objects.plants:
+      print 'Plant ' + str(plant.id) + ' added @ ' + str(plant.x) + ',' + str(plant.y)
+      self.grid[plant.x][plant.y] = plant
+    print len(self.objects.plants)
+
   def getObject(self, x, y):
-	return self.grid[x][y]
+    return self.grid[x][y]
   
   def addPlayer(self, connection, type="player"):
     connection.type = type
@@ -70,6 +75,26 @@ class Match(DefaultGameWorld):
     else:
       self.spectators.remove(connection)
 
+   #this is for testing if a plant should be made
+  def makePlant(self,x,y):
+    x1 = self.mapWidth/2
+    x2 = x
+    y1 = self.mapHeight/2
+    y2 = y
+    distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+    x2 = 0
+    y2 = 0
+    totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+    prob = (1-distance/totaldistance)*self.plantModifier
+    #prob is 0 to 1, make a plant if greater
+    if random.random() > prob:
+      toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
+      if toBeReturned == 0:
+        toBeReturned = 1
+      toBeReturned = math.floor(toBeReturned)
+      return toBeReturned
+    return -1
+      
   def start(self):
     if len(self.players) < 2:
       return "Game is not full"
@@ -80,41 +105,25 @@ class Match(DefaultGameWorld):
     self.turn = self.players[-1]
     self.turnNumber = -1
 
-    #this is for testing if a plant should be made
-    def makePlant(self,x,y):
-      x1 = self.mapWidth/2
-      x2 = x
-      y1 = self.mapHeight/2
-      y2 = y
-      distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-      x2 = 0
-      y2 = 0
-      totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
-      prob = (1-distance/totaldistance)*self.plantModifier
-      #prob is 0 to 1, make a plant if greater
-      if random.random() > prob:
-        toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
-        if toBeReturned == 0:
-          toBeReturned = 1
-        toBeReturned = math.floor(toBeReturned)
-        return toBeReturned
-      return -1
+   
       
     plantsx = 0
     while plantsx < self.mapWidth/2:
       plantsy = 0
       while plantsy < self.mapHeight/2:
-        checkMakePlant = makePlant(self,plantsx,plantsy)
+        checkMakePlant = self.makePlant(plantsx,plantsy)
         if not (checkMakePlant == -1):
-		  #Add objects on both players' sides.
+          #Add objects on both players' sides.
           self.addObject(Plant,[plantsx,plantsy,checkMakePlant])
-          self.addObject(Plant,[self.mapWidth - plantsx,plantsy,checkMakePlant])
+          self.addObject(Plant,[self.mapWidth - plantsx -1,plantsy,checkMakePlant])
 
         plantsy += 1
       plantsx += 1
 
+    self.initGrid()
     self.nextTurn()
     return True
+  
   
   def initialStats(self):
    stats = self.totalStartStats
@@ -159,29 +168,29 @@ class Match(DefaultGameWorld):
 
   def checkWinner(self):
     #Defaults player 1 as winner if both players have same number of creatures at end
-    player1 = self.objects.players[0]
-    player2 = self.objects.players[1]
+    player1 = self.players[0]
+    player2 = self.players[1]
     winner = player1
     # number of player 1's creatures and player 2's creatures
     p1C = 0
     p2C = 0
     
-    for Creature in self.objects.Creatures:
-      if Creature.owner == player1.id:
+    for c in self.objects.creatures:
+      if c.owner == self.objects.players[0].id:
          p1C += 1
       else:
          p2C += 1
          
     if p1C > p2C:
-      winner = p1C
+      winner = player1
       if p2C == 0:
          self.declareWinner(winner, "Player 2's creatures are all died")
     elif p2C > p1C:
-      winner = p2C
+      winner = player2
       if p1C == 0:
          self.declareWinner(winner, "Player 1's creatures are all died")
     if self.turnNumber >= self.turnLimit:
-      self.declareWinner(winner, "Game is over and this guy had more creatures")
+      self.declareWinner(winner, "Time limit reached")
     
 
   def declareWinner(self, winner, reason=''):
