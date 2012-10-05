@@ -113,7 +113,7 @@ class Match(DefaultGameWorld):
     plantsx = 0
     while plantsx < self.mapWidth/2:
       plantsy = 0
-      while plantsy < self.mapHeight/2:
+      while plantsy < self.mapHeight:
         checkMakePlant = self.makePlant(plantsx,plantsy)
         if not (checkMakePlant == -1):
           #Add objects on both players' sides.
