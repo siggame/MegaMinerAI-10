@@ -82,9 +82,9 @@ class Match(DefaultGameWorld):
 
     #this is for testing if a plant should be made
     def makePlant(self,x,y):
-      x1 = self.MapWidth
+      x1 = self.MapWidth/2
       x2 = x
-      y1 = self.MapHeight
+      y1 = self.MapHeight/2
       y2 = y
       distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
       x2 = 0
@@ -101,19 +101,16 @@ class Match(DefaultGameWorld):
       return -1
       
     plantsx = 0
-    while plantsx < self.MapWidth:
+    while plantsx < self.MapWidth/2:
       plantsy = 0
-      while plantsy < self.MapHeight:
+      while plantsy < self.MapHeight/2:
         checkMakePlant = makePlant(self,plantsx,plantsy)
         if not (checkMakePlant == -1):
-          #FENERATE [generate] a plant here with checkMake Plant size.
-          #[Mainly what to pass for game and id is unclear.]
-          #I attempt this with the following:
+		  #Add objects on both players' sides.
           self.addObject(Plant,[plantsx,plantsy,checkMakePlant])
-          #also mirror this plant [y stays the same, plantsx=mapSize-plantsx]
+          self.addObject(Plant,[self.MapWidth - plantsx,plantsy,checkMakePlant])
 
         plantsy += 1
-
       plantsx += 1
 
     self.nextTurn()
