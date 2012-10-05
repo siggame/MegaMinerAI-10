@@ -7,6 +7,8 @@ from networking.sexpr.sexpr import *
 import os
 import itertools
 import scribe
+import math
+import random
 
 Scribe = scribe.Scribe
 
@@ -67,20 +69,41 @@ class Match(DefaultGameWorld):
     self.turn = self.players[-1]
     self.turnNumber = -1
 
-    #TODO: Better formula? [uses cosine currently]
-    plants = 0
-    while plants < self.objects.startPlantsPerSide:
-      #generates a number 0 to 1 and then multiply be the map size
-      plantGenx = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
-      plantGeny = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.mapSize
-      #get a better thing for distance [actually based on distance]
-      plantSize = (-math.cos(random.uniform(0,math.pi)) + 1) / 2 * self.objects.plantMaxSize
-      #I don't know if this is generating a plant correctly [what do I put for ID?]
-      self.game.addObject(Plant,[self, self.game, 0, plantGenx, plantGeny, plantSize])
-      #mirror this object
-      self.game.addObject(Plant,[self, self.game, 0, self.objects.mapSize/2 - plantGenx, self.objects.mapSize/2 - plantGeny, plantSize])
-      plants += 1
-    self.game.addObject
+    #this is for testing if a plant should be made
+    def makePlant(self,x,y):
+      x1 = self.mapSize
+      x2 = x
+      y1 = self.mapSize
+      y2 = y
+      distance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+      x2 = 0
+      y2 = 0
+      totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
+      prob = (1-distance/totaldistance)*self.plantModifier
+      #prob is 0 to 1, make a plant if greater
+      if random.random()>prob:
+        toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
+        if toBeReturned == 0:
+          toBeReturned = 1
+        toBeReturned = math.floor(toBeReturned)
+        return toBeReturned
+      return -1
+      
+    plantsx = 0
+    while plantsx < self.mapSize:
+      plantsy = 0
+      while plantsy < self.mapSize:
+        checkMakePlant = makePlant(self,plantsx,plantsy)
+        if not (checkMakePlant == -1):
+          #FENERATE [generate] a plant here with checkMake Plant size.
+          #[Mainly what to pass for game and id is unclear.]
+          #I attempt this with the following:
+          self.addObject(Plant,[plantsx,plantsy,checkMakePlant])
+          #also mirror this plant [y stays the same, plantsx=mapSize-plantsx]
+
+        plantsy += 1
+
+      plantsx += 1
 
     self.nextTurn()
     return True
