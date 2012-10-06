@@ -5,10 +5,12 @@
 
 namespace visualizer
 {
-  static string toString(int i)
+  // todo: move this to the core?
+  template< class T >
+  static string toString(const T& in)
   {
     stringstream ss;
-    ss << i;
+    ss << in;
     return ss.str();
   }
    
@@ -35,10 +37,19 @@ namespace visualizer
   
   void DrawPlant::animate( const float& t, AnimData* /*d*/, IGame* game )
   {
-    
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
+  }
+  
+  void DrawCreature::animate(const float& t, AnimData* d, IGame* game )
+  {
+  	game->renderer->setColor( Color( 1, 1, 1, 1 ) );
+  	
+  	// todo: change texture
+    game->renderer->drawTexturedQuad( m_Creature->x, m_Creature->y, 1, 1, "leaf" );
+    
+    //game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
 
 }

@@ -31,9 +31,26 @@ namespace visualizer
     }; // DrawBackground
     
      class DrawPlant: public Anim
-    {
+	 {
+		public:
+		    DrawPlant( Plant* plant ) { m_Plant = plant; }
+		    void animate( const float& t, AnimData* d, IGame* game );
+
+		    float controlDuration() const
+		    { return 0; }
+
+		    float totalDuration() const
+		    { return 0; }
+		
+		private:
+		    Plant *m_Plant;
+
+	 }; // DrawDrawPlant
+	 
+	 class DrawCreature: public Anim
+     {
         public:
-            DrawPlant( Plant* plant ) { m_Plant = plant; }
+            DrawCreature( Creature* creature ) { m_Creature = creature; }
             void animate( const float& t, AnimData* d, IGame* game );
 
             float controlDuration() const
@@ -43,9 +60,11 @@ namespace visualizer
             { return 0; }
         
         private:
-            Plant *m_Plant;
+            Creature *m_Creature;
 
-    }; // DrawBackground
+     }; // DrawBackground
+    
+    
 }
 
 #endif // ANIMATION_H

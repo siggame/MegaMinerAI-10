@@ -13,6 +13,7 @@ namespace visualizer
     {
         int width;
         int height;
+        // todo: add more?
     };
     
     struct Plant : public Animatable
@@ -20,6 +21,14 @@ namespace visualizer
        int x;
        int y;
        int size;
+       // todo: add more
+    };
+    
+    struct Creature : public Animatable
+    {
+    	int x;
+    	int y;
+    	// todo: add more
     };
 
 } // visualizer

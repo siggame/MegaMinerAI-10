@@ -150,6 +150,15 @@ namespace visualizer
         turn.addAnimatable( plant );
       }
       
+      for( auto& p : m_game->states[ state ].creatures )
+      {
+      	SmartPointer<Creature> creature = new Creature();
+        creature->x = p.second.x;
+        creature->y = p.second.y;
+        creature->addKeyFrame( new DrawCreature( creature ) );
+        turn.addAnimatable( creature );
+      }
+      
       // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
       addFrame(turn);
