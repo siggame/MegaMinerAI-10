@@ -38,7 +38,7 @@ namespace visualizer
     
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
-    game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 0.75f, IRenderer::Left);
+    game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
 
 }
