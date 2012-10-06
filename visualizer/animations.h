@@ -13,10 +13,10 @@ namespace visualizer
 
     };
   
-    class DrawSomething: public Anim
+    class DrawMap: public Anim
     {
         public:
-            DrawSomething( Something* something ) { m_Something = something; }
+            DrawMap( Map* map ) { m_Map = map; }
             void animate( const float& t, AnimData* d, IGame* game );
 
             float controlDuration() const
@@ -26,7 +26,24 @@ namespace visualizer
             { return 0; }
         
         private:
-            Something *m_Something;
+            Map *m_Map;
+
+    }; // DrawBackground
+    
+     class DrawPlant: public Anim
+    {
+        public:
+            DrawPlant( Plant* plant ) { m_Plant = plant; }
+            void animate( const float& t, AnimData* d, IGame* game );
+
+            float controlDuration() const
+            { return 0; }
+
+            float totalDuration() const
+            { return 0; }
+        
+        private:
+            Plant *m_Plant;
 
     }; // DrawBackground
 }
