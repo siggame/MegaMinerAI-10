@@ -16,7 +16,7 @@ namespace visualizer
     class DrawMap: public Anim
     {
         public:
-            DrawMap( Map* map ) { m_Map = map; }
+            DrawMap( Map* map ) : m_Map(map) {}
             void animate( const float& t, AnimData* d, IGame* game );
 
             float controlDuration() const
@@ -33,7 +33,7 @@ namespace visualizer
      class DrawPlant: public Anim
 	 {
 		public:
-		    DrawPlant( Plant* plant ) { m_Plant = plant; }
+		    DrawPlant( Plant* plant ) : m_Plant(plant) {}
 		    void animate( const float& t, AnimData* d, IGame* game );
 
 		    float controlDuration() const
@@ -45,12 +45,12 @@ namespace visualizer
 		private:
 		    Plant *m_Plant;
 
-	 }; // DrawDrawPlant
+	 }; // DrawPlant
 	 
 	 class DrawCreature: public Anim
      {
         public:
-            DrawCreature( Creature* creature ) { m_Creature = creature; }
+            DrawCreature( Creature* creature ) : m_Creature(creature) {}
             void animate( const float& t, AnimData* d, IGame* game );
 
             float controlDuration() const
@@ -62,7 +62,7 @@ namespace visualizer
         private:
             Creature *m_Creature;
 
-     }; // DrawBackground
+     }; // DrawCreature
     
     
 }
