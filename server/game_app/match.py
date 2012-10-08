@@ -126,6 +126,7 @@ class Match(DefaultGameWorld):
     self.initGrid()
     self.nextTurn()
     self.spawnCreatures()
+    print len(self.objects.creatures)
     return True
   
   
@@ -285,14 +286,12 @@ class Match(DefaultGameWorld):
         newY = int(random.uniform(0,1)*self.mapHeight)
       #check map if the space is unoccupied, otherwise generate a new X,Y
         if self.getObject(newX, newY) is None:
-          break
-    #end while
-        
-    #TODO: call creature stats generator instead of all 1's
-        self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1])  
-        self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1])
-        
-        return
+          self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1])  
+          self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1])  
+          break          
+    #end while       
+    #TODO: call creature stats generator instead of all 1's      
+    return
 
 
 loadClassDefaults()
