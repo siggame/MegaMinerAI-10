@@ -36,13 +36,9 @@ class Match(DefaultGameWorld):
 #initializes a game map
   def initGrid(self):
     self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
-    print len(self.grid[0])
-    print len(self.grid)
     for creature in self.objects.creatures:
       self.grid[creature.x][creature.y] = creature
-      #print 'Creature ' + str(creature.id) + ' added @ ' + str(creature.x) + ',' + str(creature.y)
     for plant in self.objects.plants:
-      #print 'Plant ' + str(plant.id) + ' added @ ' + str(plant.x) + ',' + str(plant.y)
       self.grid[plant.x][plant.y] = plant
     print 'Number of plants: ' + str(len(self.objects.plants))
 
@@ -86,10 +82,8 @@ class Match(DefaultGameWorld):
     y2 = 0
     totaldistance = math.sqrt((x1-x2)**2 + (y1-y2)**2)
     prob = (1-distance/totaldistance)*self.plantModifier
-    print prob
     #prob is 0 to 1, make a plant if greater
     randomNum = random.random()
-    print 'Random nunmber: ' + str(randomNum)
     if randomNum < prob:
       toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
       if toBeReturned == 0:
@@ -107,9 +101,7 @@ class Match(DefaultGameWorld):
     #TODO: START STUFF
     self.turn = self.players[-1]
     self.turnNumber = -1
-
-   
-      
+     
     plantsx = 0
     while plantsx < self.mapWidth:
       plantsy = 0
@@ -126,7 +118,6 @@ class Match(DefaultGameWorld):
     self.initGrid()
     self.nextTurn()
     self.spawnCreatures()
-    print len(self.objects.creatures)
     return True
   
   
@@ -178,13 +169,14 @@ class Match(DefaultGameWorld):
     winner = player1
     # number of player 1's creatures and player 2's creatures
     p1C = 0
-    p2C = 0
-    
+    p2C = 0    
     for c in self.objects.creatures:
       if c.owner == self.objects.players[0].id:
          p1C += 1
       else:
          p2C += 1
+         
+    #print sum(creature.owner == self.objects.players[0].id for creature in self.objects.creatures)
          
     if p1C > p2C:
       winner = player1
@@ -195,7 +187,7 @@ class Match(DefaultGameWorld):
       if p1C == 0:
          self.declareWinner(winner, "Player 1's creatures are all died")
     if self.turnNumber >= self.turnLimit:
-      self.declareWinner(winner, "Time limit reached")
+      self.declareWinner(winner, "Tie!")
     
 
   def declareWinner(self, winner, reason=''):
