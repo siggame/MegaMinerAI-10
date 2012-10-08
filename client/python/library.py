@@ -125,6 +125,12 @@ library.creatureGetMovementLeft.argtypes = [c_void_p]
 library.creatureGetDefense.restype = c_int
 library.creatureGetDefense.argtypes = [c_void_p]
 
+library.creatureGetCanAttack.restype = c_int
+library.creatureGetCanAttack.argtypes = [c_void_p]
+
+library.creatureGetCanBreed.restype = c_int
+library.creatureGetCanBreed.argtypes = [c_void_p]
+
 library.plantGetId.restype = c_int
 library.plantGetId.argtypes = [c_void_p]
 

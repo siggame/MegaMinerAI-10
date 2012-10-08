@@ -50,6 +50,8 @@ public interface Client extends Library {
   int creatureGetSpeed(Pointer ptr);
   int creatureGetMovementLeft(Pointer ptr);
   int creatureGetDefense(Pointer ptr);
+  int creatureGetCanAttack(Pointer ptr);
+  int creatureGetCanBreed(Pointer ptr);
 
   int plantGetId(Pointer ptr);
   int plantGetX(Pointer ptr);

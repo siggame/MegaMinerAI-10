@@ -136,5 +136,19 @@ public class Creature
     int value = Client.creatureGetDefense(ptr);
     return value;
   }
+  ///Indicated whether or not this creature can attack this turn.
+  public int getCanAttack()
+  {
+    validify();
+    int value = Client.creatureGetCanAttack(ptr);
+    return value;
+  }
+  ///Indicated whether or not this creature can breed this turn.
+  public int getCanBreed()
+  {
+    validify();
+    int value = Client.creatureGetCanBreed(ptr);
+    return value;
+  }
 
 }

@@ -117,5 +117,17 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetDefense(ptr);
   }
+  ///Indicated whether or not this creature can attack this turn.
+  public int getCanAttack()
+  {
+    validify();
+    return Client.INSTANCE.creatureGetCanAttack(ptr);
+  }
+  ///Indicated whether or not this creature can breed this turn.
+  public int getCanBreed()
+  {
+    validify();
+    return Client.INSTANCE.creatureGetCanBreed(ptr);
+  }
 
 }

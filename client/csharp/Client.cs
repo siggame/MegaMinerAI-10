@@ -82,6 +82,10 @@ public class Client {
   public static extern int creatureGetMovementLeft(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetDefense(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int creatureGetCanAttack(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int creatureGetCanBreed(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int plantGetId(IntPtr ptr);

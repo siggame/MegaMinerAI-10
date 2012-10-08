@@ -21,8 +21,6 @@ std::ostream& operator<<(std::ostream& stream, Creature ob)
   stream << "speed: " << ob.speed  <<'\n';
   stream << "movementLeft: " << ob.movementLeft  <<'\n';
   stream << "defense: " << ob.defense  <<'\n';
-  stream << "canAttack: " << ob.canAttack  <<'\n';
-  stream << "canBreed: " << ob.canBreed  <<'\n';
   return stream;
 }
 
@@ -59,23 +57,6 @@ std::ostream& operator<<(std::ostream& stream, move ob)
 }
 
 
-std::ostream& operator<<(std::ostream& stream, playerTalk ob)
-{
-  stream << "playerTalk" << "\n";
-  stream << "actingID: " << ob.actingID  <<'\n';
-  stream << "message: " << ob.message  <<'\n';
-  return stream;
-}
-
-
-std::ostream& operator<<(std::ostream& stream, death ob)
-{
-  stream << "death" << "\n";
-  stream << "actingID: " << ob.actingID  <<'\n';
-  return stream;
-}
-
-
 std::ostream& operator<<(std::ostream& stream, eat ob)
 {
   stream << "eat" << "\n";
@@ -90,7 +71,15 @@ std::ostream& operator<<(std::ostream& stream, breed ob)
   stream << "breed" << "\n";
   stream << "actingID: " << ob.actingID  <<'\n';
   stream << "targetID: " << ob.targetID  <<'\n';
-  stream << "childID: " << ob.childID  <<'\n';
+  return stream;
+}
+
+
+std::ostream& operator<<(std::ostream& stream, playerTalk ob)
+{
+  stream << "playerTalk" << "\n";
+  stream << "actingID: " << ob.actingID  <<'\n';
+  stream << "message: " << ob.message  <<'\n';
   return stream;
 }
 
@@ -99,9 +88,7 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
 {
   stream << "turnNumber: " << ob.turnNumber  <<'\n';
   stream << "playerID: " << ob.playerID  <<'\n';
-  stream << "gameNumber: " << ob.gameNumber  <<'\n';
-  stream << "mapWidth: " << ob.mapWidth  <<'\n';
-  stream << "mapHeight: " << ob.mapHeight  <<'\n';
+  stream << "mapSize: " << ob.mapSize  <<'\n';
 
   stream << "\n\nCreatures:\n";
   for(std::map<int,Creature>::iterator i = ob.creatures.begin(); i != ob.creatures.end(); i++)
@@ -124,14 +111,12 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   {
 //    if((*(*i)).type == MOVE)
 //      stream << *((move*)*i) << "\n";
-//    if((*(*i)).type == PLAYERTALK)
-//      stream << *((playerTalk*)*i) << "\n";
-//    if((*(*i)).type == DEATH)
-//      stream << *((death*)*i) << "\n";
 //    if((*(*i)).type == EAT)
 //      stream << *((eat*)*i) << "\n";
 //    if((*(*i)).type == BREED)
 //      stream << *((breed*)*i) << "\n";
+//    if((*(*i)).type == PLAYERTALK)
+//      stream << *((playerTalk*)*i) << "\n";
   }
   
 

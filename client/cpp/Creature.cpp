@@ -65,6 +65,16 @@ int Creature::defense()
   return ((_Creature*)ptr)->defense;
 }
 
+int Creature::canAttack()
+{
+  return ((_Creature*)ptr)->canAttack;
+}
+
+int Creature::canBreed()
+{
+  return ((_Creature*)ptr)->canBreed;
+}
+
 
 int Creature::move(int x, int y)
 {
@@ -96,5 +106,7 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "speed: " << ((_Creature*)ob.ptr)->speed  <<'\n';
   stream << "movementLeft: " << ((_Creature*)ob.ptr)->movementLeft  <<'\n';
   stream << "defense: " << ((_Creature*)ob.ptr)->defense  <<'\n';
+  stream << "canAttack: " << ((_Creature*)ob.ptr)->canAttack  <<'\n';
+  stream << "canBreed: " << ((_Creature*)ob.ptr)->canBreed  <<'\n';
   return stream;
 }

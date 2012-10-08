@@ -288,6 +288,10 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->defense = atoi(sub->val);
   sub = sub->next;
+  object->canAttack = atoi(sub->val);
+  sub = sub->next;
+  object->canBreed = atoi(sub->val);
+  sub = sub->next;
 
 }
 void parsePlant(Connection* c, _Plant* object, sexp_t* expression)

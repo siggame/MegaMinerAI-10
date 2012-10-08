@@ -129,24 +129,6 @@ static bool parseCreature(Creature& object, sexp_t* expression)
   object.defense = atoi(sub->val);
   sub = sub->next;
 
-  if ( !sub ) 
-  {
-    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.canAttack = atoi(sub->val);
-  sub = sub->next;
-
-  if ( !sub ) 
-  {
-    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
-  object.canBreed = atoi(sub->val);
-  sub = sub->next;
-
   return true;
 
 }
@@ -278,47 +260,6 @@ static bool parseMove(move& object, sexp_t* expression)
   return true;
 
 }
-static bool parsePlayerTalk(playerTalk& object, sexp_t* expression)
-{
-  sexp_t* sub;
-  if ( !expression ) return false;
-  object.type = PLAYERTALK;
-  sub = expression->list->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parseplayerTalk.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.actingID = atoi(sub->val);
-  sub = sub->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parseplayerTalk.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.message = new char[strlen(sub->val)+1];
-  strncpy(object.message, sub->val, strlen(sub->val));
-  object.message[strlen(sub->val)] = 0;
-  sub = sub->next;
-  return true;
-
-}
-static bool parseDeath(death& object, sexp_t* expression)
-{
-  sexp_t* sub;
-  if ( !expression ) return false;
-  object.type = DEATH;
-  sub = expression->list->next;
-  if( !sub ) 
-  {
-    cerr << "Error in parsedeath.\n Parsing: " << *expression << endl;
-    return false;
-  }
-  object.actingID = atoi(sub->val);
-  sub = sub->next;
-  return true;
-
-}
 static bool parseEat(eat& object, sexp_t* expression)
 {
   sexp_t* sub;
@@ -360,14 +301,34 @@ static bool parseBreed(breed& object, sexp_t* expression)
     cerr << "Error in parsebreed.\n Parsing: " << *expression << endl;
     return false;
   }
-  object.targetID = atoi(sub->val);
+  object.targetID = new char[strlen(sub->val)+1];
+  strncpy(object.targetID, sub->val, strlen(sub->val));
+  object.targetID[strlen(sub->val)] = 0;
+  sub = sub->next;
+  return true;
+
+}
+static bool parsePlayerTalk(playerTalk& object, sexp_t* expression)
+{
+  sexp_t* sub;
+  if ( !expression ) return false;
+  object.type = PLAYERTALK;
+  sub = expression->list->next;
+  if( !sub ) 
+  {
+    cerr << "Error in parseplayerTalk.\n Parsing: " << *expression << endl;
+    return false;
+  }
+  object.actingID = atoi(sub->val);
   sub = sub->next;
   if( !sub ) 
   {
-    cerr << "Error in parsebreed.\n Parsing: " << *expression << endl;
+    cerr << "Error in parseplayerTalk.\n Parsing: " << *expression << endl;
     return false;
   }
-  object.childID = atoi(sub->val);
+  object.message = new char[strlen(sub->val)+1];
+  strncpy(object.message, sub->val, strlen(sub->val));
+  object.message[strlen(sub->val)] = 0;
   sub = sub->next;
   return true;
 
@@ -397,13 +358,7 @@ static bool parseSexp(Game& game, sexp_t* expression)
           gs.playerID = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;
-          gs.gameNumber = atoi(sub->val);
-          sub = sub->next;
-          if ( !sub ) return false;
-          gs.mapWidth = atoi(sub->val);
-          sub = sub->next;
-          if ( !sub ) return false;
-          gs.mapHeight = atoi(sub->val);
+          gs.mapSize = atoi(sub->val);
           sub = sub->next;
       }
       else if(string(sub->val) == "Creature")
@@ -464,22 +419,6 @@ static bool parseSexp(Game& game, sexp_t* expression)
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
       }
-      if(string(ToLower( sub->val ) ) == "player-talk")
-      {
-        SmartPointer<playerTalk> animation = new playerTalk;
-        if ( !parsePlayerTalk(*animation, expression) )
-          return false;
-
-        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
-      }
-      if(string(ToLower( sub->val ) ) == "death")
-      {
-        SmartPointer<death> animation = new death;
-        if ( !parseDeath(*animation, expression) )
-          return false;
-
-        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
-      }
       if(string(ToLower( sub->val ) ) == "eat")
       {
         SmartPointer<eat> animation = new eat;
@@ -492,6 +431,14 @@ static bool parseSexp(Game& game, sexp_t* expression)
       {
         SmartPointer<breed> animation = new breed;
         if ( !parseBreed(*animation, expression) )
+          return false;
+
+        animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );
+      }
+      if(string(ToLower( sub->val ) ) == "player-talk")
+      {
+        SmartPointer<playerTalk> animation = new playerTalk;
+        if ( !parsePlayerTalk(*animation, expression) )
           return false;
 
         animations[ ((AnimOwner*)&*animation)->owner ].push_back( animation );

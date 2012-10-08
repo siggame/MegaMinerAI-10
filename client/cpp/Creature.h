@@ -37,6 +37,10 @@ class Creature {
   int movementLeft();
   ///The defense of the creature
   int defense();
+  ///Indicated whether or not this creature can attack this turn.
+  int canAttack();
+  ///Indicated whether or not this creature can breed this turn.
+  int canBreed();
 
   // Actions
   ///Command a creature to move to a specified position

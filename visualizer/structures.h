@@ -15,10 +15,9 @@ namespace parser
 {
 
 const int MOVE = 0;
-const int PLAYERTALK = 1;
-const int DEATH = 2;
-const int EAT = 3;
-const int BREED = 4;
+const int EAT = 1;
+const int BREED = 2;
+const int PLAYERTALK = 3;
 
 struct Creature
 {
@@ -33,8 +32,6 @@ struct Creature
   int speed;
   int movementLeft;
   int defense;
-  int canAttack;
-  int canBreed;
 
   friend std::ostream& operator<<(std::ostream& stream, Creature obj);
 };
@@ -75,21 +72,6 @@ struct move : public Animation
   friend std::ostream& operator<<(std::ostream& stream, move obj);
 };
 
-struct playerTalk : public Animation
-{
-  int actingID;
-  char* message;
-
-  friend std::ostream& operator<<(std::ostream& stream, playerTalk obj);
-};
-
-struct death : public Animation
-{
-  int actingID;
-
-  friend std::ostream& operator<<(std::ostream& stream, death obj);
-};
-
 struct eat : public Animation
 {
   int actingID;
@@ -101,10 +83,17 @@ struct eat : public Animation
 struct breed : public Animation
 {
   int actingID;
-  int targetID;
-  int childID;
+  char* targetID;
 
   friend std::ostream& operator<<(std::ostream& stream, breed obj);
+};
+
+struct playerTalk : public Animation
+{
+  int actingID;
+  char* message;
+
+  friend std::ostream& operator<<(std::ostream& stream, playerTalk obj);
 };
 
 
@@ -121,9 +110,7 @@ struct GameState
 
   int turnNumber;
   int playerID;
-  int gameNumber;
-  int mapWidth;
-  int mapHeight;
+  int mapSize;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);

@@ -44,6 +44,8 @@ Creature = Model('Creature',
     Variable('speed', int, 'The speed of the creature'),
     Variable('movementLeft', int, 'The amount of moves this creature has left this turn'),
     Variable('defense', int, 'The defense of the creature'),
+	Variable('canAttack', int, 'Indicated whether or not this creature can attack this turn.'),
+	Variable('canBreed', int, 'Indicated whether or not this creature can breed this turn.'),
   ],
   functions=[ 
     Function('move', [Variable('x', int), Variable('y', int)], 

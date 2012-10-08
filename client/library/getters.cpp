@@ -44,6 +44,14 @@ DLLEXPORT int creatureGetDefense(_Creature* ptr)
 {
   return ptr->defense;
 }
+DLLEXPORT int creatureGetCanAttack(_Creature* ptr)
+{
+  return ptr->canAttack;
+}
+DLLEXPORT int creatureGetCanBreed(_Creature* ptr)
+{
+  return ptr->canBreed;
+}
 DLLEXPORT int plantGetId(_Plant* ptr)
 {
   return ptr->id;

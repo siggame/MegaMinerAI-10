@@ -139,6 +139,22 @@ class Creature(GameObject):
   ##The defense of the creature
   defense = property(getDefense)
 
+  #\cond
+  def getCanAttack(self):
+    self.validify()
+    return library.creatureGetCanAttack(self._ptr)
+  #\endcond
+  ##Indicated whether or not this creature can attack this turn.
+  canAttack = property(getCanAttack)
+
+  #\cond
+  def getCanBreed(self):
+    self.validify()
+    return library.creatureGetCanBreed(self._ptr)
+  #\endcond
+  ##Indicated whether or not this creature can breed this turn.
+  canBreed = property(getCanBreed)
+
 
   def __str__(self):
     self.validify()
@@ -154,6 +170,8 @@ class Creature(GameObject):
     ret += "speed: %s\n" % self.getSpeed()
     ret += "movementLeft: %s\n" % self.getMovementLeft()
     ret += "defense: %s\n" % self.getDefense()
+    ret += "canAttack: %s\n" % self.getCanAttack()
+    ret += "canBreed: %s\n" % self.getCanBreed()
     return ret
 
 ##A basic plant!

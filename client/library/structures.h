@@ -24,6 +24,8 @@ struct _Creature
   int speed;
   int movementLeft;
   int defense;
+  int canAttack;
+  int canBreed;
 };
 struct _Plant
 {
