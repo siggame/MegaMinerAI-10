@@ -46,10 +46,7 @@ namespace visualizer
   {
   	game->renderer->setColor( Color( 1, 1, 1, 1 ) );
   	
-  	// todo: change texture
-    game->renderer->drawTexturedQuad( m_Creature->x, m_Creature->y, 1, 1, "leaf" );
-    
-    //game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
+    game->renderer->drawTexturedQuad( m_Creature->x, m_Creature->y, 1, 1, "creature" );
   }
 
 }
