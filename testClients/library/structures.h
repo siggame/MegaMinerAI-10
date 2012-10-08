@@ -5,39 +5,35 @@
 #define STRUCTURES_H
 
 struct Connection;
-struct _ShipDescription;
-struct _ShipType;
+struct _Creature;
+struct _Plant;
 struct _Player;
-struct _Ship;
 
 
-struct _ShipDescription
+struct _Creature
 {
   Connection* _c;
   int id;
-  char* type;
-  int cost;
-  int radius;
-  int range;
-  int damage;
-  int selfDestructDamage;
-  int maxMovement;
-  int maxAttacks;
-  int maxHealth;
+  int owner;
+  int x;
+  int y;
+  int maxEnergy;
+  int energyLeft;
+  int carnivorism;
+  int herbivorism;
+  int speed;
+  int movementLeft;
+  int defense;
+  int canAttack;
+  int canBreed;
 };
-struct _ShipType
+struct _Plant
 {
   Connection* _c;
   int id;
-  char* type;
-  int cost;
-  int radius;
-  int range;
-  int damage;
-  int selfDestructDamage;
-  int maxMovement;
-  int maxAttacks;
-  int maxHealth;
+  int x;
+  int y;
+  int size;
 };
 struct _Player
 {
@@ -45,28 +41,6 @@ struct _Player
   int id;
   char* playerName;
   float time;
-  int victories;
-  int energy;
-};
-struct _Ship
-{
-  Connection* _c;
-  int id;
-  char* type;
-  int cost;
-  int radius;
-  int range;
-  int damage;
-  int selfDestructDamage;
-  int maxMovement;
-  int maxAttacks;
-  int maxHealth;
-  int owner;
-  int x;
-  int y;
-  int attacksLeft;
-  int movementLeft;
-  int health;
 };
 
 #endif

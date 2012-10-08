@@ -1,84 +1,72 @@
 #include "getters.h"
 
-DLLEXPORT int shipDescriptionGetId(_ShipDescription* ptr)
+DLLEXPORT int creatureGetId(_Creature* ptr)
 {
   return ptr->id;
 }
-DLLEXPORT char* shipDescriptionGetType(_ShipDescription* ptr)
+DLLEXPORT int creatureGetOwner(_Creature* ptr)
 {
-  return ptr->type;
+  return ptr->owner;
 }
-DLLEXPORT int shipDescriptionGetCost(_ShipDescription* ptr)
+DLLEXPORT int creatureGetX(_Creature* ptr)
 {
-  return ptr->cost;
+  return ptr->x;
 }
-DLLEXPORT int shipDescriptionGetRadius(_ShipDescription* ptr)
+DLLEXPORT int creatureGetY(_Creature* ptr)
 {
-  return ptr->radius;
+  return ptr->y;
 }
-DLLEXPORT int shipDescriptionGetRange(_ShipDescription* ptr)
+DLLEXPORT int creatureGetMaxEnergy(_Creature* ptr)
 {
-  return ptr->range;
+  return ptr->maxEnergy;
 }
-DLLEXPORT int shipDescriptionGetDamage(_ShipDescription* ptr)
+DLLEXPORT int creatureGetEnergyLeft(_Creature* ptr)
 {
-  return ptr->damage;
+  return ptr->energyLeft;
 }
-DLLEXPORT int shipDescriptionGetSelfDestructDamage(_ShipDescription* ptr)
+DLLEXPORT int creatureGetCarnivorism(_Creature* ptr)
 {
-  return ptr->selfDestructDamage;
+  return ptr->carnivorism;
 }
-DLLEXPORT int shipDescriptionGetMaxMovement(_ShipDescription* ptr)
+DLLEXPORT int creatureGetHerbivorism(_Creature* ptr)
 {
-  return ptr->maxMovement;
+  return ptr->herbivorism;
 }
-DLLEXPORT int shipDescriptionGetMaxAttacks(_ShipDescription* ptr)
+DLLEXPORT int creatureGetSpeed(_Creature* ptr)
 {
-  return ptr->maxAttacks;
+  return ptr->speed;
 }
-DLLEXPORT int shipDescriptionGetMaxHealth(_ShipDescription* ptr)
+DLLEXPORT int creatureGetMovementLeft(_Creature* ptr)
 {
-  return ptr->maxHealth;
+  return ptr->movementLeft;
 }
-DLLEXPORT int shipTypeGetId(_ShipType* ptr)
+DLLEXPORT int creatureGetDefense(_Creature* ptr)
+{
+  return ptr->defense;
+}
+DLLEXPORT int creatureGetCanAttack(_Creature* ptr)
+{
+  return ptr->canAttack;
+}
+DLLEXPORT int creatureGetCanBreed(_Creature* ptr)
+{
+  return ptr->canBreed;
+}
+DLLEXPORT int plantGetId(_Plant* ptr)
 {
   return ptr->id;
 }
-DLLEXPORT char* shipTypeGetType(_ShipType* ptr)
+DLLEXPORT int plantGetX(_Plant* ptr)
 {
-  return ptr->type;
+  return ptr->x;
 }
-DLLEXPORT int shipTypeGetCost(_ShipType* ptr)
+DLLEXPORT int plantGetY(_Plant* ptr)
 {
-  return ptr->cost;
+  return ptr->y;
 }
-DLLEXPORT int shipTypeGetRadius(_ShipType* ptr)
+DLLEXPORT int plantGetSize(_Plant* ptr)
 {
-  return ptr->radius;
-}
-DLLEXPORT int shipTypeGetRange(_ShipType* ptr)
-{
-  return ptr->range;
-}
-DLLEXPORT int shipTypeGetDamage(_ShipType* ptr)
-{
-  return ptr->damage;
-}
-DLLEXPORT int shipTypeGetSelfDestructDamage(_ShipType* ptr)
-{
-  return ptr->selfDestructDamage;
-}
-DLLEXPORT int shipTypeGetMaxMovement(_ShipType* ptr)
-{
-  return ptr->maxMovement;
-}
-DLLEXPORT int shipTypeGetMaxAttacks(_ShipType* ptr)
-{
-  return ptr->maxAttacks;
-}
-DLLEXPORT int shipTypeGetMaxHealth(_ShipType* ptr)
-{
-  return ptr->maxHealth;
+  return ptr->size;
 }
 DLLEXPORT int playerGetId(_Player* ptr)
 {
@@ -91,77 +79,5 @@ DLLEXPORT char* playerGetPlayerName(_Player* ptr)
 DLLEXPORT float playerGetTime(_Player* ptr)
 {
   return ptr->time;
-}
-DLLEXPORT int playerGetVictories(_Player* ptr)
-{
-  return ptr->victories;
-}
-DLLEXPORT int playerGetEnergy(_Player* ptr)
-{
-  return ptr->energy;
-}
-DLLEXPORT int shipGetId(_Ship* ptr)
-{
-  return ptr->id;
-}
-DLLEXPORT char* shipGetType(_Ship* ptr)
-{
-  return ptr->type;
-}
-DLLEXPORT int shipGetCost(_Ship* ptr)
-{
-  return ptr->cost;
-}
-DLLEXPORT int shipGetRadius(_Ship* ptr)
-{
-  return ptr->radius;
-}
-DLLEXPORT int shipGetRange(_Ship* ptr)
-{
-  return ptr->range;
-}
-DLLEXPORT int shipGetDamage(_Ship* ptr)
-{
-  return ptr->damage;
-}
-DLLEXPORT int shipGetSelfDestructDamage(_Ship* ptr)
-{
-  return ptr->selfDestructDamage;
-}
-DLLEXPORT int shipGetMaxMovement(_Ship* ptr)
-{
-  return ptr->maxMovement;
-}
-DLLEXPORT int shipGetMaxAttacks(_Ship* ptr)
-{
-  return ptr->maxAttacks;
-}
-DLLEXPORT int shipGetMaxHealth(_Ship* ptr)
-{
-  return ptr->maxHealth;
-}
-DLLEXPORT int shipGetOwner(_Ship* ptr)
-{
-  return ptr->owner;
-}
-DLLEXPORT int shipGetX(_Ship* ptr)
-{
-  return ptr->x;
-}
-DLLEXPORT int shipGetY(_Ship* ptr)
-{
-  return ptr->y;
-}
-DLLEXPORT int shipGetAttacksLeft(_Ship* ptr)
-{
-  return ptr->attacksLeft;
-}
-DLLEXPORT int shipGetMovementLeft(_Ship* ptr)
-{
-  return ptr->movementLeft;
-}
-DLLEXPORT int shipGetHealth(_Ship* ptr)
-{
-  return ptr->health;
 }
 

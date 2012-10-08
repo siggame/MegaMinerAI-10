@@ -34,16 +34,15 @@ struct Connection
   int turnNumber;
   int playerID;
   int gameNumber;
-  int roundNumber;
-  int victoriesNeeded;
-  int mapRadius;
+  int mapWidth;
+  int mapHeight;
 
-  _ShipType* ShipTypes;
-  int ShipTypeCount;
+  _Creature* Creatures;
+  int CreatureCount;
+  _Plant* Plants;
+  int PlantCount;
   _Player* Players;
   int PlayerCount;
-  _Ship* Ships;
-  int ShipCount;
 };
 
 #ifdef __cplusplus
@@ -63,18 +62,15 @@ extern "C"
 
 
 //commands
-  DLLEXPORT int baseDistance(int fromX, int fromY, int toX, int toY);
-  DLLEXPORT int basePointOnLine(int fromX, int fromY, int toX, int toY, int travel);
-  ///Sends in a new ship of this type. Ships must be warped in with the radius of the player's warp ship.
-  DLLEXPORT int shipTypeWarpIn(_ShipType* object, int x, int y);
+
+  ///Command a creature to move to a specified position
+  DLLEXPORT int creatureMove(_Creature* object, int x, int y);
+  ///Eat plant or creature at input location
+  DLLEXPORT int creatureEat(_Creature* object, int x, int y);
+  ///Breed with target adjacent creature. Spawn new creature at input location
+  DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate, int x, int y);
   ///Allows a player to display messages on the screen
   DLLEXPORT int playerTalk(_Player* object, char* message);
-  ///Command a ship to move to a specified position
-  DLLEXPORT int shipMove(_Ship* object, int x, int y);
-  ///Blow yourself up, damage enemy ships that overlap this ship
-  DLLEXPORT int shipSelfDestruct(_Ship* object);
-  ///Commands your ship to attack a target.
-  DLLEXPORT int shipAttack(_Ship* object, _Ship* target);
 
 //derived properties
 
@@ -85,18 +81,17 @@ extern "C"
 DLLEXPORT int getTurnNumber(Connection* c);
 DLLEXPORT int getPlayerID(Connection* c);
 DLLEXPORT int getGameNumber(Connection* c);
-DLLEXPORT int getRoundNumber(Connection* c);
-DLLEXPORT int getVictoriesNeeded(Connection* c);
-DLLEXPORT int getMapRadius(Connection* c);
+DLLEXPORT int getMapWidth(Connection* c);
+DLLEXPORT int getMapHeight(Connection* c);
 
-DLLEXPORT _ShipType* getShipType(Connection* c, int num);
-DLLEXPORT int getShipTypeCount(Connection* c);
+DLLEXPORT _Creature* getCreature(Connection* c, int num);
+DLLEXPORT int getCreatureCount(Connection* c);
+
+DLLEXPORT _Plant* getPlant(Connection* c, int num);
+DLLEXPORT int getPlantCount(Connection* c);
 
 DLLEXPORT _Player* getPlayer(Connection* c, int num);
 DLLEXPORT int getPlayerCount(Connection* c);
-
-DLLEXPORT _Ship* getShip(Connection* c, int num);
-DLLEXPORT int getShipCount(Connection* c);
 
 
 
