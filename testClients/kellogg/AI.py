@@ -23,7 +23,12 @@ class AI(BaseAI):
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):
-    print self.turnNumber
+    for creature in self.creatures:
+      if creature.owner == self.playerID:
+        print creature.getCanAttack(), "attack"
+        print creature.getCanBreed(), "breed"
+    print len(self.creatures)
+#    print self.turnNumber
     return 1
 
   def __init__(self, conn):
