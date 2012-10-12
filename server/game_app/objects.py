@@ -1,5 +1,8 @@
 import networking.config.config
 cfgCreature = networking.config.config.readConfig("config/creatureStats.cfg")
+for key in cfgCreature.keys():
+  cfgCreature[key]['type'] = key
+  
 class Creature:
   def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense):
     self.game = game
@@ -36,7 +39,7 @@ class Creature:
     return value
 
   def nextTurn(self):
-    if self.decrementEnergy(self.game.hungerPerTurn,self):
+    if self.decrementEnergy(self.game.energyPerAction,self):
       self.movementLeft = self.speed
       self.canAttack = True
       self.canBreed = True
@@ -57,7 +60,7 @@ class Creature:
     if self.owner != self.game.playerID:
       return "You cannot move your oppenent's creature."
     #You can't move if you have no moves left
-    elif self.movesLeft <= 0:
+    elif self.movementLeft <= 0:
       return "That creature has no more stamina"
     #You can't move off the edge, the world is flat
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
@@ -74,7 +77,7 @@ class Creature:
     self.y = y
     self.movementLeft -= 1
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
-    self.decrementEnergy(cfgCreature.EnergyPerAction, self)
+    self.decrementEnergy(self.game.energyPerAction, self)
     return True
 
   def eat(self, x, y): 
@@ -116,7 +119,7 @@ class Creature:
         self.energyLeft += self.carnivorism * 5
         self.game.animations.append(['death', creature.id])
       else:
-        self.decrementEnergy(cfgCreature.EnergyPerAction, self)
+        self.decrementEnergy(self.game.energyPerAction, self)
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
       
@@ -129,10 +132,10 @@ class Creature:
      if self.owner != self.id:
        return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-     elif self.energyLeft <= cfgCreature.EnergyPerBreed:
+     elif self.energyLeft <= self.game.energyPerBreed:
        return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-     elif mate.energyLeft <= cfgCreature.EnergyPerBreed:
+     elif mate.energyLeft <= self.game.energyPerBreed:
        return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
      elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
@@ -156,7 +159,7 @@ class Creature:
      # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
   
   # by default set all stats to average of parents
-     newEnergy = (self.maxEnergy + mate.maxEnergy) / 2
+     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
      newDefense = (self.defense + mate.defense) / 2
      newCarnivorism = (self.carnivorism + mate.canivorism) / 2
      newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
@@ -191,8 +194,8 @@ class Creature:
     #TODO amount of stamina necessary to breed     
      self.canBreed = False
      mate.canBreed = False
-     self.decrementEnergy(cfgCreature.EnergyPerBreed, self)
-     self.decrementEnergy(cfgCreature.EnergyPerBreed, mate) 
+     self.decrementEnergy(self.game.energyPerBreed, self)
+     self.decrementEnergy(self.game.energyPerBreed, mate) 
 
       
      return True
@@ -220,7 +223,7 @@ class Plant:
       if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
         if self.x < self.game.mapWidth /2:
           self.size += 1
-      if self.game.turnNumber +1 % self.game.plantGrowthRate *2 == 0:
+      if (self.game.turnNumber + 1) % self.game.plantGrowthRate *2 == 0:
         if self.x >= self.game.mapWidth /2:
           self.size += 1
     #Grow normal if not at zero
@@ -229,7 +232,7 @@ class Plant:
         if self.x < self.game.mapWidth /2:
     	  if self.size < self.game.plantMaxSize:
             self.size += 1
-      if self.game.turnNumber +1 % self.game.plantGrowthRate == 0:
+      if (self.game.turnNumber + 1) % self.game.plantGrowthRate == 0:
         if self.x >= self.game.mapWidth /2:
     	  if self.size < self.game.plantMaxSize:
             self.size += 1
