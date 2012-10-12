@@ -103,7 +103,7 @@ class Match(DefaultGameWorld):
     self.turnNumber = -1
      
     plantsx = 0
-    while plantsx < self.mapWidth:
+    while plantsx < self.mapWidth / 2:
       plantsy = 0
       while plantsy < self.mapHeight:
         checkMakePlant = self.makePlant(plantsx,plantsy)
