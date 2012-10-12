@@ -39,12 +39,11 @@ class Creature:
     pass
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
-  #Look ma, no hands!
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
-      creature.game.removeObject(self)
-      creature.game.animations.append(['death', self.id])
+      creature.game.removeObject(creature)
+      creature.game.animations.append(['death', creature.id])
       return False
     return True
 
