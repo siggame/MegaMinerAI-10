@@ -123,12 +123,14 @@ class Match(DefaultGameWorld):
   
   
   def initialStats(self):
-   stats = self.totalStartStats
+   # Start out with remaining stats equal to the max minus 5 because each stat has minimum of 1
+   stats = self.totalStartStats - 5
    count = 0
    list = [1, 1, 1, 1, 1]
    while stats > 0:
       position = count % 5
-      remaining = self.maxStat - list[position]
+      #between 1 and 7
+      remaining = self.maxStartStat - list[position]
       # Random integer of stats to be added to current number. Can never exceed maxStat
       temp = random.randint(0, stats) % (remaining + 1)
       list[position] += temp
@@ -137,6 +139,8 @@ class Match(DefaultGameWorld):
       # Incrementing count so as to step through each position in the list
       count += 1
    
+   # First entry is energy, which is a multiple of 10 with a base energy
+   list[0] = self.baseEnergy + list[0] * 10
    return list
    
 
@@ -271,21 +275,21 @@ class Match(DefaultGameWorld):
 #This function assumes the plants have been spawned symmetrically across the vertical axis
   def spawnCreatures(self):
     i = 0
-    startingEnergy = 100
     while i < self.startingCreatures:
       i+=1
-      statList = self.initialStats()
+      randStats = self.initialStats()
+      # Change order of creature parameters to make this cleaner?
+      statList = [randStats[0], randStats[0], randStats[1], randStats[2], randStats[3], randStats[3], randStats[4]]
     #Generate x,y for creature location
       while True:
         newX = int(random.uniform(0,1)*self.mapWidth / 2)
         newY = int(random.uniform(0,1)*self.mapHeight)
       #check map if the space is unoccupied, otherwise generate a new X,Y
         if self.getObject(newX, newY) is None:
-          self.addObject(Creature,[0, newX, newY, startingEnergy, startingEnergy]+statList)  
-          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY, startingEnergy, startingEnergy]+statList)
+          self.addObject(Creature,[0, newX, newY]+statList)  
+          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY]+statList)
           break          
-    #end while       
-    #TODO: call creature stats generator instead of all 1's      
+    #end while
     return
 
 
