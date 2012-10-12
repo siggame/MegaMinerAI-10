@@ -36,14 +36,20 @@ class Creature:
     return value
 
   def nextTurn(self):
-    pass
+    if self.decrementEnergy(self.game.hungerPerTurn,self):
+      self.movementLeft = self.speed
+      self.canAttack = True
+      self.canBreed = True
+    return True
+    
+    
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
-      creature.game.removeObject(self)
-      creature.game.animations.append(['death', self.id])
+      creature.game.removeObject(creature)
+      creature.game.animations.append(['death', creature.id])
       return False
     return True
 
@@ -209,9 +215,26 @@ class Plant:
     return value
 
   def nextTurn(self):
-    pass
-
-
+    #Grow slower if at zero
+    if self.size == 0:
+      if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
+        if self.x < self.game.mapWidth /2:
+          self.size += 1
+      if self.game.turnNumber +1 % self.game.plantGrowthRate *2 == 0:
+        if self.x >= self.game.mapWidth /2:
+          self.size += 1
+    #Grow normal if not at zero
+    else:
+      if self.game.turnNumber % self.game.plantGrowthRate == 0:
+        if self.x < self.game.mapWidth /2:
+    	  if self.size < self.game.plantMaxSize:
+            self.size += 1
+      if self.game.turnNumber +1 % self.game.plantGrowthRate == 0:
+        if self.x >= self.game.mapWidth /2:
+    	  if self.size < self.game.plantMaxSize:
+            self.size += 1
+          
+    return True
 
 class Player:
   def __init__(self, game, id, playerName, time):
