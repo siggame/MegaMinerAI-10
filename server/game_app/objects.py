@@ -39,7 +39,7 @@ class Creature:
     return value
 
   def nextTurn(self):
-    if self.decrementEnergy(self.game.hungerPerTurn,self):
+    if self.decrementEnergy(self.game.energyPerAction,self):
       self.movementLeft = self.speed
       self.canAttack = True
       self.canBreed = True
@@ -159,7 +159,7 @@ class Creature:
      # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
   
   # by default set all stats to average of parents
-     newEnergy = (self.maxEnergy + mate.maxEnergy) / 2
+     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
      newDefense = (self.defense + mate.defense) / 2
      newCarnivorism = (self.carnivorism + mate.canivorism) / 2
      newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
@@ -223,7 +223,7 @@ class Plant:
       if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
         if self.x < self.game.mapWidth /2:
           self.size += 1
-      if self.game.turnNumber +1 % self.game.plantGrowthRate *2 == 0:
+      if (self.game.turnNumber + 1) % self.game.plantGrowthRate *2 == 0:
         if self.x >= self.game.mapWidth /2:
           self.size += 1
     #Grow normal if not at zero
@@ -232,7 +232,7 @@ class Plant:
         if self.x < self.game.mapWidth /2:
     	  if self.size < self.game.plantMaxSize:
             self.size += 1
-      if self.game.turnNumber +1 % self.game.plantGrowthRate == 0:
+      if (self.game.turnNumber + 1) % self.game.plantGrowthRate == 0:
         if self.x >= self.game.mapWidth /2:
     	  if self.size < self.game.plantMaxSize:
             self.size += 1
