@@ -34,13 +34,7 @@ class Creature:
     return value
 
   def nextTurn(self):
-    #self.canAttack = True
-	#self.canBreed = True
-	#self.movementLeft = self.speed
-	#self.energy += self.game.hungerPerTurn
-	
-	#if self.energy >= self.game.maxHunger:
-	  #die
+    
     pass
 
   def move(self, x, y):
@@ -220,25 +214,9 @@ class Plant:
     return value
 
   def nextTurn(self):
-    #self.game.turnNumber
-    #Grow slower if 0
-    if self.size == 0:
-      if self.game.turnNumber % self.game.plantGrowthRate * 2 == 0:
-        if self.x < self.game.mapWidth/2:
-          self.size += 1
-      if self.game.turnNumber+1 % self.game.plantGrowthRate * 2 == 0:
-        if self.x > self.game.mapWidth/2:
-          self.size += 1
-    #Grow normally
-    else:
-      if self.game.turnNumber % self.game.plantGrowthRate == 0:
-        if self.x < self.game.mapWidth/2:
-          if self.size <= self.game.plantMaxSize:
-            self.size += 1
-      if self.game.turnNumber+1 % self.game.plantGrowthRate == 0:
-        if self.x > self.game.mapWidth/2:
-          if self.size <= self.game.plantMaxSize:
-            self.size += 1
+    pass
+
+
 
 class Player:
   def __init__(self, game, id, playerName, time):
