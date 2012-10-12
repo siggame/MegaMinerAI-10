@@ -42,7 +42,7 @@ class Creature:
 	#if self.energy >= self.game.maxHunger:
 	  #die
     pass
-
+  #TODO: remove this comment!
   def move(self, x, y):
     if self.owner != self.game.playerID:
       return "You cannot move your oppenent's creature."
