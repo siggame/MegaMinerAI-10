@@ -8,7 +8,8 @@
 #include <list>
 
 namespace visualizer
-{
+{ 
+  
   Galapagos::Galapagos()
   {
     m_game = 0;
@@ -39,8 +40,27 @@ namespace visualizer
   void Galapagos::preDraw()
   {
     const Input& input = gui->getInput();
-    
-    // Handle player input here
+    if( input.leftRelease )
+    {
+      int turn = timeManager->getTurn();
+      //float t = timeManager->getTurnPercent();
+      int x = input.x,
+          width = input.sx, 
+          y = input.y,
+          height = input.sy;
+      
+      m_selectedUnitIDs.clear();
+      
+      for( auto& c : m_game->states[ turn ].creatures )
+      {
+        auto creature = c.second;
+        
+        if( creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y )
+        {
+          m_selectedUnitIDs.push_back(creature.id);
+        }
+      }
+    }
   }
 
   void Galapagos::postDraw()
@@ -80,8 +100,7 @@ namespace visualizer
   // Give the Debug Info widget the selected object IDs in the Gamelog
   list<int> Galapagos::getSelectedUnits()
   {
-    // TODO Selection logic
-    return list<int>();  // return the empty list
+    return m_selectedUnitIDs;
   }
 
   void Galapagos::loadGamelog( std::string gamelog )
@@ -124,7 +143,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "one" << "two" << "three";
+    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Energy Left" << "Carn" << "Herb" << "Speed" << "Defence";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -157,6 +176,22 @@ namespace visualizer
         creature->y = p.second.y;
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
+      }
+      
+      // add each object that is selectable to the visualizer's selection info
+      for( auto& c : m_game->states[ state ].creatures )
+      {
+        auto creature = c.second;
+        turn[creature.id]["ID"] = creature.id;
+        turn[creature.id]["Owner"] = creature.owner;
+        turn[creature.id]["X"] = creature.x;
+        turn[creature.id]["Y"] = creature.y;
+        turn[creature.id]["Energy"] = -1;
+        turn[creature.id]["Energy Left"] = -1;
+        turn[creature.id]["Carn"] = -1;
+        turn[creature.id]["Herb"] = -1;
+        turn[creature.id]["Speed"] = -1;
+        turn[creature.id]["Defence"] = -1;
       }
       
       // end of parsing this state in the glog, build the turn
