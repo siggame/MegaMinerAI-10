@@ -1,5 +1,8 @@
 import networking.config.config
 cfgCreature = networking.config.config.readConfig("config/creatureStats.cfg")
+for key in cfgCreature.keys():
+  cfgCreature[key]['type'] = key
+  
 class Creature:
   def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense):
     self.game = game
@@ -36,7 +39,7 @@ class Creature:
     return value
 
   def nextTurn(self):
-    if self.decrementEnergy(self.game.hungerPerTurn,self):
+    if self.decrementEnergy(self.game.energyPerAction,self):
       self.movementLeft = self.speed
       self.canAttack = True
       self.canBreed = True
@@ -57,7 +60,7 @@ class Creature:
     if self.owner != self.game.playerID:
       return "You cannot move your oppenent's creature."
     #You can't move if you have no moves left
-    elif self.movesLeft <= 0:
+    elif self.movementLeft <= 0:
       return "That creature has no more stamina"
     #You can't move off the edge, the world is flat
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
@@ -74,7 +77,7 @@ class Creature:
     self.y = y
     self.movementLeft -= 1
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
-    self.decrementEnergy(cfgCreature.EnergyPerAction, self)
+    self.decrementEnergy(self.game.energyPerAction, self)
     return True
 
   def eat(self, x, y): 
@@ -116,7 +119,7 @@ class Creature:
         self.energyLeft += self.carnivorism * 5
         self.game.animations.append(['death', creature.id])
       else:
-        self.decrementEnergy(cfgCreature.EnergyPerAction, self)
+        self.decrementEnergy(self.game.energyPerAction, self)
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
       
@@ -129,10 +132,10 @@ class Creature:
      if self.owner != self.id:
        return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-     elif self.energyLeft <= cfgCreature.EnergyPerBreed:
+     elif self.energyLeft <= self.game.energyPerBreed:
        return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-     elif mate.energyLeft <= cfgCreature.EnergyPerBreed:
+     elif mate.energyLeft <= self.game.energyPerBreed:
        return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
      elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
