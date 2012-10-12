@@ -164,31 +164,31 @@ class Creature:
      newCarnivorism = (self.carnivorism + mate.canivorism) / 2
      newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
      newSpeed = (self.speed + mate.speed) / 2
-     newDefense = (self.defense + mate.defense) / 2
  
-     totalStatsSoFar = newEnergy + newDefense + newCarnivorism + newHerbivorism + newSpeed
+     #totalStatsSoFar = newEnergy + newDefense + newCarnivorism + newHerbivorism + newSpeed
   
     # The child will have a total stat of the best parent's total plus one
-     parentSumStat1 = self.energy + self.defense + self.carnivorism + self.herbivorism + self.speed
-     parentSumStat2 = mate.energy + mate.defense + mate.carnivorism + mate.herbivorism + mate.speed
-     targetStat = max(parentSumStat1, parentSumStat2) + 1
+     #parentSumStat1 = self.energy + self.defense + self.carnivorism + self.herbivorism + self.speed
+     #parentSumStat2 = mate.energy + mate.defense + mate.carnivorism + mate.herbivorism + mate.speed
+     #targetStat = max(parentSumStat1, parentSumStat2) + 1
   
     # This loop will add all the unallocated stat points
     # TODO - finish this while loop
-     while totalStatsSoFar < targetStat:
-       totalSoFar += 1
+     #while totalStatsSoFar < targetStat:
+      # totalSoFar += 1
   
      newbaby = self.game.addObject(Creature,[
        self.owner, 
        x, 
-       y, 
-       newEnergy, 
-       newEnergy/3, 
-       newCarnivorism, 
-       newHerbivorism, 
-       newSpeed, 
-       0, 
-       newDefense])
+       y]
+       + babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense)
+       #newEnergy, 
+       #newEnergy/3, 
+       #newCarnivorism, 
+       #newHerbivorism, 
+       #newSpeed, 
+       #0, 
+       #newDefense])
     #newbaby = self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
      self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
     #TODO amount of stamina necessary to breed     
@@ -199,6 +199,26 @@ class Creature:
 
       
      return True
+   
+  def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
+    stats = [energy, 0, carnivorism, herbivorism, speed, 0, defense]
+    largestStat = 0
+    
+    #get the largest stat
+    for i in stats:
+      if i > largestStat:
+        largestStat = i
+    
+    #increase the largest stat by 1
+    #NOTE: currently, if two stats are tied for largest, both increase
+    for i in stats:
+      if i == largestStat:
+        stats[1] += 1
+    
+    #make sure the creature has the correct starting energy
+    stats[1] = stats[0] / 3
+    
+    return stats
     
 class Plant:
   def __init__(self, game, id, x, y, size):
