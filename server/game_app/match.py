@@ -86,9 +86,9 @@ class Match(DefaultGameWorld):
     randomNum = random.random()
     if randomNum < prob:
       toBeReturned = random.uniform(1,(6-6*(distance/totaldistance)))
+      toBeReturned = math.floor(toBeReturned)
       if toBeReturned == 0:
         toBeReturned = 1
-      toBeReturned = math.floor(toBeReturned)
       return toBeReturned
     return -1
       
