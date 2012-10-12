@@ -34,11 +34,19 @@ class AI(BaseAI):
         
     for creature in self.creatures:
       if creature.owner == self.playerID:
-        randx=random.randrange(-1,1)
-        randy=random.randrange(-1,1)
+        randx=random.randrange(-1,1); randy=random.randrange(-1,1)
         grid[lifeform.x][lifeform.y] = None
         creature.move(creature.x+randx,creature.y+randy) 
         grid[lifeform.x+randx][lifeform.y+randy] = lifeform
+        for location in adjacent:
+          thing = grid[location[0]][location[1]]
+          if isinstance(thing,Plant):
+            creature.eat(thing.x,thing.y)
+          elif isinstance(thing,Creature):
+            if thing.owner==self.playerID:
+              creature.breed(thing,thing.x,thing.y)
+            else:
+              creature.eat(thing.x,thing.y)
       print self.getTurnNumber()
     return 1
 
