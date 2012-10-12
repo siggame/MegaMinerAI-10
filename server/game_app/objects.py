@@ -36,7 +36,13 @@ class Creature:
     return value
 
   def nextTurn(self):
-    pass
+    if self.decrementEnergy(self.game.hungerPerTurn,self):
+      self.movementLeft = self.speed
+      self.canAttack = True
+      self.canBreed = True
+    return True
+    
+    
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
   def decrementEnergy(self, energyDec, creature):
