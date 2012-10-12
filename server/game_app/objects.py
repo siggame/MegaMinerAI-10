@@ -210,9 +210,26 @@ class Plant:
     return value
 
   def nextTurn(self):
-    pass
-
-
+    #Grow slower if at zero
+    if self.size == 0:
+      if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
+        if self.x < self.game.mapWidth /2:
+          self.size += 1
+      if self.game.turnNumber +1 % self.game.plantGrowthRate *2 == 0:
+        if self.x >= self.game.mapWidth /2:
+          self.size += 1
+    #Grow normal if not at zero
+    else:
+      if self.game.turnNumber % self.game.plantGrowthRate == 0:
+        if self.x < self.game.mapWidth /2:
+    	  if self.size < self.game.plantMaxSize:
+            self.size += 1
+      if self.game.turnNumber +1 % self.game.plantGrowthRate == 0:
+        if self.x >= self.game.mapWidth /2:
+    	  if self.size < self.game.plantMaxSize:
+            self.size += 1
+          
+    return True
 
 class Player:
   def __init__(self, game, id, playerName, time):
