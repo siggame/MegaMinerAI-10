@@ -176,7 +176,7 @@ class Creature:
     # This loop will add all the unallocated stat points
     # TODO - finish this while loop
      while totalStatsSoFar < targetStat:
-       totalSoFar += 1
+       totalStatsSoFar += 1
   
      newbaby = self.game.addObject(Creature,[
        self.owner, 
@@ -194,8 +194,12 @@ class Creature:
     #TODO amount of stamina necessary to breed     
      self.canBreed = False
      mate.canBreed = False
-     self.decrementEnergy(self.game.energyPerBreed, self)
-     self.decrementEnergy(self.game.energyPerBreed, mate) 
+     self.canAttack = False
+     mate.canAttack = False
+     self.movementLeft = 0
+     mate.movementLeft = 0
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, self)
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, mate) 
 
       
      return True
