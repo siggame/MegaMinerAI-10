@@ -37,7 +37,7 @@ class Creature:
     pass
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
-  def decrementEnergy(self, energyDec, creature=self):
+  def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
       creature.game.removeObject(self)
@@ -58,7 +58,7 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
-	#Make all objects into a map to reduce check times
+    #Make all objects into a map to reduce check times
     if self.game.getObject(x,y) is not None:
       return "There is already an object in that location."
     #TODO Restrictions for movement when breeding
@@ -66,7 +66,7 @@ class Creature:
     self.y = y
     self.movementLeft -= 1
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
-    self.decrementEnergy(self, 3)
+    self.decrementEnergy(3, self)
     return True
 
   def eat(self, x, y): 
@@ -80,7 +80,7 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't eat if you've already eaten this turn.
-    elif self.canAttack != True
+    elif self.canAttack != True:
       return "You can't eat more than once per turn!"
     #Get whether a lifeform exists in the tile you want to eat.
     lifeform = self.game.getObject(x,y)
@@ -108,7 +108,7 @@ class Creature:
         self.energyLeft += self.carnivorism * 5
         self.game.animations.append(['death', creature.id])
       else:
-        self.decrementEnergy(self, 3)
+        self.decrementEnergy(3, self)
 
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
@@ -184,8 +184,8 @@ class Creature:
     #TODO amount of stamina necessary to breed     
      self.canBreed = False
      mate.canBreed = False
-     self.decrementEnergy(self, self.maxEnergy/3)
-     self.decrementEnergy(self, mate.maxEnergy/3, mate) 
+     self.decrementEnergy(self.maxEnergy/3, self)
+     self.decrementEnergy(mate.maxEnergy/3, mate) 
 
       
      return True
