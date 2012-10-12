@@ -1,3 +1,5 @@
+import networking.config.config
+cfgCreature = networking.config.config.readConfig("config/creatureStats.cfg")
 class Creature:
   def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense):
     self.game = game
@@ -34,15 +36,17 @@ class Creature:
     return value
 
   def nextTurn(self):
-    #self.canAttack = True
-	#self.canBreed = True
-	#self.movementLeft = self.speed
-	#self.energy += self.game.hungerPerTurn
-	
-	#if self.energy >= self.game.maxHunger:
-	  #die
     pass
-  #TODO: remove this comment!
+  #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
+  #Returns true if the creature lives, returns false if it dies.
+  def decrementEnergy(self, energyDec, creature):
+    creature.energyLeft -= energyDec
+    if creature.energyLeft <= 0:
+      creature.game.removeObject(self)
+      creature.game.animations.append(['death', self.id])
+      return False
+    return True
+
   def move(self, x, y):
     if self.owner != self.game.playerID:
       return "You cannot move your oppenent's creature."
@@ -56,35 +60,37 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
-	#Make all objects into a map to reduce check times
+    #Make all objects into a map to reduce check times
     if self.game.getObject(x,y) is not None:
       return "There is already an object in that location."
     #TODO Restrictions for movement when breeding
     self.x = x
     self.y = y
     self.movementLeft -= 1
-    #TODO Hunger cost of movement will be defined in a config file
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
+    self.decrementEnergy(cfgCreature.EnergyPerAction, self)
     return True
 
   def eat(self, x, y): 
-    # #You can only move your creature
+    #You can only move your creature
     if self.owner != self.game.playerID:
       return "You cannot eat with your oppenent's creature"
-    # #You can't move if you have no moves left
+    #You can't move if you have no moves left
     elif self.energyLeft <= 0:
-      return "That creature has no more stamina"
-    # #You can't eat more than one space away
+      return "That creature has no energy left"
+    #You can't eat more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
-    # elif abs(self.x-plant.x) + abs(self.y-plant.y) != 1:
-      # return "You can only eat adjacent plants"
-    targetId = -1
+    #You can't eat if you've already eaten this turn.
+    elif self.canAttack != True:
+      return "You can't eat more than once per turn!"
+    #Get whether a lifeform exists in the tile you want to eat.
     lifeform = self.game.getObject(x,y)
-    if lifeform is not None:
+    #You can't use the eat command on a tile with nothing in it.
+    if lifeform is None:
       return "No lifeforms at that location."  
     if isinstance(lifeform, Plant):
-      plant = self.game.objects[targetId]
+      plant = lifeform
       if size == 0:
         return "That plant is too small to eat."
       self.energyLeft += self.herbivorism * 5
@@ -93,20 +99,23 @@ class Creature:
       plant.size -= 1
       self.game.animations.append(['eat', self.id, plant.id])
     else:
-      creature = self.game.getObject(x,y)
+      creature = lifeform
       damage = self.carnivorism - creature.defense
       if damage < 1:
         damage = 1
-      creature.health -= damage
+      creature.energyLeft -= damage
      
-      if creature.health <= 0:
+      if creature.energyLeft <= 0:
         self.game.removeObject(creature)
-      self.energyLeft += self.carnivorism * 5
-
+        self.energyLeft += self.carnivorism * 5
+        self.game.animations.append(['death', creature.id])
+      else:
+        self.decrementEnergy(cfgCreature.EnergyPerAction, self)
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
-
+      
       self.game.animations.append(['eat', self.id, creature.id])
+    self.canAttack = False
     return True
 
   def breed(self, mate, x, y):
@@ -114,10 +123,10 @@ class Creature:
      if self.owner != self.id:
        return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-     elif self.energyLeft <= self.maxEnergy/3:
+     elif self.energyLeft <= cfgCreature.EnergyPerBreed:
        return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-     elif mate.energyLeft <= mate.maxEnergy/3:
+     elif mate.energyLeft <= cfgCreature.EnergyPerBreed:
        return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
      elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
@@ -134,6 +143,9 @@ class Creature:
     #Check that baby spawn location is empty    
      if self.game.getObject(x,y) is not None:
       return "Invalid location to spawn baby"
+    #You can't breed if either partner has already bred.
+     elif self.canBreed != True or mate.canBreed !=True:
+       return "You've already bred this turn! You can't do it again."
     #TODO make baby better than parents
      # self.game.addObject(Creature, makeBaby(self, mate, x, y) )
   
@@ -145,7 +157,7 @@ class Creature:
      newSpeed = (self.speed + mate.speed) / 2
      newDefense = (self.defense + mate.defense) / 2
  
-     totalStatsSoFar = newEnergy + newDefense + newCarnivorism + newHerbivorishm + newSpeed
+     totalStatsSoFar = newEnergy + newDefense + newCarnivorism + newHerbivorism + newSpeed
   
     # The child will have a total stat of the best parent's total plus one
      parentSumStat1 = self.energy + self.defense + self.carnivorism + self.herbivorism + self.speed
@@ -170,37 +182,14 @@ class Creature:
        newDefense])
     #newbaby = self.game.addObject(Creature,[self.owner, x, y, 1, 1, 1, 1, 1, 1, 1, 1])
      self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
-    #TODO amount of stamina necessary to breed
-     self.energyLeft -= (self.maxEnergy / 3)
-     mate.energyLeft -= (mate.maxEnergy / 3)
-     if self.energyLeft <= 0:
-       self.game.removeObject(self)
-     if mate.energyLeft <= 0:
-       self.game.removeObject(mate)
+    #TODO amount of stamina necessary to breed     
+     self.canBreed = False
+     mate.canBreed = False
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, self)
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, mate) 
+
       
      return True
-
-	
-	
-  # def makeBaby(self, mate, x, y):
-    # #TODO: Figure out breeding algorithm
-    
-    # newBaby = Creature(x, y, 1, 1, 1, 1, 1, 1, 1, 0)
-    
-    # newBaby.health = self.object.maxHealth
-    # newBaby.hunger = self.object.maxHunger
-    # newBaby.carnivorism = math.ceil((self.carnivorism + mate.carnivorism) / 2)
-    # newBaby.herbivorism = math.ceil((self.herbivorism + mate.herbivorism) / 2)
-    # newBaby.speed = math.ceil((self.speed + mate.speed) / 2)
-    # newBaby.maxStamina = math.ceil((self.stamina + mate.stamina) / 2)
-    # newBaby.defense = math.ceil((self.defense + mate.defense) / 2)
-    
-    # statList = [newBaby.carnivorism, newBaby.herbivorism, newBaby.speed, newBaby.maxStamina, newBaby.defense]
-    # bestStat = statList.index(max(statList))
-    # #TODO increment best stat by one, make sure it doesn't go over self.objects.maxStat
-    
-    # return newBaby
-  #pass
     
 class Plant:
   def __init__(self, game, id, x, y, size):
@@ -220,25 +209,9 @@ class Plant:
     return value
 
   def nextTurn(self):
-    #self.game.turnNumber
-    #Grow slower if 0
-    if self.size == 0:
-      if self.game.turnNumber % self.game.plantGrowthRate * 2 == 0:
-        if self.x < self.game.mapWidth/2:
-          self.size += 1
-      if self.game.turnNumber+1 % self.game.plantGrowthRate * 2 == 0:
-        if self.x > self.game.mapWidth/2:
-          self.size += 1
-    #Grow normally
-    else:
-      if self.game.turnNumber % self.game.plantGrowthRate == 0:
-        if self.x < self.game.mapWidth/2:
-          if self.size <= self.game.plantMaxSize:
-            self.size += 1
-      if self.game.turnNumber+1 % self.game.plantGrowthRate == 0:
-        if self.x > self.game.mapWidth/2:
-          if self.size <= self.game.plantMaxSize:
-            self.size += 1
+    pass
+
+
 
 class Player:
   def __init__(self, game, id, playerName, time):
