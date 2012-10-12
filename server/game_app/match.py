@@ -116,8 +116,8 @@ class Match(DefaultGameWorld):
       plantsx += 1
 
     self.initGrid()
-    self.nextTurn()
     self.spawnCreatures()
+    self.nextTurn()
     return True
   
   
