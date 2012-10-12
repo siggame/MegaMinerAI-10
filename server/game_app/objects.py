@@ -80,7 +80,7 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't eat if you've already eaten this turn.
-    elif self.canAttack != True
+    elif self.canAttack != True:
       return "You can't eat more than once per turn!"
     #Get whether a lifeform exists in the tile you want to eat.
     lifeform = self.game.getObject(x,y)
@@ -230,9 +230,22 @@ class Plant:
     return value
 
   def nextTurn(self):
-    pass
-
-
+	#Grow slower if at zero
+	if self.size == 0:
+	  if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
+	    if self.x < self.game.mapWidth /2:
+	      self.size += 1
+	  if self.game.turnNumber +1 % self.game.plantGrowthRate *2 == 0:
+	    if self.x >+ self.game.mapWidth /2:
+	      self.size += 1
+	#Grow normall if not at zero
+	else:
+	  if self.game.turnNumber % self.game.plantGrowthRate == 0:
+	    if self.x < self.game.mapWidth /2:
+	      self.size += 1
+	  if self.game.turnNumber +1 % self.game.plantGrowthRate == 0:
+	    if self.x >+ self.game.mapWidth /2:
+	      self.size += 1
 
 class Player:
   def __init__(self, game, id, playerName, time):
