@@ -165,6 +165,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
+        plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
       }

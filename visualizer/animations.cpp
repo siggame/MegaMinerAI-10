@@ -38,7 +38,14 @@ namespace visualizer
   void DrawPlant::animate( const float& t, AnimData* /*d*/, IGame* game )
   {
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
-    game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
+    if (m_Plant->hasGrown)
+    {
+      game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 2, 2, "leaf" );
+    }
+    else
+    {
+      game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
+    }
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   

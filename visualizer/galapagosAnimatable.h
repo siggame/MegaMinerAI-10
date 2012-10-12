@@ -21,6 +21,7 @@ namespace visualizer
        int x;
        int y;
        int size;
+       bool hasGrown;
        // todo: add more
     };
     
