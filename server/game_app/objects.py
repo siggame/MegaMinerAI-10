@@ -1,3 +1,5 @@
+import networking.config.config
+cfgCreature = networking.config.config.readConfig("config/creatureStats.cfg")
 class Creature:
   def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense):
     self.game = game
@@ -37,7 +39,7 @@ class Creature:
     pass
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
-  def decrementEnergy(self, energyDec, creature=self):
+  def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
       creature.game.removeObject(self)
@@ -58,7 +60,7 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
-	#Make all objects into a map to reduce check times
+    #Make all objects into a map to reduce check times
     if self.game.getObject(x,y) is not None:
       return "There is already an object in that location."
     #TODO Restrictions for movement when breeding
@@ -66,7 +68,7 @@ class Creature:
     self.y = y
     self.movementLeft -= 1
     self.game.animations.append(['move', self.id, self.x, self.y, x, y])
-    self.decrementEnergy(self, 3)
+    self.decrementEnergy(cfgCreature.EnergyPerAction, self)
     return True
 
   def eat(self, x, y): 
@@ -108,8 +110,7 @@ class Creature:
         self.energyLeft += self.carnivorism * 5
         self.game.animations.append(['death', creature.id])
       else:
-        self.decrementEnergy(self, 3)
-
+        self.decrementEnergy(cfgCreature.EnergyPerAction, self)
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
       
@@ -122,10 +123,10 @@ class Creature:
      if self.owner != self.id:
        return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-     elif self.energyLeft <= self.maxEnergy/3:
+     elif self.energyLeft <= cfgCreature.EnergyPerBreed:
        return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-     elif mate.energyLeft <= mate.maxEnergy/3:
+     elif mate.energyLeft <= cfgCreature.EnergyPerBreed:
        return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
      elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
@@ -184,33 +185,11 @@ class Creature:
     #TODO amount of stamina necessary to breed     
      self.canBreed = False
      mate.canBreed = False
-     self.decrementEnergy(self, self.maxEnergy/3)
-     self.decrementEnergy(self, mate.maxEnergy/3, mate) 
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, self)
+     self.decrementEnergy(cfgCreature.EnergyPerBreed, mate) 
 
       
      return True
-
-	
-	
-  # def makeBaby(self, mate, x, y):
-    # #TODO: Figure out breeding algorithm
-    
-    # newBaby = Creature(x, y, 1, 1, 1, 1, 1, 1, 1, 0)
-    
-    # newBaby.health = self.object.maxHealth
-    # newBaby.hunger = self.object.maxHunger
-    # newBaby.carnivorism = math.ceil((self.carnivorism + mate.carnivorism) / 2)
-    # newBaby.herbivorism = math.ceil((self.herbivorism + mate.herbivorism) / 2)
-    # newBaby.speed = math.ceil((self.speed + mate.speed) / 2)
-    # newBaby.maxStamina = math.ceil((self.stamina + mate.stamina) / 2)
-    # newBaby.defense = math.ceil((self.defense + mate.defense) / 2)
-    
-    # statList = [newBaby.carnivorism, newBaby.herbivorism, newBaby.speed, newBaby.maxStamina, newBaby.defense]
-    # bestStat = statList.index(max(statList))
-    # #TODO increment best stat by one, make sure it doesn't go over self.objects.maxStat
-    
-    # return newBaby
-  #pass
     
 class Plant:
   def __init__(self, game, id, x, y, size):

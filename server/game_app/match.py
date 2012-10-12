@@ -118,6 +118,7 @@ class Match(DefaultGameWorld):
     self.initGrid()
     self.spawnCreatures()
     self.nextTurn()
+
     return True
   
   
@@ -270,16 +271,18 @@ class Match(DefaultGameWorld):
 #This function assumes the plants have been spawned symmetrically across the vertical axis
   def spawnCreatures(self):
     i = 0
+    startingEnergy = 100
     while i < self.startingCreatures:
       i+=1
+      statList = self.initialStats()
     #Generate x,y for creature location
       while True:
         newX = int(random.uniform(0,1)*self.mapWidth / 2)
         newY = int(random.uniform(0,1)*self.mapHeight)
       #check map if the space is unoccupied, otherwise generate a new X,Y
         if self.getObject(newX, newY) is None:
-          self.addObject(Creature,[0, newX, newY, 1, 1, 1, 1, 1, 1, 1,])  
-          self.addObject(Creature,[1, (self.mapWidth-newX), newY, 1, 1, 1, 1, 1, 1, 1,])  
+          self.addObject(Creature,[0, newX, newY, startingEnergy, startingEnergy]+statList)  
+          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY, startingEnergy, startingEnergy]+statList)
           break          
     #end while       
     #TODO: call creature stats generator instead of all 1's      
