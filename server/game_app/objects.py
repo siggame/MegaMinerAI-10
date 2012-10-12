@@ -36,7 +36,7 @@ class Creature:
     return value
 
   def nextTurn(self):
-    if self.decrementEnergy(self.game.hungerPerTurn,self):
+    if self.decrementEnergy(self.game.energyPerAction,self):
       self.movementLeft = self.speed
       self.canAttack = True
       self.canBreed = True
