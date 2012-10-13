@@ -36,6 +36,7 @@ namespace visualizer
     programs.clear();
 
   } // Galapagos::~Galapagos()
+  
 
   void Galapagos::preDraw()
   {
@@ -45,17 +46,29 @@ namespace visualizer
       int turn = timeManager->getTurn();
       //float t = timeManager->getTurnPercent();
       int x = input.x,
-          width = input.sx, 
-          y = input.y,
-          height = input.sy;
+      width = input.sx, 
+      y = input.y,
+      height = input.sy;
+      
+      width -= x;
+      height -= y; 
+      
+      // debugging
+      cout<<"x:"<<x<<endl;
+      cout<<"y:"<<y<<endl;
+      cout<<"width:"<<width<<endl;
+      cout<<"height:"<<height<<endl<<endl;
+      
+      bool bFlip = height < 0 || width < 0; 
       
       m_selectedUnitIDs.clear();
       
       for( auto& c : m_game->states[ turn ].creatures )
       {
         auto creature = c.second;
-        
-        if( creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y )
+      
+        if((bFlip && creature.x >= x+width && creature.x+1 <= x && creature.y >= y+height && creature.y+1 <= y) ||
+         (creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y ))
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
