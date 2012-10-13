@@ -53,6 +53,11 @@ namespace visualizer
       width -= x;
       height -= y; 
       
+      int left = min(x,x+width);
+      int top = min(y,y+height);
+      int right = max(x,x+width);
+      int bottom = max(y,y+height);
+      
       // debuggings
       cout<<"x:"<<x<<endl;
       cout<<"y:"<<y<<endl;
@@ -64,11 +69,8 @@ namespace visualizer
       for( auto& c : m_game->states[ turn ].creatures )
       {
         auto creature = c.second;
-      
-        if((creature.x >= x+width && creature.x+1 <= x && creature.y >= y+height && creature.y+1 <= y) ||
-         ((creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y )) ||
-         (creature.x <= x+width && creature.x+1 >= x && creature.y >= y+height && creature.y+1 <= y ) ||
-         (creature.x >= x+width && creature.x+1 <= x && creature.y <= y+height && creature.y+1 >= y ))
+        
+        if(left <= creature.x+1 && right >= creature.x && top <= creature.y+1 && bottom >= creature.y+1)
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
