@@ -181,7 +181,7 @@ class Creature:
        self.owner, 
        x, 
        y]
-       + babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense)
+       + babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense))
        #newEnergy, 
        #newEnergy/3, 
        #newCarnivorism, 
