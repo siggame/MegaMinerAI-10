@@ -36,7 +36,7 @@ namespace visualizer
     programs.clear();
 
   } // Galapagos::~Galapagos()
-  
+ 
 
   void Galapagos::preDraw()
   {
@@ -53,13 +53,11 @@ namespace visualizer
       width -= x;
       height -= y; 
       
-      // debugging
+      // debuggings
       cout<<"x:"<<x<<endl;
       cout<<"y:"<<y<<endl;
       cout<<"width:"<<width<<endl;
-      cout<<"height:"<<height<<endl<<endl;
-      
-      bool bFlip = height < 0 || width < 0; 
+      cout<<"height:"<<height<<endl;
       
       m_selectedUnitIDs.clear();
       
@@ -67,8 +65,10 @@ namespace visualizer
       {
         auto creature = c.second;
       
-        if((bFlip && creature.x >= x+width && creature.x+1 <= x && creature.y >= y+height && creature.y+1 <= y) ||
-         (creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y ))
+        if((creature.x >= x+width && creature.x+1 <= x && creature.y >= y+height && creature.y+1 <= y) ||
+         ((creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y )) ||
+         (creature.x <= x+width && creature.x+1 >= x && creature.y >= y+height && creature.y+1 <= y ) ||
+         (creature.x >= x+width && creature.x+1 <= x && creature.y <= y+height && creature.y+1 >= y ))
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
@@ -189,10 +189,21 @@ namespace visualizer
         creature->y = p.second.y;
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
+        
+        turn[p.second.id]["ID"] = p.second.id;
+        turn[p.second.id]["Owner"] = p.second.owner;
+        turn[p.second.id]["X"] = p.second.x;
+        turn[p.second.id]["Y"] = p.second.y;
+        turn[p.second.id]["Energy"] = -1;
+        turn[p.second.id]["Energy Left"] = -1;
+        turn[p.second.id]["Carn"] = -1;
+        turn[p.second.id]["Herb"] = -1;
+        turn[p.second.id]["Speed"] = -1;
+        turn[p.second.id]["Defence"] = -1;
       }
       
       // add each object that is selectable to the visualizer's selection info
-      for( auto& c : m_game->states[ state ].creatures )
+      /*for( auto& c : m_game->states[ state ].creatures )
       {
         auto creature = c.second;
         turn[creature.id]["ID"] = creature.id;
@@ -205,8 +216,8 @@ namespace visualizer
         turn[creature.id]["Herb"] = -1;
         turn[creature.id]["Speed"] = -1;
         turn[creature.id]["Defence"] = -1;
-      }
-      
+      }*/
+     
       // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
       addFrame(turn);
