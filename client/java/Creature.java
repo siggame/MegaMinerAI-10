@@ -42,11 +42,11 @@ class Creature
     return Client.INSTANCE.creatureEat(ptr, x, y);
   }
   ///Breed with target adjacent creature. Spawn new creature at input location
-  int breed(Creature mate, int x, int y)
+  int breed(Creature mate)
   {
     validify();
     mate.validify();
-    return Client.INSTANCE.creatureBreed(ptr, mate.ptr, x, y);
+    return Client.INSTANCE.creatureBreed(ptr, mate.ptr);
   }
 
     //getters
@@ -128,6 +128,12 @@ class Creature
   {
     validify();
     return Client.INSTANCE.creatureGetCanBreed(ptr);
+  }
+  ///ID of the creature that gave birth to this one.
+  public int getParentID()
+  {
+    validify();
+    return Client.INSTANCE.creatureGetParentID(ptr);
   }
 
 }

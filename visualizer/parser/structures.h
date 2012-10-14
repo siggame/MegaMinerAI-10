@@ -35,6 +35,7 @@ struct Creature
   int defense;
   int canAttack;
   int canBreed;
+  int parentID;
 
   friend std::ostream& operator<<(std::ostream& stream, Creature obj);
 };

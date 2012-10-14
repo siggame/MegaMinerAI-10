@@ -25,6 +25,7 @@ DLLEXPORT int creatureGetMovementLeft(_Creature* ptr);
 DLLEXPORT int creatureGetDefense(_Creature* ptr);
 DLLEXPORT int creatureGetCanAttack(_Creature* ptr);
 DLLEXPORT int creatureGetCanBreed(_Creature* ptr);
+DLLEXPORT int creatureGetParentID(_Creature* ptr);
 
 
 DLLEXPORT int plantGetId(_Plant* ptr);

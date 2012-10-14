@@ -23,6 +23,7 @@ std::ostream& operator<<(std::ostream& stream, Creature ob)
   stream << "defense: " << ob.defense  <<'\n';
   stream << "canAttack: " << ob.canAttack  <<'\n';
   stream << "canBreed: " << ob.canBreed  <<'\n';
+  stream << "parentID: " << ob.parentID  <<'\n';
   return stream;
 }
 

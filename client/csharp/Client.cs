@@ -29,7 +29,7 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureEat(IntPtr self, int x, int y);
   [DllImport("client")]
-  public static extern int creatureBreed(IntPtr self, IntPtr mate, int x, int y);
+  public static extern int creatureBreed(IntPtr self, IntPtr mate);
   [DllImport("client")]
   public static extern int playerTalk(IntPtr self, string message);
 
@@ -86,6 +86,8 @@ public class Client {
   public static extern int creatureGetCanAttack(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetCanBreed(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int creatureGetParentID(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int plantGetId(IntPtr ptr);

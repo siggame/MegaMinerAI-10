@@ -75,6 +75,11 @@ int Creature::canBreed()
   return ((_Creature*)ptr)->canBreed;
 }
 
+int Creature::parentID()
+{
+  return ((_Creature*)ptr)->parentID;
+}
+
 
 int Creature::move(int x, int y)
 {
@@ -86,9 +91,9 @@ int Creature::eat(int x, int y)
   return creatureEat( (_Creature*)ptr, x, y);
 }
 
-int Creature::breed(Creature& mate, int x, int y)
+int Creature::breed(Creature& mate)
 {
-  return creatureBreed( (_Creature*)ptr, (_Creature*) mate.ptr, x, y);
+  return creatureBreed( (_Creature*)ptr, (_Creature*) mate.ptr);
 }
 
 
@@ -108,5 +113,6 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "defense: " << ((_Creature*)ob.ptr)->defense  <<'\n';
   stream << "canAttack: " << ((_Creature*)ob.ptr)->canAttack  <<'\n';
   stream << "canBreed: " << ((_Creature*)ob.ptr)->canBreed  <<'\n';
+  stream << "parentID: " << ((_Creature*)ob.ptr)->parentID  <<'\n';
   return stream;
 }

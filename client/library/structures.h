@@ -26,6 +26,7 @@ struct _Creature
   int defense;
   int canAttack;
   int canBreed;
+  int parentID;
 };
 struct _Plant
 {

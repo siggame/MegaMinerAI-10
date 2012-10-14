@@ -52,6 +52,10 @@ DLLEXPORT int creatureGetCanBreed(_Creature* ptr)
 {
   return ptr->canBreed;
 }
+DLLEXPORT int creatureGetParentID(_Creature* ptr)
+{
+  return ptr->parentID;
+}
 DLLEXPORT int plantGetId(_Plant* ptr)
 {
   return ptr->id;
