@@ -39,6 +39,8 @@ namespace visualizer
  
   void Galapagos::GetSelectedRect(Rect& R) const
   {
+    
+  
     const Input& input = gui->getInput();
     
     int x = input.x;
@@ -90,20 +92,32 @@ namespace visualizer
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
+        
       }
+      
     }
   }
+        
+          
+      
 
   void Galapagos::postDraw()
   {
-    /*if( renderer->fboSupport() )
+    int turn = timeManager->getTurn();
+    
+    for(auto iter = m_selectedUnitIDs.begin(); iter != m_selectedUnitIDs.end(); ++iter)
     {
-
-      renderer->useShader( programs["post"] ); 
-      renderer->swapFBO();
-      renderer->useShader( 0 );
-
-    }*/
+      auto cIter = m_game->states[turn].creatures.find(*iter);
+      
+      if(cIter != m_game->states[turn].creatures.end())
+      {
+        const auto& creature = cIter->second;
+        
+        renderer->setColor( Color( 1.0, 0.5, 0.5, 0.5 ) );
+        renderer->drawQuad(creature.x,creature.y,1,1);
+      }
+    }
+    
   }
 
 
@@ -218,23 +232,7 @@ namespace visualizer
         turn[p.second.id]["Speed"] = -1;
         turn[p.second.id]["Defence"] = -1;
       }
-      
-      // add each object that is selectable to the visualizer's selection info
-      /*for( auto& c : m_game->states[ state ].creatures )
-      {
-        auto creature = c.second;
-        turn[creature.id]["ID"] = creature.id;
-        turn[creature.id]["Owner"] = creature.owner;
-        turn[creature.id]["X"] = creature.x;
-        turn[creature.id]["Y"] = creature.y;
-        turn[creature.id]["Energy"] = -1;
-        turn[creature.id]["Energy Left"] = -1;
-        turn[creature.id]["Carn"] = -1;
-        turn[creature.id]["Herb"] = -1;
-        turn[creature.id]["Speed"] = -1;
-        turn[creature.id]["Defence"] = -1;
-      }*/
-     
+
       // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
       addFrame(turn);
