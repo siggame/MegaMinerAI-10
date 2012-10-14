@@ -37,6 +37,36 @@ namespace visualizer
 
   } // Galapagos::~Galapagos()
  
+  void Galapagos::GetSelectedRect(Rect& R) const
+  {
+    const Input& input = gui->getInput();
+    
+    int x = input.x;
+    int y = input.y;
+    int width = input.sx - input.x;
+    int height = input.sy - input.y;
+    
+    cout<<"width"<<width<<endl;
+    cout<<"height"<<height<<endl<<endl;
+    
+    if(width == 0)
+    {
+      width = 1;
+    }
+    if(height == 0)
+    {
+      height = 1;
+    }
+    
+    int right = input.x+width;
+    int bottom = input.y+height;
+    
+    R.left = min(x,right);
+    R.top = min(y,bottom);
+    R.right = max(x,right);
+    R.bottom = max(y,bottom);
+    
+  }
 
   void Galapagos::preDraw()
   {
@@ -45,32 +75,18 @@ namespace visualizer
     {
       int turn = timeManager->getTurn();
       //float t = timeManager->getTurnPercent();
-      int x = input.x,
-      width = input.sx, 
-      y = input.y,
-      height = input.sy;
       
-      width -= x;
-      height -= y; 
-      
-      int left = min(x,x+width);
-      int top = min(y,y+height);
-      int right = max(x,x+width);
-      int bottom = max(y,y+height);
-      
-      // debuggings
-      cout<<"x:"<<x<<endl;
-      cout<<"y:"<<y<<endl;
-      cout<<"width:"<<width<<endl;
-      cout<<"height:"<<height<<endl;
+      Rect selectedRect;
+      GetSelectedRect(selectedRect);
       
       m_selectedUnitIDs.clear();
       
       for( auto& c : m_game->states[ turn ].creatures )
       {
-        auto creature = c.second;
+        const auto& creature = c.second;
         
-        if(left <= creature.x+1 && right >= creature.x && top <= creature.y+1 && bottom >= creature.y+1)
+        if(selectedRect.left <= creature.x+1 && selectedRect.right >= creature.x &&
+          selectedRect.top <= creature.y+1 && selectedRect.bottom >= creature.y+1)
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
@@ -80,15 +96,14 @@ namespace visualizer
 
   void Galapagos::postDraw()
   {
-    if( renderer->fboSupport() )
+    /*if( renderer->fboSupport() )
     {
-#if 0
+
       renderer->useShader( programs["post"] ); 
       renderer->swapFBO();
       renderer->useShader( 0 );
-#endif
 
-    }
+    }*/
   }
 
 
