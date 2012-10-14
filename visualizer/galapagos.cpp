@@ -39,8 +39,6 @@ namespace visualizer
  
   void Galapagos::GetSelectedRect(Rect& R) const
   {
-    
-  
     const Input& input = gui->getInput();
     
     int x = input.x;
@@ -87,8 +85,8 @@ namespace visualizer
       {
         const auto& creature = c.second;
         
-        if(selectedRect.left <= creature.x+1 && selectedRect.right >= creature.x &&
-          selectedRect.top <= creature.y+1 && selectedRect.bottom >= creature.y+1)
+        if(selectedRect.left <= creature.x && selectedRect.right >= creature.x &&
+          selectedRect.top <= creature.y && selectedRect.bottom >= creature.y)
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
@@ -97,9 +95,6 @@ namespace visualizer
       
     }
   }
-        
-          
-      
 
   void Galapagos::postDraw()
   {
