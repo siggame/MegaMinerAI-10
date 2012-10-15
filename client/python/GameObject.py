@@ -44,12 +44,12 @@ class Creature(GameObject):
     return library.creatureEat(self._ptr, x, y)
 
   ##Breed with target adjacent creature. Spawn new creature at input location
-  def breed(self, mate, x, y):
+  def breed(self, mate):
     self.validify()
     if not isinstance(mate, Creature):
       raise TypeError('mate should be of [Creature]')
     mate.validify()
-    return library.creatureBreed(self._ptr, mate._ptr, x, y)
+    return library.creatureBreed(self._ptr, mate._ptr)
 
   #\cond
   def getId(self):
@@ -155,6 +155,14 @@ class Creature(GameObject):
   ##Indicated whether or not this creature can breed this turn.
   canBreed = property(getCanBreed)
 
+  #\cond
+  def getParentID(self):
+    self.validify()
+    return library.creatureGetParentID(self._ptr)
+  #\endcond
+  ##ID of the creature that gave birth to this one.
+  parentID = property(getParentID)
+
 
   def __str__(self):
     self.validify()
@@ -172,6 +180,7 @@ class Creature(GameObject):
     ret += "defense: %s\n" % self.getDefense()
     ret += "canAttack: %s\n" % self.getCanAttack()
     ret += "canBreed: %s\n" % self.getCanBreed()
+    ret += "parentID: %s\n" % self.getParentID()
     return ret
 
 ##A basic plant!

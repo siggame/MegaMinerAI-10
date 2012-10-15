@@ -48,7 +48,7 @@ library.creatureEat.restype = c_int
 library.creatureEat.argtypes = [c_void_p, c_int, c_int]
 
 library.creatureBreed.restype = c_int
-library.creatureBreed.argtypes = [c_void_p, c_void_p, c_int, c_int]
+library.creatureBreed.argtypes = [c_void_p, c_void_p]
 
 library.playerTalk.restype = c_int
 library.playerTalk.argtypes = [c_void_p, c_char_p]
@@ -130,6 +130,9 @@ library.creatureGetCanAttack.argtypes = [c_void_p]
 
 library.creatureGetCanBreed.restype = c_int
 library.creatureGetCanBreed.argtypes = [c_void_p]
+
+library.creatureGetParentID.restype = c_int
+library.creatureGetParentID.argtypes = [c_void_p]
 
 library.plantGetId.restype = c_int
 library.plantGetId.argtypes = [c_void_p]

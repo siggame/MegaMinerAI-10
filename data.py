@@ -44,8 +44,9 @@ Creature = Model('Creature',
     Variable('speed', int, 'The speed of the creature'),
     Variable('movementLeft', int, 'The amount of moves this creature has left this turn'),
     Variable('defense', int, 'The defense of the creature'),
-	Variable('canAttack', int, 'Indicated whether or not this creature can attack this turn.'),
-	Variable('canBreed', int, 'Indicated whether or not this creature can breed this turn.'),
+    Variable('canAttack', int, 'Indicated whether or not this creature can attack this turn.'),
+    Variable('canBreed', int, 'Indicated whether or not this creature can breed this turn.'),
+    Variable('parentID', int, 'ID of the creature that gave birth to this one.'),
   ],
   functions=[ 
     Function('move', [Variable('x', int), Variable('y', int)], 
@@ -58,7 +59,7 @@ Creature = Model('Creature',
 
 Creature.addFunctions(
   [
-    Function ('breed', [Variable('mate', Creature), Variable('x', int), Variable('y', int)], 
+    Function ('breed', [Variable('mate', Creature)], 
     doc='Breed with target adjacent creature. Spawn new creature at input location'),
   ]
 )

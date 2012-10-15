@@ -136,12 +136,12 @@ class GameApp(AccountsAppMixin, BaseApp):
   @protocolmethod
   @errorBuffer
   @requireTurn
-  @requireTypes(None, int, int, int, int)
-  def gameBreed(self, creature, mate, x, y):
+  @requireTypes(None, int, int)
+  def gameBreed(self, creature, mate):
     """Breed with target adjacent creature. Spawn new creature at input location"""
     if self.game.turn is not self:
       return "Not your turn."
-    return self.game.breed(creature, mate, x, y)
+    return self.game.breed(creature, mate)
 
   @protocolmethod
   @errorBuffer

@@ -32,18 +32,13 @@ class Match(DefaultGameWorld):
     self.gameNumber = id
     self.mapWidth = self.mapWidth
     self.mapHeight = self.mapHeight
-
-#initializes a game map
-  def initGrid(self):
-    self.grid = [[None]*self.mapHeight for _ in range(self.mapWidth)]
-    for creature in self.objects.creatures:
-      self.grid[creature.x][creature.y] = creature
-    for plant in self.objects.plants:
-      self.grid[plant.x][plant.y] = plant
-    print 'Number of plants: ' + str(len(self.objects.plants))
+    self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)] 
 
   def getObject(self, x, y):
-    return self.grid[x][y]
+    if len(self.grid[x][y]) > 0:
+      return self.grid[x][y][0]
+    else:
+      return None
   
   def addPlayer(self, connection, type="player"):
     connection.type = type
@@ -72,7 +67,19 @@ class Match(DefaultGameWorld):
       self.spectators.remove(connection)
 
    #this is for testing if a plant should be made
-  def makePlant(self,x,y):
+  def makePlant(self,x,y): 
+
+    #Better way   
+    
+    # midX = self.mapWidth/2
+    # midY = self.mapHeight/2
+    # distance = math.sqrt(midX - x)**2 + (midY - y)**2)
+    # maxDist =  math.sqrt((midX-0)**2 + (midY-0)**2)
+    # probability = (1-distance/totaldistance)*self.plantModifier
+    # if random.random() < probability:
+      # return math.floor(random.uniform(1,(self.plantMaxSize/2-self.plantMaxSize/2*(distance/totaldistance)))) +1
+    # return -1
+    
     x1 = self.mapWidth/2
     x2 = x
     y1 = self.mapHeight/2
@@ -114,9 +121,25 @@ class Match(DefaultGameWorld):
 
         plantsy += 1
       plantsx += 1
-
-    self.initGrid()
+    for plant in self.objects.plants:
+      self.grid[plant.x][plant.y] = [plant]
+      
     self.spawnCreatures()
+    
+    #Display initial game state for debugging
+    for creature in self.objects.creatures:
+      if creature.owner == 0:
+        print "Creature"
+        print "--------"
+        print "Energy: ", (creature.maxEnergy - 100) / 10
+        print "Carnivorism: ", creature.carnivorism
+        print "Herbivorism: ", creature.herbivorism
+        print "Defense: ", creature.defense
+        print "Speed: ", creature.speed 
+        print ""        
+    
+    for creature in self.objects.creatures:
+      self.grid[creature.x][creature.y] = [creature]
     self.nextTurn()
 
     return True
@@ -145,6 +168,10 @@ class Match(DefaultGameWorld):
    
 
   def nextTurn(self):
+    # for col in range(len(self.grid)):
+      # for row in range(len(self.grid[col])):
+        # if len(self.grid[col][row]) > 0:
+          # print self.grid[col][row], col, row
     self.turnNumber += 1
     if self.turn == self.players[0]:
       self.turn = self.players[1]
@@ -168,36 +195,23 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    #Defaults player 1 as winner if both players have same number of creatures at end
     player1 = self.players[0]
     player2 = self.players[1]
-    winner = player1
-    # number of player 1's creatures and player 2's creatures
-    p1C = 0
-    p2C = 0    
-    for c in self.objects.creatures:
-      if c.owner == self.objects.players[0].id:
-         p1C += 1
+    p1c = sum(creature.owner == self.objects.players[0].id for creature in self.objects.creatures)
+    p2c = sum(creature.owner == self.objects.players[1].id for creature in self.objects.creatures)
+    if p1c == 0 or p2c == 0 or self.turnNumber >= self.turnLimit:
+      if p1c > p2c:
+        self.declareWinner(player1, "Player 1 wins through creature domination")
+      elif p1c < p2c:
+        self.declareWinner(player2, "Player 2 wins through creature domination")
+      #Defaults player 1 as winner if both players have same number of creatures at end
       else:
-         p2C += 1
-         
-    #print sum(creature.owner == self.objects.players[0].id for creature in self.objects.creatures)
-         
-    if p1C > p2C:
-      winner = player1
-      if p2C == 0:
-         self.declareWinner(winner, "Player 2's creatures are all died")
-    elif p2C > p1C:
-      winner = player2
-      if p1C == 0:
-         self.declareWinner(winner, "Player 1's creatures are all died")
-    if self.turnNumber >= self.turnLimit:
-      self.declareWinner(winner, "Tie!")
+        self.declareWinner(player1, "The game was a tie.")             
     
 
   def declareWinner(self, winner, reason=''):
-    print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
     self.winner = winner
+    print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
 
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
     self.scribe.writeSExpr(msg)
@@ -224,9 +238,9 @@ class Match(DefaultGameWorld):
   def eat(self, object, x, y):
     return object.eat(x, y, )
 
-  @derefArgs(Creature, Creature, None, None)
-  def breed(self, object, mate, x, y):
-    return object.breed(mate, x, y, )
+  @derefArgs(Creature, Creature)
+  def breed(self, object, mate, ):
+    return object.breed(mate)
 
   @derefArgs(Player, None)
   def talk(self, object, message):
@@ -286,8 +300,8 @@ class Match(DefaultGameWorld):
         newY = int(random.uniform(0,1)*self.mapHeight)
       #check map if the space is unoccupied, otherwise generate a new X,Y
         if self.getObject(newX, newY) is None:
-          self.addObject(Creature,[0, newX, newY]+statList)  
-          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY]+statList)
+          self.addObject(Creature,[0, newX, newY]+statList+[0])  
+          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY]+statList+[0])
           break          
     #end while
     return

@@ -147,6 +147,15 @@ static bool parseCreature(Creature& object, sexp_t* expression)
   object.canBreed = atoi(sub->val);
   sub = sub->next;
 
+  if ( !sub ) 
+  {
+    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.parentID = atoi(sub->val);
+  sub = sub->next;
+
   return true;
 
 }

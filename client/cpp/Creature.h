@@ -41,6 +41,8 @@ class Creature {
   int canAttack();
   ///Indicated whether or not this creature can breed this turn.
   int canBreed();
+  ///ID of the creature that gave birth to this one.
+  int parentID();
 
   // Actions
   ///Command a creature to move to a specified position
@@ -48,7 +50,7 @@ class Creature {
   ///Eat plant or creature at input location
   int eat(int x, int y);
   ///Breed with target adjacent creature. Spawn new creature at input location
-  int breed(Creature& mate, int x, int y);
+  int breed(Creature& mate);
 
   // Properties
 

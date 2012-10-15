@@ -36,6 +36,37 @@ namespace visualizer
     programs.clear();
 
   } // Galapagos::~Galapagos()
+ 
+  void Galapagos::GetSelectedRect(Rect& R) const
+  {
+    const Input& input = gui->getInput();
+    
+    int x = input.x;
+    int y = input.y;
+    int width = input.sx - input.x;
+    int height = input.sy - input.y;
+    
+    cout<<"width"<<width<<endl;
+    cout<<"height"<<height<<endl<<endl;
+    
+    if(width == 0)
+    {
+      width = 1;
+    }
+    if(height == 0)
+    {
+      height = 1;
+    }
+    
+    int right = input.x+width;
+    int bottom = input.y+height;
+    
+    R.left = min(x,right);
+    R.top = min(y,bottom);
+    R.right = max(x,right);
+    R.bottom = max(y,bottom);
+    
+  }
 
   void Galapagos::preDraw()
   {
@@ -44,36 +75,44 @@ namespace visualizer
     {
       int turn = timeManager->getTurn();
       //float t = timeManager->getTurnPercent();
-      int x = input.x,
-          width = input.sx, 
-          y = input.y,
-          height = input.sy;
+      
+      Rect selectedRect;
+      GetSelectedRect(selectedRect);
       
       m_selectedUnitIDs.clear();
       
       for( auto& c : m_game->states[ turn ].creatures )
       {
-        auto creature = c.second;
+        const auto& creature = c.second;
         
-        if( creature.x <= x+width && creature.x+1 >= x && creature.y <= y+height && creature.y+1 >= y )
+        if(selectedRect.left <= creature.x && selectedRect.right >= creature.x &&
+          selectedRect.top <= creature.y && selectedRect.bottom >= creature.y)
         {
           m_selectedUnitIDs.push_back(creature.id);
         }
+        
       }
+      
     }
   }
 
   void Galapagos::postDraw()
   {
-    if( renderer->fboSupport() )
+    int turn = timeManager->getTurn();
+    
+    for(auto iter = m_selectedUnitIDs.begin(); iter != m_selectedUnitIDs.end(); ++iter)
     {
-#if 0
-      renderer->useShader( programs["post"] ); 
-      renderer->swapFBO();
-      renderer->useShader( 0 );
-#endif
-
+      auto cIter = m_game->states[turn].creatures.find(*iter);
+      
+      if(cIter != m_game->states[turn].creatures.end())
+      {
+        const auto& creature = cIter->second;
+        
+        renderer->setColor( Color( 1.0, 0.5, 0.5, 0.5 ) );
+        renderer->drawQuad(creature.x,creature.y,1,1);
+      }
     }
+    
   }
 
 
@@ -177,24 +216,19 @@ namespace visualizer
         creature->y = p.second.y;
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
+        
+        turn[p.second.id]["ID"] = p.second.id;
+        turn[p.second.id]["Owner"] = p.second.owner;
+        turn[p.second.id]["X"] = p.second.x;
+        turn[p.second.id]["Y"] = p.second.y;
+        turn[p.second.id]["Energy"] = -1;
+        turn[p.second.id]["Energy Left"] = -1;
+        turn[p.second.id]["Carn"] = -1;
+        turn[p.second.id]["Herb"] = -1;
+        turn[p.second.id]["Speed"] = -1;
+        turn[p.second.id]["Defence"] = -1;
       }
-      
-      // add each object that is selectable to the visualizer's selection info
-      for( auto& c : m_game->states[ state ].creatures )
-      {
-        auto creature = c.second;
-        turn[creature.id]["ID"] = creature.id;
-        turn[creature.id]["Owner"] = creature.owner;
-        turn[creature.id]["X"] = creature.x;
-        turn[creature.id]["Y"] = creature.y;
-        turn[creature.id]["Energy"] = -1;
-        turn[creature.id]["Energy Left"] = -1;
-        turn[creature.id]["Carn"] = -1;
-        turn[creature.id]["Herb"] = -1;
-        turn[creature.id]["Speed"] = -1;
-        turn[creature.id]["Defence"] = -1;
-      }
-      
+
       // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
       addFrame(turn);

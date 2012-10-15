@@ -229,13 +229,11 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
   return 1;
 }
 
-DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate, int x, int y)
+DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
 {
   stringstream expr;
   expr << "(game-breed " << object->id
       << " " << mate->id
-       << " " << x
-       << " " << y
        << ")";
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
@@ -291,6 +289,8 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   object->canAttack = atoi(sub->val);
   sub = sub->next;
   object->canBreed = atoi(sub->val);
+  sub = sub->next;
+  object->parentID = atoi(sub->val);
   sub = sub->next;
 
 }

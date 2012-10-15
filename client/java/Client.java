@@ -20,7 +20,7 @@ public interface Client extends Library {
     //commands
   int creatureMove(Pointer object, int x, int y);
   int creatureEat(Pointer object, int x, int y);
-  int creatureBreed(Pointer object, Pointer mate, int x, int y);
+  int creatureBreed(Pointer object, Pointer mate);
   int playerTalk(Pointer object, String message);
 
     //accessors
@@ -52,6 +52,7 @@ public interface Client extends Library {
   int creatureGetDefense(Pointer ptr);
   int creatureGetCanAttack(Pointer ptr);
   int creatureGetCanBreed(Pointer ptr);
+  int creatureGetParentID(Pointer ptr);
 
   int plantGetId(Pointer ptr);
   int plantGetX(Pointer ptr);
