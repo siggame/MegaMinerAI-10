@@ -64,7 +64,6 @@ namespace visualizer
 
      }; // DrawCreature
     
-    
 }
 
 #endif // ANIMATION_H

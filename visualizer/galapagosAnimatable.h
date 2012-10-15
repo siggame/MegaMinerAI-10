@@ -13,6 +13,8 @@ namespace visualizer
     {
         int width;
         int height;
+        float prevColor;
+        float color;
         // todo: add more?
     };
     

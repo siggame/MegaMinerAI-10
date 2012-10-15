@@ -187,6 +187,8 @@ namespace visualizer
     timeManager->setNumTurns( 0 );
 
     animationEngine->registerGame(0, 0);
+    
+    float fPrevColor = 0.6f;
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
@@ -195,8 +197,12 @@ namespace visualizer
       SmartPointer<Map> map = new Map();
       map->width = m_game->states[state].mapWidth;
       map->height = m_game->states[state].mapHeight;
+      map->color = 0.4f*sin((float)state*0.1f) + 0.5f;
+      map->prevColor = fPrevColor;
       map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
+      
+      fPrevColor = map->color;
       
       for( auto& p : m_game->states[ state ].plants )
       {

@@ -1,5 +1,6 @@
 #include "animations.h"
 #include "galapagos.h"
+#include "easing_equations.h"
 #include <sstream>
 #include <string>
 
@@ -20,15 +21,14 @@ namespace visualizer
 
   void DrawMap::animate( const float& t, AnimData * /*d*/, IGame* game )
   {
-    // Set the color to red
-    game->renderer->setColor( Color( 0, 1, 0, 1 ) );
-    
-    // Draw a 2x2 rectangle at (1,1), with the top left corner of the screen being the origin 
     for (int x = 0; x < m_Map->width; x++)
     {
       for (int y = 0; y < m_Map->height; y++)
       {
-        game->renderer->setColor( Color( (float)x/m_Map->width, (float)y/m_Map->height, 0, 1 ) );
+        float color = linearTween(t,m_Map->prevColor,m_Map->color - m_Map->prevColor,1.0); 
+      
+        game->renderer->setColor( Color( color, color, 0.2f,1.0f ) );
+          
         game->renderer->drawTexturedQuad( x, y, 1, 1, "grass" );
       }
     }
@@ -47,6 +47,7 @@ namespace visualizer
   	game->renderer->setColor( Color( 1, 1, 1, 1 ) );
   	
     game->renderer->drawTexturedQuad( m_Creature->x, m_Creature->y, 1, 1, "creature" );
+    
   }
-
+  
 }
