@@ -47,7 +47,7 @@ class Creature:
 
   def nextTurn(self):
     #If creatures are stacked they are unable to perform any actions
-    if self.game.grid[self.x][self.y] > 1:
+    if len(self.game.grid[self.x][self.y]) > 1:
       if(self.decrementEnergy(self.game.energyPerAction, self)):
         self.canAttack = False
         self.canBreed = False
@@ -80,7 +80,8 @@ class Creature:
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
-      
+            
+      print "moving a creature"
       self.x = x
       self.y = y
       self.movementLeft -= 1
@@ -97,7 +98,7 @@ class Creature:
       return "That creature has no energy left"
     #You can't eat more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
-      return "Units can only move to adjacent locations"
+      return "Units can only eat objects at adjacent locations"
     #You can't eat if you've already eaten this turn.
     elif self.canEat != True:
       return "You can't eat more than once per turn!"
@@ -107,6 +108,7 @@ class Creature:
     if lifeform is None:
       return "No lifeforms at that location."  
     if isinstance(lifeform, Plant):
+      print "trying to eat a plant"
       plant = lifeform
       if size == 0:
         return "That plant is too small to eat."
@@ -116,6 +118,7 @@ class Creature:
       plant.size -= 1
       self.game.animations.append(['eat', self.id, plant.id])
     else:
+      print "trying to eat a creature"
       creature = lifeform
       damage = self.carnivorism - creature.defense
       if damage < 1:
@@ -138,7 +141,7 @@ class Creature:
 
   def breed(self, mate):
     #You can only breed your creature
-    if self.owner != self.id:
+    if self.owner != self.game.playerID:
       return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
     elif self.energyLeft <= self.game.energyPerBreed:
