@@ -32,23 +32,22 @@ class AI(BaseAI):
         
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
-  def run(self):
-    
+  def run(self):   
     adjacent = [[1,0],[-1,0],[0,1],[0,-1]]
     for creature in self.creatures:
       if creature.owner == self.playerID:
-        randx=random.randrange(-1,1); 
-        randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
+        randx=random.randrange(-1,2); 
+        randy = abs(randx)^1*((-1)**random.randrange(1,100)%6)
         x=0;y=0
-        if isinstance(self.getObject(creature.x+randx,creature.y+randy),int):
+        if isinstance(self.getObject(creature.x+randx,creature.y+randy),int) and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
           creature.move(creature.x+randx,creature.y+randy)
           x=creature.x+randx;
           y=creature.y+randy
         for location in adjacent:
-          thing= self.getObject(x+location[0],y+location[1])
+          thing=self.getObject(x+location[0],y+location[1])
           if isinstance(thing,Plant):
             creature.eat(thing.x,thing.y)
-          elif isinstance(thing,Creature):
+          if isinstance(thing,Creature):
             if thing.owner==self.playerID:
               creature.breed(thing,thing.x,thing.y)
             else:
