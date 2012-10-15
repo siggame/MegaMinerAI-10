@@ -161,6 +161,7 @@ class Creature:
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
   
+    print "giggity"
   # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
@@ -180,7 +181,7 @@ class Creature:
     self.decrementEnergy(self.game.energyPerBreed, mate) 
      
     #Update the grid with the new baby
-    self.game.grid[x][y].append(newbaby)       
+    self.game.grid[self.x][self.y].append(newbaby)       
     return True
    
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
