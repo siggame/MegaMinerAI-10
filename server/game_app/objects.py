@@ -1,3 +1,5 @@
+import math
+
 class Creature:
   def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
     self.game = game
@@ -110,7 +112,7 @@ class Creature:
     if isinstance(lifeform, Plant):
       print "trying to eat a plant"
       plant = lifeform
-      if size == 0:
+      if plant.size == 0:
         return "That plant is too small to eat."
       self.energyLeft += self.herbivorism * 5
       if self.energyLeft > self.maxEnergy:
@@ -162,11 +164,11 @@ class Creature:
   # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
-    newCarnivorism = (self.carnivorism + mate.canivorism) / 2
+    newCarnivorism = (self.carnivorism + mate.carnivorism) / 2
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
      
-    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
+    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
     self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])    
     self.canBreed = False
     mate.canBreed = False
@@ -185,7 +187,7 @@ class Creature:
     #Create a list of equivilent stats
     stats = [energy, 0, carnivorism, herbivorism, speed, 0, defense]
     #Identify which stat is the highest
-    maxStatIndex = stats.index(math.max(stats))   
+    maxStatIndex = stats.index(max(stats))   
     count = 0
     #If the highest stat is maxed, we move until the nex
     #If all are maxed, we just have a perfect creature
