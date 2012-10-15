@@ -81,17 +81,9 @@ namespace visualizer
       
       m_selectedUnitIDs.clear();
       
-      for( auto& c : m_game->states[ turn ].creatures )
-      {
-        const auto& creature = c.second;
-        
-        if(selectedRect.left <= creature.x && selectedRect.right >= creature.x &&
-          selectedRect.top <= creature.y && selectedRect.bottom >= creature.y)
-        {
-          m_selectedUnitIDs.push_back(creature.id);
-        }
-        
-      }
+      AddSelectedObjsToList(m_game->states[ turn ].creatures,selectedRect);
+      AddSelectedObjsToList(m_game->states[ turn ].plants,selectedRect);
+   
       
     }
   }
@@ -102,17 +94,13 @@ namespace visualizer
     
     for(auto iter = m_selectedUnitIDs.begin(); iter != m_selectedUnitIDs.end(); ++iter)
     {
-      auto cIter = m_game->states[turn].creatures.find(*iter);
-      
-      if(cIter != m_game->states[turn].creatures.end())
+      // If polymorphism was used, we would not have to search both lists.....................
+      if(!DrawQuadAroundObj(m_game->states[turn].creatures,*iter))
       {
-        const auto& creature = cIter->second;
-        
-        renderer->setColor( Color( 1.0, 0.5, 0.5, 0.5 ) );
-        renderer->drawQuad(creature.x,creature.y,1,1);
+        DrawQuadAroundObj(m_game->states[turn].plants,*iter);
       }
     }
-    
+       
   }
 
 
@@ -212,6 +200,10 @@ namespace visualizer
         plant->size = p.second.size;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
+        
+        turn[p.second.id]["ID"] = p.second.id;
+        turn[p.second.id]["X"] = p.second.x;
+        turn[p.second.id]["Y"] = p.second.y;
       }
       
       for( auto& p : m_game->states[ state ].creatures )

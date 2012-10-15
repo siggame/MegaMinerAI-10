@@ -54,6 +54,43 @@ namespace visualizer
             list<int> m_selectedUnitIDs;
             
             void GetSelectedRect(Rect& out) const;
+            
+            // this would not be needed if polymorphism was used... wtf
+            template< class T >
+            void AddSelectedObjsToList(const T& datastruct, const Rect& R)
+            {
+              for(auto& iter : datastruct)
+              {  
+                const auto& obj = iter.second;
+                
+                // todo: move this logic into another function
+                if(R.left <= obj.x && R.right >= obj.x && R.top <= obj.y && R.bottom >= obj.y)
+                {
+                  m_selectedUnitIDs.push_back(obj.id);
+                }
+                
+              }
+        
+            }
+            
+            template< class T >
+            bool DrawQuadAroundObj(const T& datastruct, const typename T::key_type& key)
+            {       
+              auto iter = datastruct.find(key);
+      
+              if(iter != datastruct.end())
+              {
+                const auto& obj = iter->second;
+                
+                renderer->setColor( Color( 1.0, 0.5, 0.5, 0.5 ) );
+                renderer->drawQuad(obj.x,obj.y,1,1);
+                
+                return true;
+              }
+              
+              return false;
+
+            }
     }; 
 
 } // visualizer
