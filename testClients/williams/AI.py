@@ -38,28 +38,82 @@ class AI(BaseAI):
     return validNodes  
     
   def findPath(self, startX, startY, goalX, goalY):
-    moveSet = [[startX, startY, self.distance(startX, startY, goalX, goalY), [startX, startY]]]
-    checkedSet = []
-    current = moveSet[0]
-    while len(moveSet) > 0:   
-      current = moveSet[0]
+    # moveSet = [[startX, startY, math.floor(self.distance(startX, startY, goalX, goalY)), [startX, startY]]]
+    # checkedSet = []
+    # current = moveSet[0]
+    # while len(moveSet) > 0:   
+      # current = moveSet[0]
+      # if current[0] == goalX and current[1] == goalY:
+        # pathNode = current;
+        # finalPath = [[current[1],current[0]],[current[3][0],current[3][1]]]
+        # while pathNode[0] != startX and pathNode[1] != startY:
+          # pathNode = [node for node in checkedSet if(node[0] == pathNode[3][0] and node[1] == pathNode[3][1])][0]
+          # finalPath = finalPath + [[pathNode[3][0], pathNode[3][1]]]
+        # #finalPath.remove(finalPath[len(finalPath)-1])
+        # finalPath = finalPath[::-1]
+        # return finalPath
+      # for node in self.neighborNodes(current[0], current[1]):      
+        # if any(oldNode for oldNode in moveSet if oldNode[0] == node[0] and oldNode[1] == node[1]) or any(oldNode for oldNode in checkedSet if oldNode[0] == node[0] and oldNode[1] == node[1]): 
+          # continue
+        # if (len(self.grid[node[0]][node[1]]) == 0) or (node[0] == goalX and node[1] == goalY): 
+          # moveSet.append([node[0], node[1], math.floor(self.distance(node[0], node[1], goalX, goalY)),[current[0], current[1]]])
+      # checkedSet.append(moveSet[0])
+      # moveSet.remove(moveSet[0])         
+      # moveSet.sort(key=itemgetter(2))
+    
+    closedSet = []
+    #startx, starty, score, pathto
+    openSet = [[startX, startY, self.distance(startX, startY, goalX, goalY), []]]    
+    #while we have nodes to iterate
+    while len(openSet) > 0:
+      current = openSet[0]
+      #check to see if we have reached our goal
       if current[0] == goalX and current[1] == goalY:
-        pathNode = current;
-        finalPath = [[current[0],current[1]]]
-        while pathNode[0] != startX and pathNode[1] != startY:
-          pathNode = [node for node in checkedSet if(node[0] == pathNode[3][0] and node[1] == pathNode[3][1])][0]
-          finalPath = finalPath + [[pathNode[3][0], pathNode[3][1]]]
-        print startX, startY, goalX, goalY
-        print finalPath
-        return finalPath
-      for node in self.neighborNodes(current[0], current[1]):      
-        if any(oldNode for oldNode in moveSet if oldNode[0] == node[0] and oldNode[1] == node[1]) or any(oldNode for oldNode in checkedSet if oldNode[0] == node[0] and oldNode[1] == node[1]): 
+        return current[3] + [[goalX, goalY]]
+      #loops through each neighboring node
+      for node in self.neighborNodes(current[0], current[1]):
+        #calculate their score and path and add them as possible paths       
+        if any(oldnode for oldnode in openSet if oldnode[0] == node[0] and oldnode[1] == node[1]) or any(oldnode for oldnode in closedSet if oldnode[0] == node[0] and oldnode[1] == node[1]):
           continue
         if (len(self.grid[node[0]][node[1]]) == 0) or (node[0] == goalX and node[1] == goalY): 
-          moveSet.append([node[0], node[1], math.floor(self.distance(node[0], node[1], goalX, goalY)),[current[0], current[1]]])
-      checkedSet.append(moveSet[0])
-      moveSet.remove(moveSet[0])          
-      moveSet.sort(key=itemgetter(2))
+          score = self.distance(node[0], node[1], goalX, goalY)
+          path = current[3] + [[current[0], current[1]]]        
+          openSet.append([node[0], node[1], score, path])
+      openSet.remove(current)
+      closedSet.append(current)
+      openSet = sorted(openSet)        
+    return []
+    
+    # closedSet = []
+    # #StartX, startY, score, pathTo
+    # id = 0
+    # openSet = {id: [startX, startY, self.distance(startX, startY, goalX, goalY), id]}   
+    # #While we have nodes to iterate
+    # while len(openSet) > 0:
+      # current = openSet[id]
+      # #Check to see if we have reached our goal
+      # if current[0] == goalX and current[1] == goalY: 
+        # finalPath = [[current[0], current[1]]]
+        # traceID = current[3]
+        # while traceID != 0:
+          # lastNode = [oldNode for oldNode in closedSet if oldNode[2] == traceID][0]
+          # finalPath = finalPath + [[lastNode[0], lastNode[1]]] 
+          # traceID = lastNode[2] - 1 
+        # print finalPath          
+        # return finalPath      
+      # #Loops through each neighboring node
+      # for node in self.neighborNodes(current[0], current[1]):
+        # #Calculate their score and path and add them as possible paths       
+        # if any(oldNode for oldNode in openSet.values() if oldNode[0] == node[0] and oldNode[1] == node[1]) or any(oldNode for oldNode in closedSet if oldNode[0] == node[0] and oldNode[1] == node[1]):
+          # continue
+        # if (len(self.grid[node[0]][node[1]]) == 0) or (node[0] == goalX and node[1] == goalY): 
+          # score = self.distance(node[0], node[1], goalX, goalY)     
+          # openSet[id+1] = [node[0], node[1], score, id]
+      # del openSet[id]
+      # closedSet.append([current[0],current[1], id]) 
+      # id+=1      
+    # return []
+
     
   def findNearestFriendlyCreatureXY(self, creature):
     #Doesn't work if I only have one creature left
@@ -118,14 +172,13 @@ class AI(BaseAI):
     self.myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
     print self.turnNumber
     for creature in self.myCreatures:
-      coords = self.findNearestFriendlyCreatureXY(creature)
+      coords = self.findNearestFriendlyCreatureXY(creature)     
       path = self.findPath(creature.x, creature.y, coords[0], coords[1])
-      time.sleep(3)
-      tempCount = creature.movementLeft
-      while tempCount > 0 and len(path) > 0:
-        creature.move(path[0][0], path[0][0])
-        path.remove(path[0]);
-        tempCount -= 1
+      path.remove(path[0])
+      print creature.x, creature.y, path[0][0], path[0][1]
+      creature.move(path[0][0], path[0][1])
+      path.remove(path[0])
+      #print path
     return 1
 
   def __init__(self, conn):
