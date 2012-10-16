@@ -50,7 +50,9 @@ namespace visualizer
   {
   	game->renderer->setColor( Color( 1, 1, 1, 1 ) );
   	
-    game->renderer->drawTexturedQuad( m_Creature->x, m_Creature->y, 1, 1, "creature" );
+  	int frame = game->timeManager->getTurn() % 4;
+  	
+    game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature2" , frame);
     
   }
   
