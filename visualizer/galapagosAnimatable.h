@@ -15,6 +15,7 @@ namespace visualizer
         int height;
         float prevColor;
         float color;
+        float xPos;
         // todo: add more?
     };
     

@@ -1,6 +1,7 @@
 #include "animations.h"
 #include "galapagos.h"
 #include "easing_equations.h"
+#include "glm/gtx/fast_square_root.hpp"
 #include <sstream>
 #include <string>
 
@@ -21,13 +22,16 @@ namespace visualizer
 
   void DrawMap::animate( const float& t, AnimData * /*d*/, IGame* game )
   {
+    int middleY = m_Map->height / 2;
+  
     for (int x = 0; x < m_Map->width; x++)
     {
       for (int y = 0; y < m_Map->height; y++)
       {
+        float d = glm::fastInverseSqrt((float)((m_Map->xPos - x)*(m_Map->xPos - x)+(middleY-y)*(middleY-y)));
         float color = linearTween(t,m_Map->prevColor,m_Map->color - m_Map->prevColor,1.0); 
-      
-        game->renderer->setColor( Color( color, color, 0.2f,1.0f ) );
+ 
+        game->renderer->setColor( Color(color*10.0f*d, color, 0.2f,1.0f ) );
           
         game->renderer->drawTexturedQuad( x, y, 1, 1, "grass" );
       }
