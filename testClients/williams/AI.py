@@ -92,7 +92,7 @@ class AI(BaseAI):
     ediblePlants = [target for target in self.plants if target.size > 0]
     if len(ediblePlants) > 0:
       #Creates a dictionary of the distances to each plant that has a size > 0
-      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in self.plants if target.size > 0}  
+      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in ediblePlants}  
       #Returns the object that is the closest creature      
       bestPlant = next(target for target in self.plants if target.id == min(dict, key=dict.get))
       #Returns the x and y value of that plant's location
@@ -130,16 +130,18 @@ class AI(BaseAI):
         movementLeft = creature.movementLeft
         currentLoc = [creature.x, creature.y]
         #Move until we are to the plant or can move no more
-        #while len(path) > 0 and creature.movementLeft > 0 and self.distance(path[0][0], path[0][1], coords[0], coords[1]) > 1:
-        while len(path) > 0 and movementLeft > 0 and self.distance(path[0][0], path[0][1], coords[0], coords[1]) > 1:
+        #while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, coords[0], coords[1]) > 1:
+        while len(path) > 0 and movementLeft > 0 and self.distance(currentLoc[0], currentLoc[1], coords[0], coords[1]) > 1:
           creature.move(path[0][0], path[0][1]) 
           currentLoc = path[0]         
           path.remove(path[0])
           movementLeft -= 1
         #We are next to a plant! Eat it!
         #if self.distance(creature.x, creatue.y, coords[0], coords[1]) == 1:
-        if self.distance(currentLoc[0], currentLoc[1], coords[0], coords[1]) == 1:
-          creature.eat(coords[0], coords[1])         
+        if self.distance(currentLoc[0], currentLoc[1], coords[0], coords[1]) == 1.0:
+          creature.eat(coords[0], coords[1])  
+
+                
     return 1
 
   def __init__(self, conn):
