@@ -51,13 +51,13 @@ class Creature:
     #If creatures are stacked they are unable to perform any actions
     if len(self.game.grid[self.x][self.y]) > 1:
       if(self.decrementEnergy(self.game.energyPerAction, self)):
-        self.canAttack = False
+        self.canEat = False
         self.canBreed = False
         self.movementLeft = 0
     #Else, we decrement energy like normal and reset stats
     elif(self.decrementEnergy(self.game.energyPerAction, self)):
       self.movementLeft = self.speed
-      self.canAttack = True
+      self.canEat= True
       self.canBreed = True
     return True
 
