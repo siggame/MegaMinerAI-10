@@ -31,6 +31,7 @@ namespace visualizer
     {
     	int x;
     	int y;
+    	int owner;
     	// todo: add more
     };
 

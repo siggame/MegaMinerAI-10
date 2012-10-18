@@ -215,6 +215,7 @@ namespace visualizer
       	SmartPointer<Creature> creature = new Creature();
         creature->x = p.second.x;
         creature->y = p.second.y;
+        creature->owner = p.second.owner;
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
         
