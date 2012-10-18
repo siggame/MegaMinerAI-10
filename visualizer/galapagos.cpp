@@ -46,18 +46,6 @@ namespace visualizer
     int width = input.sx - input.x;
     int height = input.sy - input.y;
     
-    cout<<"width"<<width<<endl;
-    cout<<"height"<<height<<endl<<endl;
-    
-    if(width == 0)
-    {
-      width = 1;
-    }
-    if(height == 0)
-    {
-      height = 1;
-    }
-    
     int right = input.x+width;
     int bottom = input.y+height;
     
