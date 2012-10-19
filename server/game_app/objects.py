@@ -169,7 +169,8 @@ class Creature:
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
      
-    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
+#    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
+    newbaby = self.game.addObject(Creature,[self.owner,self.x,self.y]+self.newBreed(self,mate)+[self.id])
     self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])    
     self.canBreed = False
     mate.canBreed = False
@@ -206,7 +207,8 @@ class Creature:
     fatherStats.update(fatherCheck)
     motherStats.update(motherCheck)
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
-    return babyStats	
+    babyList = [babyStats['energy'],0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    return babyList	
    
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
     #Create a list of equivilent stats
