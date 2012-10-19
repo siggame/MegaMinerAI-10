@@ -6,16 +6,54 @@
 #include "parser/structures.h"
 
 #include "math.h"
+#include <string>
 
 namespace visualizer
 {
-    struct Map: public Animatable
+    class Map : public Animatable
     {
+    public:
+    
+        friend class DrawMap;
+    
+        struct Tile
+        {
+          explicit Tile(const std::string& tex = "sand") : texture(tex) {}
+
+          std::string texture;
+          
+          // todo: add more
+        };
+        
+        Map(int w, int h, float pc, float mc, float xp) : width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp)
+        {
+          m_tiles.resize(w*h);
+        }
+        
+        Tile& operator()(unsigned int r, unsigned int c)
+        {
+          return m_tiles[c + r*width];
+        }
+        
+        const Tile& operator()(unsigned int r, unsigned int c) const
+        {
+          return m_tiles[c + r*width];
+        }
+        
+        int Width() const { return width; }
+        int Height() const { return height; }
+        
+    private:
+    
+        std::vector<Tile> m_tiles;
         int width;
         int height;
-        float prevColor;
-        float color;
+        
+        // lighting
+        float prevMapColor;
+        float mapColor;
         float xPos;
+        
         // todo: add more?
     };
     

@@ -55,6 +55,8 @@ namespace visualizer
             
             void GetSelectedRect(Rect& out) const;
             
+            void SeedRand() const;
+            
             // this would not be needed if polymorphism was used... wtf
             template< class T >
             void AddSelectedObjsToList(const T& datastruct, const Rect& R)
