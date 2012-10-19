@@ -184,6 +184,30 @@ class Creature:
     self.game.grid[self.x][self.y].append(newbaby)       
     return True
    
+   
+  def newBreed(self,mate):
+    fatherStats = {'energy':(self.energy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
+    motherStats = {'energy':(mate.energy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
+    fatherCheck = {}
+    motherCheck = {}
+    if self.game.maxStat in fatherStats.values:
+  	fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
+	for ii in fatherStats:
+          if fatherStats[ii]==self.game.maxStat:
+            del fatherStats[ii]
+	    
+    if self.game.minStat in motherStats.values:
+	motherCheck = {ii:motherStats[ii] for ii in motherStats if motherStats[ii]==self.game.minStat}
+	for ii in motherStats:
+  	  if motherStats[ii]==self.game.minStat:
+	    del motherStats[ii]
+    fatherStats[max(fatherStats,key=fatherStats.get)]+=1
+    motherStats[min(fatherStats,key=motherStats.get)]-=1
+    fatherStats.update(fatherCheck)
+    motherStats.update(motherCheck)
+    babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
+    return babyStats	
+   
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
     #Create a list of equivilent stats
     stats = [energy, 0, carnivorism, herbivorism, speed, 0, defense]
