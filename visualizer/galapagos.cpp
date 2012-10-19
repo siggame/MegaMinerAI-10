@@ -117,6 +117,15 @@ namespace visualizer
   {
     return m_selectedUnitIDs;
   }
+  
+  void Galapagos::SeedRand() const
+  {
+    std::hash<std::string> hasher;
+    unsigned int seed = hasher(m_game->players[0]) + hasher(m_game->players[1]);
+    srand(seed);
+    
+    cout<<"Seed: "<<seed<<endl;
+  }
 
   void Galapagos::loadGamelog( std::string gamelog )
   {
@@ -143,6 +152,8 @@ namespace visualizer
           );
     }
     // END: Initial Setup
+    
+    SeedRand();
 
     // Setup the renderer as a 4 x 4 map by default
     // TODO: Change board size to something useful
