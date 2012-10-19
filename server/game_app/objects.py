@@ -170,7 +170,7 @@ class Creature:
     newSpeed = (self.speed + mate.speed) / 2
      
 #    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
-    newbaby = self.game.addObject(Creature,[self.owner,self.x,self.y]+self.newBreed(self,mate)+[self.id])
+    newbaby = self.game.addObject(Creature,[self.owner,self.x,self.y]+self.newBreed(mate)+[self.id])
     self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])    
     self.canBreed = False
     mate.canBreed = False
@@ -187,11 +187,11 @@ class Creature:
    
    
   def newBreed(self,mate):
-    fatherStats = {'energy':(self.energy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
-    motherStats = {'energy':(mate.energy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
+    fatherStats = {'energy':(self.maxEnergy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
+    motherStats = {'energy':(mate.maxEnergy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
     fatherCheck = {}
     motherCheck = {}
-    if self.game.maxStat in fatherStats.values:
+    if self.game.maxStat in fatherStats.values():
   	fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
 	for ii in fatherStats:
           if fatherStats[ii]==self.game.maxStat:
@@ -204,10 +204,9 @@ class Creature:
 	    del motherStats[ii]
     fatherStats[max(fatherStats,key=fatherStats.get)]+=1
     motherStats[min(fatherStats,key=motherStats.get)]-=1
-    fatherStats.update(fatherCheck)
-    motherStats.update(motherCheck)
+    fatherStats.update(fatherCheck); motherStats.update(motherCheck)
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
-    babyList = [babyStats['energy'],0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList	
    
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
