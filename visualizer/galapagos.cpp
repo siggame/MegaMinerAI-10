@@ -8,7 +8,13 @@
 #include <list>
 
 namespace visualizer
-{ 
+{
+  // todo: move this function elsewhere
+  float GetRandFloat(float a, float b)
+  {
+    float fRand = rand() / (RAND_MAX + 1.0f);
+    return fRand*(b - a) + a;
+  } 
   
   Galapagos::Galapagos()
   {
@@ -184,16 +190,14 @@ namespace visualizer
       float halfWidth = m_game->states[state].mapWidth / 2.0f;
     
       Frame turn;  // The frame that will be drawn
-      SmartPointer<Map> map = new Map();
-      map->width = m_game->states[state].mapWidth;
-      map->height = m_game->states[state].mapHeight;
-      map->color = 0.3f*sin((float)state*0.1f) + 0.5f;
-      map->xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
-      map->prevColor = fPrevColor;
+      float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
+      SmartPointer<Map> map = new Map(m_game->states[state].mapWidth,
+      m_game->states[state].mapHeight,fPrevColor,mapColor,halfWidth*sin((float)state*0.1f)+halfWidth);
+
       map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
       
-      fPrevColor = map->color;
+      fPrevColor = mapColor;
       
       for( auto& p : m_game->states[ state ].plants )
       {
@@ -201,6 +205,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
+        (*map)(plant->y,plant->x) = Map::Tile("grass");
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -215,6 +220,7 @@ namespace visualizer
         creature->x = p.second.x;
         creature->y = p.second.y;
         creature->owner = p.second.owner;
+        (*map)(creature->y,creature->x) = Map::Tile("grass");
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
         
