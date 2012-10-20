@@ -16,14 +16,14 @@ namespace visualizer
 
         struct Tile
         {
-          Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
+          explicit Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
 
           std::string texture;
           int turn;           
           // todo: add more
         };
         
-        Map(int w, int h, float pc, float mc, float xp) : width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp), m_tiles(w*h)
+        Map(int w, int h, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp) 
         {
         }
         
