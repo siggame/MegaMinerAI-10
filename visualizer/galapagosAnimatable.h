@@ -14,13 +14,15 @@ namespace visualizer
     {
     public:
     
+        // todo: remove friendship
         friend class DrawMap;
     
         struct Tile
         {
-          explicit Tile(const std::string& tex = "sand") : texture(tex) {}
+          Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
 
           std::string texture;
+          int turn;
           
           // todo: add more
         };
@@ -29,6 +31,14 @@ namespace visualizer
         {
           m_tiles.resize(w*h);
         }
+        
+        Map(const Map& other, float mapColor, float xPos) : m_tiles(other.m_tiles), width(other.width),
+        height(other.height), prevMapColor(other.mapColor), mapColor(mapColor), xPos(xPos)
+        {
+          
+        }
+    
+     
         
         Tile& operator()(unsigned int r, unsigned int c)
         {
@@ -42,6 +52,11 @@ namespace visualizer
         
         int Width() const { return width; }
         int Height() const { return height; }
+        
+        // lighting
+        void SetColor(float c) { mapColor = c; }
+        void SetSunPos(float x) { xPos = x; }
+        void SetPrevColor(float c) { prevMapColor = c; }
         
     private:
     
