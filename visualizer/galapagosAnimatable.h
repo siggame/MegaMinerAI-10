@@ -13,17 +13,13 @@ namespace visualizer
     class Map : public Animatable
     {
     public:
-    
-        // todo: remove friendship
-        friend class DrawMap;
-    
+
         struct Tile
         {
           Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
 
           std::string texture;
-          int turn;
-          
+          int turn;           
           // todo: add more
         };
         
@@ -37,7 +33,6 @@ namespace visualizer
         {
           
         }
-    
      
         
         Tile& operator()(unsigned int r, unsigned int c)
@@ -50,14 +45,12 @@ namespace visualizer
           return m_tiles[c + r*width];
         }
         
-        int Width() const { return width; }
-        int Height() const { return height; }
-        
-        // lighting
-        void SetColor(float c) { mapColor = c; }
-        void SetSunPos(float x) { xPos = x; }
-        void SetPrevColor(float c) { prevMapColor = c; }
-        
+        int GetWidth() const { return width; }
+        int GetHeight() const { return height; }
+        float GetPrevMapColor() const { return prevMapColor; }
+        float GetxPos() const { return xPos; }
+        float GetMapColor() const { return mapColor; }
+
     private:
     
         std::vector<Tile> m_tiles;

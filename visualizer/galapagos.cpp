@@ -175,7 +175,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Energy Left" << "Carn" << "Herb" << "Speed" << "Defence";
+    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Carn" << "Herb" << "Speed" << "Defence";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -216,7 +216,6 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
-        //(*map)(plant->y,plant->x) = Map::Tile("grass",0);
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -239,12 +238,11 @@ namespace visualizer
         turn[p.second.id]["Owner"] = p.second.owner;
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
-        turn[p.second.id]["Energy"] = -1;
-        turn[p.second.id]["Energy Left"] = -1;
-        turn[p.second.id]["Carn"] = -1;
-        turn[p.second.id]["Herb"] = -1;
-        turn[p.second.id]["Speed"] = -1;
-        turn[p.second.id]["Defence"] = -1;
+        turn[p.second.id]["Energy"] = p.second.energyLeft;
+        turn[p.second.id]["Carn"] = p.second.carnivorism;
+        turn[p.second.id]["Herb"] = p.second.herbivorism;
+        turn[p.second.id]["Speed"] = p.second.speed;
+        turn[p.second.id]["Defence"] = p.second.defense;
       }
 
       // end of parsing this state in the glog, build the turn
