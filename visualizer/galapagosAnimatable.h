@@ -23,9 +23,8 @@ namespace visualizer
           // todo: add more
         };
         
-        Map(int w, int h, float pc, float mc, float xp) : width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp)
+        Map(int w, int h, float pc, float mc, float xp) : width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp), m_tiles(w*h)
         {
-          m_tiles.resize(w*h);
         }
         
         Map(const Map& other, float mapColor, float xPos) : m_tiles(other.m_tiles), width(other.width),
