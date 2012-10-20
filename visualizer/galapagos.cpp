@@ -182,7 +182,7 @@ namespace visualizer
     animationEngine->registerGame(0, 0);
     
     // Starting color
-    float fPrevColor = 0.6f;
+    Map* pPrevMap = nullptr;
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
@@ -191,13 +191,24 @@ namespace visualizer
     
       Frame turn;  // The frame that will be drawn
       float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
-      SmartPointer<Map> map = new Map(m_game->states[state].mapWidth,
-      m_game->states[state].mapHeight,fPrevColor,mapColor,halfWidth*sin((float)state*0.1f)+halfWidth);
+      float xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
+      SmartPointer<Map> map;
+      
+      if(pPrevMap == nullptr)
+      {
+        map = new Map(m_game->states[state].mapWidth,
+        m_game->states[state].mapHeight,0.6f,mapColor,xPos);
+      }
+      else
+      {
+        map = new Map(*pPrevMap,mapColor,xPos); 
+      }
+     
+      pPrevMap = map;
+ 
 
       map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
-      
-      fPrevColor = mapColor;
       
       for( auto& p : m_game->states[ state ].plants )
       {
@@ -205,7 +216,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
-        (*map)(plant->y,plant->x) = Map::Tile("grass");
+        //(*map)(plant->y,plant->x) = Map::Tile("grass",0);
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -220,7 +231,7 @@ namespace visualizer
         creature->x = p.second.x;
         creature->y = p.second.y;
         creature->owner = p.second.owner;
-        (*map)(creature->y,creature->x) = Map::Tile("grass");
+        (*map)(creature->y,creature->x) = Map::Tile("sand",state);
         creature->addKeyFrame( new DrawCreature( creature ) );
         turn.addAnimatable( creature );
         
