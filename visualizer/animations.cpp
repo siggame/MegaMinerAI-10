@@ -24,23 +24,38 @@ namespace visualizer
   {
     int middleY = m_Map->GetHeight() / 2;
     
-    bool lighting = game->options->getNumber("Enable Sun") > 0.0f;
-    float color = linearTween(t,m_Map->GetPrevMapColor(),m_Map->GetMapColor() - m_Map->GetPrevMapColor(),1.0);
+    bool bLighting = game->options->getNumber("Enable Lighting") > 0.0f;
+    bool bSunEffect = bLighting && (game->options->getNumber("Enable Sun") > 0.0f);
+    float color = 1.0f;
+    
+    if(bLighting)
+    {
+      color = linearTween(t,m_Map->GetPrevMapColor(),m_Map->GetMapColor() - m_Map->GetPrevMapColor(),1.0);
+    }
+    
   
     for (int x = 0; x < m_Map->GetWidth(); x++)
     {
       for (int y = 0; y < m_Map->GetHeight(); y++)
       {
         const Map::Tile& tile = (*m_Map)(y,x);
-        float d = 1.0f;
+        float r = 0.8f;
+        float g = 0.8f;
         
-        if(lighting)
+        if(bLighting)
         {
-          d = glm::fastInverseSqrt((float)((m_Map->GetxPos() - x)*(m_Map->GetxPos() - x)+(middleY-y)*(middleY-y)))*10.0f;
-        }
-      
-        game->renderer->setColor( Color(color*d, color, 0.2f,1.0f ) );
+          float d = 1.0f;
           
+          if(bSunEffect)
+          {
+            d = glm::fastInverseSqrt((float)((m_Map->GetxPos() - x)*(m_Map->GetxPos() - x)+(middleY-y)*(middleY-y)))*10.0f;
+          }
+          
+          r = color*d;
+          g = color;
+        } 
+        
+        game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
         game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 7) < game->timeManager->getTurn() ? "grass" : tile.texture );
       }
     }
