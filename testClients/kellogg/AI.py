@@ -3,6 +3,65 @@ from BaseAI import BaseAI
 from GameObject import *
 import random
 import math
+import heapq
+
+class Cell(object):
+	def _init_(self,x,y,parent,reachable)
+		self.x = x
+		self.y = y
+		self.parent = parent
+		self.reachable = reachable
+		self.g = 0
+		self.h = 0
+		self.f = 0
+
+class Astar(object):
+	def _init_(self,creature,target):
+		self.open = []
+		self.closed = set()
+		self.cells = []
+		self.gridHeight = AI.mapHeight
+		self.gridWidth = AI.mapWidth
+		heapq.heapify(self.op)
+		
+	def init_grid(self):
+		lifeforms = AI.plants+AI.creatures
+		walls = [[lifeform.x,lifeform.y] for lifeform in lifeforms]
+		for x in range(AI.gridWidth):
+			for y in range(AI.gridHeight):
+				if (x,y) in walls:
+					reachable = False
+				else:
+					reachable = True
+				self.cells.append(Cell(x,y,reachable))
+				self.start = self.get_cell(creature.x,creature.y)
+				self.end = self.get_cell(target.x,target.y)
+	
+	def get_heuristic(self,cell):
+		return 10*(abs(cell.x-self.end.x)+abs(cell.y-self.end.y))
+		
+	def get_cell(self,x,y):
+		return self.cell[x*AI.mapHeight+y]
+
+	def get_adjacent_cells(self,cell):
+		cells = []
+		if cell.x < AI.gridWidth-1:
+			cells.append(self.get_cell(x+1,cell.y))
+		if cell.y > 0:
+			cells.append(self.get_cell(cell.x,cell.y-1))
+		if cell.x>0:
+			cells.append(self.get_cell(cell.x-1,cell.y))
+		if cell.y<AI.gridHeight-1:
+			cells.append(self.get_cell(cell.x,cell.y+1))
+		return cell
+		
+class Grid(object):
+		def _init_(self):
+ 		  grid = [[0 for ii in range(self.mapWidth)] for iii in range(self.mapHeight)]
+		  lifeforms = self.plants+self.creatures
+			for lifeform in lifeforms:
+				grid[lifeform.x][lifeform.y]=1	
+
 
 class AI(BaseAI):
   """The class implementing gameplay logic."""
