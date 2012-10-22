@@ -76,6 +76,8 @@ namespace visualizer
     {
     	int x;
     	int y;
+        int energyLeft;
+        int maxEnergy;
     	int owner;
     	// todo: add more
     };

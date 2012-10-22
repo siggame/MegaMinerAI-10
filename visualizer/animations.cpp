@@ -74,7 +74,7 @@ namespace visualizer
     Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1 ) : Color( 0.1, 0.1, 0.8, 1 );
   	game->renderer->setColor( color );
   	
-  	int frame = game->timeManager->getTurn() % 7;
+    int frame = (int)(7.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy) % 7;
   	
     game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
     
