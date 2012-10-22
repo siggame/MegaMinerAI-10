@@ -22,27 +22,41 @@ namespace visualizer
 
   void DrawMap::animate( const float& t, AnimData * /*d*/, IGame* game )
   {
-    int middleY = m_Map->height / 2;
+    int middleY = m_Map->GetHeight() / 2;
     
-    bool lighting = (bool)game->options->getNumber("Enable Sun");
-    float color = linearTween(t,m_Map->prevMapColor,m_Map->mapColor - m_Map->prevMapColor,1.0);
-  
-    for (int x = 0; x < m_Map->width; x++)
+    bool bLighting = game->options->getNumber("Enable Lighting") > 0.0f;
+    bool bSunEffect = bLighting && (game->options->getNumber("Enable Sun") > 0.0f);
+    float color = 1.0f;
+    
+    if(bLighting)
     {
-      for (int y = 0; y < m_Map->height; y++)
+      color = linearTween(t,m_Map->GetPrevMapColor(),m_Map->GetMapColor() - m_Map->GetPrevMapColor(),1.0);
+    }
+    
+  
+    for (int x = 0; x < m_Map->GetWidth(); x++)
+    {
+      for (int y = 0; y < m_Map->GetHeight(); y++)
       {
         const Map::Tile& tile = (*m_Map)(y,x);
-          
-        float d = 1.0f;
+        float r = 0.8f;
+        float g = 0.8f;
         
-        if(lighting)
+        if(bLighting)
         {
-          d = glm::fastInverseSqrt((float)((m_Map->xPos - x)*(m_Map->xPos - x)+(middleY-y)*(middleY-y)))*10.0f;
-        }
- 
-        game->renderer->setColor( Color(color*d, color, 0.2f,1.0f ) );
+          float d = 1.0f;
           
-        game->renderer->drawTexturedQuad( x, y, 1, 1, tile.texture );
+          if(bSunEffect)
+          {
+            d = glm::fastInverseSqrt((float)((m_Map->GetxPos() - x)*(m_Map->GetxPos() - x)+(middleY-y)*(middleY-y)))*10.0f;
+          }
+          
+          r = color*d;
+          g = color;
+        } 
+        
+        game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
+        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 7) < game->timeManager->getTurn() ? "grass" : tile.texture );
       }
     }
     

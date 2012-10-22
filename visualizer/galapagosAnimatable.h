@@ -13,22 +13,26 @@ namespace visualizer
     class Map : public Animatable
     {
     public:
-    
-        friend class DrawMap;
-    
+
         struct Tile
         {
-          explicit Tile(const std::string& tex = "sand") : texture(tex) {}
+          explicit Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
 
           std::string texture;
-          
+          int turn;           
           // todo: add more
         };
         
-        Map(int w, int h, float pc, float mc, float xp) : width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp)
+        Map(int w, int h, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp) 
         {
-          m_tiles.resize(w*h);
         }
+        
+        Map(const Map& other, float mapColor, float xPos) : m_tiles(other.m_tiles), width(other.width),
+        height(other.height), prevMapColor(other.mapColor), mapColor(mapColor), xPos(xPos)
+        {
+          
+        }
+     
         
         Tile& operator()(unsigned int r, unsigned int c)
         {
@@ -40,9 +44,12 @@ namespace visualizer
           return m_tiles[c + r*width];
         }
         
-        int Width() const { return width; }
-        int Height() const { return height; }
-        
+        int GetWidth() const { return width; }
+        int GetHeight() const { return height; }
+        float GetPrevMapColor() const { return prevMapColor; }
+        float GetxPos() const { return xPos; }
+        float GetMapColor() const { return mapColor; }
+
     private:
     
         std::vector<Tile> m_tiles;
