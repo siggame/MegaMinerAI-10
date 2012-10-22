@@ -26,20 +26,26 @@ class Match(DefaultGameWorld):
     self.scribe = Scribe(self.logPath())
     self.addPlayer(self.scribe, "spectator")
 
-    #TODO: INITIALIZE THESE!
     self.turnNumber = -1
     self.playerID = -1
     self.gameNumber = id
     self.mapWidth = self.mapWidth
     self.mapHeight = self.mapHeight
-    self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)] 
+    self.energyPerBreed = self.energyPerBreed
+    self.energyPerAction = self.energyPerAction
+    self.energyPerTurn = self.energyPerTurn  
+    self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
 
   def getObject(self, x, y):
     if len(self.grid[x][y]) > 0:
       return self.grid[x][y][0]
     else:
-      return None
-  
+      return None  
+    
+  #this is here to be wrapped
+  def __del__(self):
+    pass
+
   def addPlayer(self, connection, type="player"):
     connection.type = type
     if len(self.players) >= 2 and type == "player":
@@ -65,21 +71,29 @@ class Match(DefaultGameWorld):
       self.players.remove(connection)
     else:
       self.spectators.remove(connection)
-
-   #this is for testing if a plant should be made
+      
+  def initialStats(self):
+   # Start out with remaining stats equal to the max minus 5 because each stat has minimum of 1
+   stats = self.totalStartStats - 5
+   count = 0
+   list = [1, 1, 1, 1, 1]
+   while stats > 0:
+      position = count % 5
+      #between 1 and 7
+      remaining = self.maxStartStat - list[position]
+      # Random integer of stats to be added to current number. Can never exceed maxStat
+      temp = random.randint(0, stats) % (remaining + 1)
+      list[position] += temp
+      # Decrementing stats, reflecting how many available stats are left
+      stats -= temp
+      # Incrementing count so as to step through each position in the list
+      count += 1
+   
+   # First entry is energy, which is a multiple of 10 with a base energy
+   list[0] = self.baseEnergy + list[0] * 10
+   return list
+      
   def makePlant(self,x,y): 
-
-    #Better way   
-    
-    # midX = self.mapWidth/2
-    # midY = self.mapHeight/2
-    # distance = math.sqrt(midX - x)**2 + (midY - y)**2)
-    # maxDist =  math.sqrt((midX-0)**2 + (midY-0)**2)
-    # probability = (1-distance/totaldistance)*self.plantModifier
-    # if random.random() < probability:
-      # return math.floor(random.uniform(1,(self.plantMaxSize/2-self.plantMaxSize/2*(distance/totaldistance)))) +1
-    # return -1
-    
     x1 = self.mapWidth/2
     x2 = x
     y1 = self.mapHeight/2
@@ -98,7 +112,7 @@ class Match(DefaultGameWorld):
         toBeReturned = 1
       return toBeReturned
     return -1
-      
+
   def start(self):
     if len(self.players) < 2:
       return "Game is not full"
@@ -116,8 +130,10 @@ class Match(DefaultGameWorld):
         checkMakePlant = self.makePlant(plantsx,plantsy)
         if not (checkMakePlant == -1):
           #Add objects on both players' sides.
-          self.addObject(Plant,[plantsx,plantsy,checkMakePlant])
-          self.addObject(Plant,[self.mapWidth - plantsx -1,plantsy,checkMakePlant])
+          growthRate = math.floor(random.uniform(10, 30))
+          turnsUntilGrowth = growthRate
+          self.addObject(Plant,[plantsx,plantsy,checkMakePlant, growthRate, turnsUntilGrowth])
+          self.addObject(Plant,[self.mapWidth - plantsx -1 ,plantsy, checkMakePlant, growthRate, turnsUntilGrowth])
 
         plantsy += 1
       plantsx += 1
@@ -141,37 +157,10 @@ class Match(DefaultGameWorld):
     for creature in self.objects.creatures:
       self.grid[creature.x][creature.y] = [creature]
     self.nextTurn()
-
     return True
-  
-  
-  def initialStats(self):
-   # Start out with remaining stats equal to the max minus 5 because each stat has minimum of 1
-   stats = self.totalStartStats - 5
-   count = 0
-   list = [1, 1, 1, 1, 1]
-   while stats > 0:
-      position = count % 5
-      #between 1 and 7
-      remaining = self.maxStartStat - list[position]
-      # Random integer of stats to be added to current number. Can never exceed maxStat
-      temp = random.randint(0, stats) % (remaining + 1)
-      list[position] += temp
-      # Decrementing stats, reflecting how many available stats are left
-      stats -= temp
-      # Incrementing count so as to step through each position in the list
-      count += 1
-   
-   # First entry is energy, which is a multiple of 10 with a base energy
-   list[0] = self.baseEnergy + list[0] * 10
-   return list
-   
+
 
   def nextTurn(self):
-    # for col in range(len(self.grid)):
-      # for row in range(len(self.grid[col])):
-        # if len(self.grid[col][row]) > 0:
-          # print self.grid[col][row], col, row
     self.turnNumber += 1
     if self.turn == self.players[0]:
       self.turn = self.players[1]
@@ -206,12 +195,12 @@ class Match(DefaultGameWorld):
         self.declareWinner(player2, "Player 2 wins through creature domination")
       #Defaults player 1 as winner if both players have same number of creatures at end
       else:
-        self.declareWinner(player1, "The game was a tie.")             
-    
+        self.declareWinner(player1, "The game was a tie.")       
+
 
   def declareWinner(self, winner, reason=''):
-    self.winner = winner
     print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
+    self.winner = winner
 
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
     self.scribe.writeSExpr(msg)
@@ -226,7 +215,8 @@ class Match(DefaultGameWorld):
     self.sendStatus([self.players[self.playerID]])
     self.playerID ^= 1
     self.turn = None
-    
+    self.objects.clear()
+
   def logPath(self):
     return "logs/" + str(self.id) + ".glog"
 
@@ -239,8 +229,8 @@ class Match(DefaultGameWorld):
     return object.eat(x, y, )
 
   @derefArgs(Creature, Creature)
-  def breed(self, object, mate, ):
-    return object.breed(mate)
+  def breed(self, object, mate):
+    return object.breed(mate, )
 
   @derefArgs(Player, None)
   def talk(self, object, message):
@@ -273,9 +263,10 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.turnNumber, self.playerID, self.gameNumber, self.mapWidth, self.mapHeight])
+    msg.append(["game", self.turnNumber, self.playerID, self.gameNumber, self.mapWidth, self.mapHeight, self.energyPerBreed, self.energyPerAction, self.energyPerTurn])
 
     typeLists = []
+    typeLists.append(["Mappable"] + [i.toList() for i in self.objects.values() if i.__class__ is Mappable])
     typeLists.append(["Creature"] + [i.toList() for i in self.objects.values() if i.__class__ is Creature])
     typeLists.append(["Plant"] + [i.toList() for i in self.objects.values() if i.__class__ is Plant])
     typeLists.append(["Player"] + [i.toList() for i in self.objects.values() if i.__class__ is Player])
@@ -283,10 +274,9 @@ class Match(DefaultGameWorld):
     msg.extend(typeLists)
 
     return msg
-
-
-#SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
-#This function assumes the plants have been spawned symmetrically across the vertical axis
+    
+  #SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
+  #This function assumes the plants have been spawned symmetrically across the vertical axis
   def spawnCreatures(self):
     i = 0
     while i < self.startingCreatures:
@@ -296,15 +286,16 @@ class Match(DefaultGameWorld):
       statList = [randStats[0], randStats[0], randStats[1], randStats[2], randStats[3], randStats[3], randStats[4]]
     #Generate x,y for creature location
       while True:
-        newX = int(random.uniform(0,1)*self.mapWidth / 2)
-        newY = int(random.uniform(0,1)*self.mapHeight)
+        newX = int(random.uniform(0,self.mapWidth / 2))
+        newY = int(random.uniform(0, self.mapHeight))
       #check map if the space is unoccupied, otherwise generate a new X,Y
         if self.getObject(newX, newY) is None:
-          self.addObject(Creature,[0, newX, newY]+statList+[0])  
-          self.addObject(Creature,[1, (self.mapWidth-newX-1), newY]+statList+[0])
+          self.addObject(Creature,[newX, newY, 0]+statList+[0])  
+          self.addObject(Creature,[(self.mapWidth-newX-1), newY, 1]+statList+[0])
           break          
     #end while
     return
 
 
 loadClassDefaults()
+
