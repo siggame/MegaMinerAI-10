@@ -276,6 +276,7 @@ namespace visualizer
       for(auto iter = rangePair.first; iter != rangePair.second; ++iter)
       {
           turn.addAnimatable((iter->second));
+          animations.erase(iter);
       }
 
       // end of parsing this state in the glog, build the turn
