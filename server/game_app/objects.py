@@ -92,20 +92,23 @@ class Creature(Mappable):
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
-    #Make all objects into a map to reduce check times
-    if self.game.getObject(x,y) is not None:
-      return "There is already an object in that location."
-      
+    #Make all objects into a map to reduce check times if isinstance(lifeform, Plant):
+    elif isinstance(self.game.getObject(x,y), Plant):
+      if self.game.getObject(x,y).size > 0:
+        return "There is a plant there!."
+    elif isinstance(self.game.getObject(x,y), Creature):
+      return "There is a creature there!."     
     if(self.decrementEnergy(self.game.energyPerAction, self)):
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
-            
-      print "moving a creature"
       self.x = x
       self.y = y
       self.movementLeft -= 1
       self.game.animations.append(['move', self.id, self.x, self.y, x, y])  
+      if isinstance(self.game.getObject(x,y), Plant):
+        self.game.removeObject(self.game.getObject(x,y))
+        self.game.grid[x][y].remove(self.game.getObject(x,y))
       return True
     return "Your creature died of starvation as it tried to move"
 
@@ -128,7 +131,6 @@ class Creature(Mappable):
     if lifeform is None:
       return "No lifeforms at that location."  
     if isinstance(lifeform, Plant):
-      print "trying to eat a plant"
       plant = lifeform
       if plant.size == 0:
         return "That plant is too small to eat."
@@ -138,7 +140,6 @@ class Creature(Mappable):
       plant.size -= 1
       self.game.animations.append(['eat', self.id, plant.id])
     else:
-      print "trying to eat a creature"
       creature = lifeform
       damage = self.carnivorism - creature.defense
       if damage < 1:
@@ -246,8 +247,6 @@ class Creature(Mappable):
     
     return stats
 
-
-
 class Plant(Mappable):
   def __init__(self, game, id, x, y, size, growthRate, turnsUntilGrowth):
     self.game = game
@@ -270,27 +269,11 @@ class Plant(Mappable):
     return value
 
   def nextTurn(self):
-    #Grow slower if at zero
-    if self.size == 0:
-      if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
-        if self.x < self.game.mapWidth /2:
-          self.size += 1
-      if (self.game.turnNumber + 1) % self.game.plantGrowthRate *2 == 0:
-        if self.x >= self.game.mapWidth /2:
-          self.size += 1
-    #Grow normal if not at zero
-    else:
-      if self.game.turnNumber % self.game.plantGrowthRate == 0:
-        if self.x < self.game.mapWidth /2:
-          if self.size < self.game.plantMaxSize:
-            self.size += 1
-      if (self.game.turnNumber + 1) % self.game.plantGrowthRate == 0:
-        if self.x >= self.game.mapWidth /2:
-          if self.size < self.game.plantMaxSize:
-            self.size += 1
+    self.turnsUntilGrowth -= 1
+    if self.turnsUntilGrowth == 0 and self.size < 10:
+      self.size += 1
+      self.turnsUntilGrowth = self.growthRate     
     return True
-
-
 
 class Player:
   def __init__(self, game, id, playerName, time):
