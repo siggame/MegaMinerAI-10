@@ -7,6 +7,9 @@ from networking.sexpr.sexpr import *
 import os
 import itertools
 import scribe
+import jsonLogger
+
+# added
 import math
 import random
 
@@ -24,6 +27,9 @@ class Match(DefaultGameWorld):
     self.controller = controller
     DefaultGameWorld.__init__(self)
     self.scribe = Scribe(self.logPath())
+    self.jsonLogger = jsonLogger.JsonLogger(self.logPath())
+    self.jsonAnimations = []
+    self.dictLog = dict(gameName = "Galapagos", turns = [])
     self.addPlayer(self.scribe, "spectator")
 
     self.turnNumber = -1
@@ -180,6 +186,26 @@ class Match(DefaultGameWorld):
       self.sendStatus([self.turn] +  self.spectators)
     else:
       self.sendStatus(self.spectators)
+      
+    self.dictLog['turns'].append(
+      dict(
+        turnNumber = self.turnNumber,
+        playerID = self.playerID,
+        gameNumber = self.gameNumber,
+        mapWidth = self.mapWidth,
+        mapHeight = self.mapHeight,
+        energyPerBreed = self.energyPerBreed,
+        energyPerAction = self.energyPerAction,
+        energyPerTurn = self.energyPerTurn,
+        Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
+        Creatures = [i.toJson() for i in self.objects.values() if i.__class__ is Creature],
+        Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
+        Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
+        animations = self.jsonAnimations
+      )
+    )
+    
+    self.jsonAnimations = []
     self.animations = ["animations"]
     return True
 
@@ -202,12 +228,20 @@ class Match(DefaultGameWorld):
     print "Game", self.id, "over"
     self.winner = winner
     self.sendStatus(self.spectators)
+    
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
+    
+    self.dictLog["winnerID"] =  self.getPlayerIndex(self.winner)
+    self.dictLog["winReason"] = reason
+    self.jsonLogger.writeLog( self.dictLog )
+    
     self.scribe.writeSExpr(msg)
     self.scribe.finalize()
     self.removePlayer(self.scribe)
+    
     for p in self.players + self.spectators:
       p.writeSExpr(msg)
+    
     self.sendStatus([self.turn])
     self.playerID ^= 1
     self.sendStatus([self.players[self.playerID]])
@@ -271,7 +305,14 @@ class Match(DefaultGameWorld):
     msg.extend(typeLists)
 
     return msg
-    
+  
+  def addAnimation(self, anim):
+    # generate the sexp
+    self.animations.append(anim.toList())
+    # generate the json
+    self.jsonAnimations.append(anim.toJson())
+  
+  
   #SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
   #This function assumes the plants have been spawned symmetrically across the vertical axis
   def spawnCreatures(self):
