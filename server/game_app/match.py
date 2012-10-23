@@ -40,7 +40,7 @@ class Match(DefaultGameWorld):
     if len(self.grid[x][y]) > 0:
       return self.grid[x][y][0]
     else:
-      return None  
+      return None
     
   #this is here to be wrapped
   def __del__(self):

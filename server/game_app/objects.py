@@ -68,16 +68,17 @@ class Creature(Mappable):
 
   def nextTurn(self):
     #If creatures are stacked they are unable to perform any actions
-    if len(self.game.grid[self.x][self.y]) > 1:
-      if(self.decrementEnergy(self.game.energyPerAction, self)):
-        self.canEat = False
-        self.canBreed = False
-        self.movementLeft = 0
-    #Else, we decrement energy like normal and reset stats
-    elif(self.decrementEnergy(self.game.energyPerAction, self)):
-      self.movementLeft = self.speed
-      self.canEat= True
-      self.canBreed = True
+    if self.game.grid[self.x][self.y] is not None:
+      if len(self.game.grid[self.x][self.y]) > 1:
+        if(self.decrementEnergy(self.game.energyPerAction, self)):
+          self.canEat = False
+          self.canBreed = False
+          self.movementLeft = 0
+      #Else, we decrement energy like normal and reset stats
+      elif(self.decrementEnergy(self.game.energyPerAction, self)):
+        self.movementLeft = self.speed
+        self.canEat= True
+        self.canBreed = True
     return True
 
   def move(self, x, y):
@@ -181,7 +182,6 @@ class Creature(Mappable):
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
   
-    print "giggity"
   # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
@@ -189,8 +189,7 @@ class Creature(Mappable):
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
      
-#    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
-    newbaby = self.game.addObject(Creature,[self.owner,self.x,self.y]+self.newBreed(mate)+[self.id])
+    newbaby = self.game.addObject(Creature,[self.x,self.y, self.owner]+self.newBreed(mate)+[self.id])
     self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])    
     self.canBreed = False
     mate.canBreed = False
@@ -214,9 +213,9 @@ class Creature(Mappable):
     #Create a new baby based on the average of the parents stats
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}   
 
-    print sum(fatherStats.values())
-    print sum(fatherStats.values())
-    print sum(babyStats.values())
+    print "Sum of the father's stats:", sum(fatherStats.values())
+    print "Sum of the mothers's stats:", sum(motherStats.values())
+    print "Sum of the baby's stats:", sum(babyStats.values())
     #Remove fringe cases from possibilities
     for ii in babyStats:
       if babyStats[ii]==self.game.minStat:
