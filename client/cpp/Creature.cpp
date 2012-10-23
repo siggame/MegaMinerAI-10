@@ -15,11 +15,6 @@ int Creature::id()
   return ((_Creature*)ptr)->id;
 }
 
-int Creature::owner()
-{
-  return ((_Creature*)ptr)->owner;
-}
-
 int Creature::x()
 {
   return ((_Creature*)ptr)->x;
@@ -28,6 +23,11 @@ int Creature::x()
 int Creature::y()
 {
   return ((_Creature*)ptr)->y;
+}
+
+int Creature::owner()
+{
+  return ((_Creature*)ptr)->owner;
 }
 
 int Creature::maxEnergy()
@@ -65,9 +65,9 @@ int Creature::defense()
   return ((_Creature*)ptr)->defense;
 }
 
-int Creature::canAttack()
+int Creature::canEat()
 {
-  return ((_Creature*)ptr)->canAttack;
+  return ((_Creature*)ptr)->canEat;
 }
 
 int Creature::canBreed()
@@ -101,9 +101,9 @@ int Creature::breed(Creature& mate)
 std::ostream& operator<<(std::ostream& stream,Creature ob)
 {
   stream << "id: " << ((_Creature*)ob.ptr)->id  <<'\n';
-  stream << "owner: " << ((_Creature*)ob.ptr)->owner  <<'\n';
   stream << "x: " << ((_Creature*)ob.ptr)->x  <<'\n';
   stream << "y: " << ((_Creature*)ob.ptr)->y  <<'\n';
+  stream << "owner: " << ((_Creature*)ob.ptr)->owner  <<'\n';
   stream << "maxEnergy: " << ((_Creature*)ob.ptr)->maxEnergy  <<'\n';
   stream << "energyLeft: " << ((_Creature*)ob.ptr)->energyLeft  <<'\n';
   stream << "carnivorism: " << ((_Creature*)ob.ptr)->carnivorism  <<'\n';
@@ -111,7 +111,7 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "speed: " << ((_Creature*)ob.ptr)->speed  <<'\n';
   stream << "movementLeft: " << ((_Creature*)ob.ptr)->movementLeft  <<'\n';
   stream << "defense: " << ((_Creature*)ob.ptr)->defense  <<'\n';
-  stream << "canAttack: " << ((_Creature*)ob.ptr)->canAttack  <<'\n';
+  stream << "canEat: " << ((_Creature*)ob.ptr)->canEat  <<'\n';
   stream << "canBreed: " << ((_Creature*)ob.ptr)->canBreed  <<'\n';
   stream << "parentID: " << ((_Creature*)ob.ptr)->parentID  <<'\n';
   return stream;

@@ -29,7 +29,12 @@ public interface Client extends Library {
   int getGameNumber(Pointer connection);
   int getMapWidth(Pointer connection);
   int getMapHeight(Pointer connection);
+  int getEnergyPerBreed(Pointer connection);
+  int getEnergyPerAction(Pointer connection);
+  int getEnergyPerTurn(Pointer connection);
 
+  Pointer getMappable(Pointer connection, int num);
+  int getMappableCount(Pointer connection);
   Pointer getCreature(Pointer connection, int num);
   int getCreatureCount(Pointer connection);
   Pointer getPlant(Pointer connection, int num);
@@ -39,10 +44,14 @@ public interface Client extends Library {
 
 
     //getters
+  int mappableGetId(Pointer ptr);
+  int mappableGetX(Pointer ptr);
+  int mappableGetY(Pointer ptr);
+
   int creatureGetId(Pointer ptr);
-  int creatureGetOwner(Pointer ptr);
   int creatureGetX(Pointer ptr);
   int creatureGetY(Pointer ptr);
+  int creatureGetOwner(Pointer ptr);
   int creatureGetMaxEnergy(Pointer ptr);
   int creatureGetEnergyLeft(Pointer ptr);
   int creatureGetCarnivorism(Pointer ptr);
@@ -50,7 +59,7 @@ public interface Client extends Library {
   int creatureGetSpeed(Pointer ptr);
   int creatureGetMovementLeft(Pointer ptr);
   int creatureGetDefense(Pointer ptr);
-  int creatureGetCanAttack(Pointer ptr);
+  int creatureGetCanEat(Pointer ptr);
   int creatureGetCanBreed(Pointer ptr);
   int creatureGetParentID(Pointer ptr);
 
@@ -58,6 +67,8 @@ public interface Client extends Library {
   int plantGetX(Pointer ptr);
   int plantGetY(Pointer ptr);
   int plantGetSize(Pointer ptr);
+  int plantGetGrowthRate(Pointer ptr);
+  int plantGetTurnsUntilGrowth(Pointer ptr);
 
   int playerGetId(Pointer ptr);
   String playerGetPlayerName(Pointer ptr);

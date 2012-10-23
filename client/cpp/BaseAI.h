@@ -8,6 +8,7 @@
 #include <ctime>
 #include "game.h"
 
+#include "Mappable.h"
 #include "Creature.h"
 #include "Plant.h"
 #include "Player.h"
@@ -21,6 +22,7 @@ class BaseAI
 {
 protected:
   Connection* c;
+  std::vector<Mappable> mappables;
   std::vector<Creature> creatures;
   std::vector<Plant> plants;
   std::vector<Player> players;
@@ -35,6 +37,12 @@ public:
   int mapWidth();
   ///The height of the map
   int mapHeight();
+  ///The amount of energy required from each creature in order to breed.
+  int energyPerBreed();
+  ///The amount of energy required to try to eat or to move.
+  int energyPerAction();
+  ///The amount of energy lost from the passage of time.
+  int energyPerTurn();
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

@@ -8,12 +8,21 @@ namespace parser
 {
 
 
+std::ostream& operator<<(std::ostream& stream, Mappable ob)
+{
+  stream << "id: " << ob.id  <<'\n';
+  stream << "x: " << ob.x  <<'\n';
+  stream << "y: " << ob.y  <<'\n';
+  return stream;
+}
+
+
 std::ostream& operator<<(std::ostream& stream, Creature ob)
 {
   stream << "id: " << ob.id  <<'\n';
-  stream << "owner: " << ob.owner  <<'\n';
   stream << "x: " << ob.x  <<'\n';
   stream << "y: " << ob.y  <<'\n';
+  stream << "owner: " << ob.owner  <<'\n';
   stream << "maxEnergy: " << ob.maxEnergy  <<'\n';
   stream << "energyLeft: " << ob.energyLeft  <<'\n';
   stream << "carnivorism: " << ob.carnivorism  <<'\n';
@@ -21,7 +30,7 @@ std::ostream& operator<<(std::ostream& stream, Creature ob)
   stream << "speed: " << ob.speed  <<'\n';
   stream << "movementLeft: " << ob.movementLeft  <<'\n';
   stream << "defense: " << ob.defense  <<'\n';
-  stream << "canAttack: " << ob.canAttack  <<'\n';
+  stream << "canEat: " << ob.canEat  <<'\n';
   stream << "canBreed: " << ob.canBreed  <<'\n';
   stream << "parentID: " << ob.parentID  <<'\n';
   return stream;
@@ -34,6 +43,8 @@ std::ostream& operator<<(std::ostream& stream, Plant ob)
   stream << "x: " << ob.x  <<'\n';
   stream << "y: " << ob.y  <<'\n';
   stream << "size: " << ob.size  <<'\n';
+  stream << "growthRate: " << ob.growthRate  <<'\n';
+  stream << "turnsUntilGrowth: " << ob.turnsUntilGrowth  <<'\n';
   return stream;
 }
 
@@ -103,7 +114,13 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "gameNumber: " << ob.gameNumber  <<'\n';
   stream << "mapWidth: " << ob.mapWidth  <<'\n';
   stream << "mapHeight: " << ob.mapHeight  <<'\n';
+  stream << "energyPerBreed: " << ob.energyPerBreed  <<'\n';
+  stream << "energyPerAction: " << ob.energyPerAction  <<'\n';
+  stream << "energyPerTurn: " << ob.energyPerTurn  <<'\n';
 
+  stream << "\n\nMappables:\n";
+  for(std::map<int,Mappable>::iterator i = ob.mappables.begin(); i != ob.mappables.end(); i++)
+    stream << i->second << '\n';
   stream << "\n\nCreatures:\n";
   for(std::map<int,Creature>::iterator i = ob.creatures.begin(); i != ob.creatures.end(); i++)
     stream << i->second << '\n';

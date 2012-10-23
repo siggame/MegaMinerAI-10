@@ -1,16 +1,11 @@
 import com.sun.jna.Pointer;
 
 ///A basic plant!
-class Plant
+class Plant extends Mappable
 {
-  Pointer ptr;
-  int ID;
-  int iteration;
   public Plant(Pointer p)
   {
-    ptr = p;
-    ID = Client.INSTANCE.plantGetId(ptr);
-    iteration = BaseAI.iteration;
+    super(p);
   }
   boolean validify()
   {
@@ -38,13 +33,13 @@ class Plant
     validify();
     return Client.INSTANCE.plantGetId(ptr);
   }
-  ///X position of the plant
+  ///X position of the object
   public int getX()
   {
     validify();
     return Client.INSTANCE.plantGetX(ptr);
   }
-  ///Y position of the plant
+  ///Y position of the object
   public int getY()
   {
     validify();
@@ -55,6 +50,18 @@ class Plant
   {
     validify();
     return Client.INSTANCE.plantGetSize(ptr);
+  }
+  ///The number of turns it takes this plant to grow in size.
+  public int getGrowthRate()
+  {
+    validify();
+    return Client.INSTANCE.plantGetGrowthRate(ptr);
+  }
+  ///The number of turns left until this plant will grow again.
+  public int getTurnsUntilGrowth()
+  {
+    validify();
+    return Client.INSTANCE.plantGetTurnsUntilGrowth(ptr);
   }
 
 }

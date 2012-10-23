@@ -1,12 +1,20 @@
 #include "getters.h"
 
-DLLEXPORT int creatureGetId(_Creature* ptr)
+DLLEXPORT int mappableGetId(_Mappable* ptr)
 {
   return ptr->id;
 }
-DLLEXPORT int creatureGetOwner(_Creature* ptr)
+DLLEXPORT int mappableGetX(_Mappable* ptr)
 {
-  return ptr->owner;
+  return ptr->x;
+}
+DLLEXPORT int mappableGetY(_Mappable* ptr)
+{
+  return ptr->y;
+}
+DLLEXPORT int creatureGetId(_Creature* ptr)
+{
+  return ptr->id;
 }
 DLLEXPORT int creatureGetX(_Creature* ptr)
 {
@@ -15,6 +23,10 @@ DLLEXPORT int creatureGetX(_Creature* ptr)
 DLLEXPORT int creatureGetY(_Creature* ptr)
 {
   return ptr->y;
+}
+DLLEXPORT int creatureGetOwner(_Creature* ptr)
+{
+  return ptr->owner;
 }
 DLLEXPORT int creatureGetMaxEnergy(_Creature* ptr)
 {
@@ -44,9 +56,9 @@ DLLEXPORT int creatureGetDefense(_Creature* ptr)
 {
   return ptr->defense;
 }
-DLLEXPORT int creatureGetCanAttack(_Creature* ptr)
+DLLEXPORT int creatureGetCanEat(_Creature* ptr)
 {
-  return ptr->canAttack;
+  return ptr->canEat;
 }
 DLLEXPORT int creatureGetCanBreed(_Creature* ptr)
 {
@@ -71,6 +83,14 @@ DLLEXPORT int plantGetY(_Plant* ptr)
 DLLEXPORT int plantGetSize(_Plant* ptr)
 {
   return ptr->size;
+}
+DLLEXPORT int plantGetGrowthRate(_Plant* ptr)
+{
+  return ptr->growthRate;
+}
+DLLEXPORT int plantGetTurnsUntilGrowth(_Plant* ptr)
+{
+  return ptr->turnsUntilGrowth;
 }
 DLLEXPORT int playerGetId(_Player* ptr)
 {

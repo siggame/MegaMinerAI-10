@@ -6,22 +6,26 @@
 #include <iostream>
 #include "structures.h"
 
+#include "Mappable.h"
 
 ///A basic plant!
-class Plant {
+class Plant : public Mappable {
   public:
-  void* ptr;
   Plant(_Plant* ptr = NULL);
 
   // Accessors
   ///Unique Identifier
   int id();
-  ///X position of the plant
+  ///X position of the object
   int x();
-  ///Y position of the plant
+  ///Y position of the object
   int y();
   ///The size of the plant
   int size();
+  ///The number of turns it takes this plant to grow in size.
+  int growthRate();
+  ///The number of turns left until this plant will grow again.
+  int turnsUntilGrowth();
 
   // Actions
 

@@ -1,7 +1,6 @@
 #-*-python-*-
 from BaseAI import BaseAI
 from GameObject import *
-import random
 
 class AI(BaseAI):
   """The class implementing gameplay logic."""
@@ -24,9 +23,7 @@ class AI(BaseAI):
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):
-    print "Turn: ", self.turnNumber
-    print "Creatures: ", len(self.creatures)
-    print "Plants: ", len(self.plants)
+    print self.turnNumber
     return 1
 
   def __init__(self, conn):

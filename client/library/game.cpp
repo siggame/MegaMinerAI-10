@@ -59,6 +59,11 @@ DLLEXPORT Connection* createConnection()
   c->gameNumber = 0;
   c->mapWidth = 0;
   c->mapHeight = 0;
+  c->energyPerBreed = 0;
+  c->energyPerAction = 0;
+  c->energyPerTurn = 0;
+  c->Mappables = NULL;
+  c->MappableCount = 0;
   c->Creatures = NULL;
   c->CreatureCount = 0;
   c->Plants = NULL;
@@ -73,6 +78,13 @@ DLLEXPORT void destroyConnection(Connection* c)
   #ifdef ENABLE_THREADS
   pthread_mutex_destroy(&c->mutex);
   #endif
+  if(c->Mappables)
+  {
+    for(int i = 0; i < c->MappableCount; i++)
+    {
+    }
+    delete[] c->Mappables;
+  }
   if(c->Creatures)
   {
     for(int i = 0; i < c->CreatureCount; i++)
@@ -203,6 +215,7 @@ DLLEXPORT void getStatus(Connection* c)
 }
 
 
+
 DLLEXPORT int creatureMove(_Creature* object, int x, int y)
 {
   stringstream expr;
@@ -257,6 +270,21 @@ DLLEXPORT int playerTalk(_Player* object, char* message)
 
 
 //Utility functions for parsing data
+void parseMappable(Connection* c, _Mappable* object, sexp_t* expression)
+{
+  sexp_t* sub;
+  sub = expression->list;
+
+  object->_c = c;
+
+  object->id = atoi(sub->val);
+  sub = sub->next;
+  object->x = atoi(sub->val);
+  sub = sub->next;
+  object->y = atoi(sub->val);
+  sub = sub->next;
+
+}
 void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
 {
   sexp_t* sub;
@@ -266,11 +294,11 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
 
   object->id = atoi(sub->val);
   sub = sub->next;
-  object->owner = atoi(sub->val);
-  sub = sub->next;
   object->x = atoi(sub->val);
   sub = sub->next;
   object->y = atoi(sub->val);
+  sub = sub->next;
+  object->owner = atoi(sub->val);
   sub = sub->next;
   object->maxEnergy = atoi(sub->val);
   sub = sub->next;
@@ -286,7 +314,7 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->defense = atoi(sub->val);
   sub = sub->next;
-  object->canAttack = atoi(sub->val);
+  object->canEat = atoi(sub->val);
   sub = sub->next;
   object->canBreed = atoi(sub->val);
   sub = sub->next;
@@ -308,6 +336,10 @@ void parsePlant(Connection* c, _Plant* object, sexp_t* expression)
   object->y = atoi(sub->val);
   sub = sub->next;
   object->size = atoi(sub->val);
+  sub = sub->next;
+  object->growthRate = atoi(sub->val);
+  sub = sub->next;
+  object->turnsUntilGrowth = atoi(sub->val);
   sub = sub->next;
 
 }
@@ -412,6 +444,32 @@ DLLEXPORT int networkLoop(Connection* c)
           c->mapHeight = atoi(sub->val);
           sub = sub->next;
 
+          c->energyPerBreed = atoi(sub->val);
+          sub = sub->next;
+
+          c->energyPerAction = atoi(sub->val);
+          sub = sub->next;
+
+          c->energyPerTurn = atoi(sub->val);
+          sub = sub->next;
+
+        }
+        else if(string(sub->val) == "Mappable")
+        {
+          if(c->Mappables)
+          {
+            for(int i = 0; i < c->MappableCount; i++)
+            {
+            }
+            delete[] c->Mappables;
+          }
+          c->MappableCount =  sexp_list_length(expression)-1; //-1 for the header
+          c->Mappables = new _Mappable[c->MappableCount];
+          for(int i = 0; i < c->MappableCount; i++)
+          {
+            sub = sub->next;
+            parseMappable(c, c->Mappables+i, sub);
+          }
         }
         else if(string(sub->val) == "Creature")
         {
@@ -479,6 +537,15 @@ DLLEXPORT int networkLoop(Connection* c)
   }
 }
 
+DLLEXPORT _Mappable* getMappable(Connection* c, int num)
+{
+  return c->Mappables + num;
+}
+DLLEXPORT int getMappableCount(Connection* c)
+{
+  return c->MappableCount;
+}
+
 DLLEXPORT _Creature* getCreature(Connection* c, int num)
 {
   return c->Creatures + num;
@@ -526,4 +593,16 @@ DLLEXPORT int getMapWidth(Connection* c)
 DLLEXPORT int getMapHeight(Connection* c)
 {
   return c->mapHeight;
+}
+DLLEXPORT int getEnergyPerBreed(Connection* c)
+{
+  return c->energyPerBreed;
+}
+DLLEXPORT int getEnergyPerAction(Connection* c)
+{
+  return c->energyPerAction;
+}
+DLLEXPORT int getEnergyPerTurn(Connection* c)
+{
+  return c->energyPerTurn;
 }

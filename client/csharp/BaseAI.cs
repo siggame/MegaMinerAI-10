@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 ///The provided AI class does just that.
 public abstract class BaseAI
 {
+  public static Mappable[] mappables;
   public static Creature[] creatures;
   public static Plant[] plants;
   public static Player[] players;
@@ -44,6 +45,12 @@ public abstract class BaseAI
   {
     iteration++;
     int count = 0;
+    count = Client.getMappableCount(connection);
+    mappables = new Mappable[count];
+    for(int i = 0; i < count; i++)
+    {
+      mappables[i] = new Mappable(Client.getMappable(connection, i));
+    }
     count = Client.getCreatureCount(connection);
     creatures = new Creature[count];
     for(int i = 0; i < count; i++)
@@ -100,6 +107,24 @@ public abstract class BaseAI
   public int mapHeight()
   {
     int value = Client.getMapHeight(connection);
+    return value;
+  }
+  ///The amount of energy required from each creature in order to breed.
+  public int energyPerBreed()
+  {
+    int value = Client.getEnergyPerBreed(connection);
+    return value;
+  }
+  ///The amount of energy required to try to eat or to move.
+  public int energyPerAction()
+  {
+    int value = Client.getEnergyPerAction(connection);
+    return value;
+  }
+  ///The amount of energy lost from the passage of time.
+  public int energyPerTurn()
+  {
+    int value = Client.getEnergyPerTurn(connection);
     return value;
   }
 }

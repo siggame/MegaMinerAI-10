@@ -15,15 +15,18 @@ class BaseAI:
   runGenerator = None
   connection = None
   #\endcond
+  mappables = []
   creatures = []
   plants = []
   players = []
   #\cond
   def startTurn(self):
+    from GameObject import Mappable
     from GameObject import Creature
     from GameObject import Plant
     from GameObject import Player
 
+    BaseAI.mappables = [Mappable(library.getMappable(self.connection, i)) for i in xrange(library.getMappableCount(self.connection))]
     BaseAI.creatures = [Creature(library.getCreature(self.connection, i)) for i in xrange(library.getCreatureCount(self.connection))]
     BaseAI.plants = [Plant(library.getPlant(self.connection, i)) for i in xrange(library.getPlantCount(self.connection))]
     BaseAI.players = [Player(library.getPlayer(self.connection, i)) for i in xrange(library.getPlayerCount(self.connection))]
@@ -68,5 +71,20 @@ class BaseAI:
     return library.getMapHeight(self.connection)
   #\endcond
   mapHeight = property(getMapHeight)
+  #\cond
+  def getEnergyPerBreed(self):
+    return library.getEnergyPerBreed(self.connection)
+  #\endcond
+  energyPerBreed = property(getEnergyPerBreed)
+  #\cond
+  def getEnergyPerAction(self):
+    return library.getEnergyPerAction(self.connection)
+  #\endcond
+  energyPerAction = property(getEnergyPerAction)
+  #\cond
+  def getEnergyPerTurn(self):
+    return library.getEnergyPerTurn(self.connection)
+  #\endcond
+  energyPerTurn = property(getEnergyPerTurn)
   def __init__(self, connection):
     self.connection = connection

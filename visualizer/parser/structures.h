@@ -20,12 +20,18 @@ const int DEATH = 2;
 const int EAT = 3;
 const int BREED = 4;
 
-struct Creature
+struct Mappable
 {
   int id;
-  int owner;
   int x;
   int y;
+
+  friend std::ostream& operator<<(std::ostream& stream, Mappable obj);
+};
+
+struct Creature: public Mappable 
+{
+  int owner;
   int maxEnergy;
   int energyLeft;
   int carnivorism;
@@ -33,19 +39,18 @@ struct Creature
   int speed;
   int movementLeft;
   int defense;
-  int canAttack;
+  int canEat;
   int canBreed;
   int parentID;
 
   friend std::ostream& operator<<(std::ostream& stream, Creature obj);
 };
 
-struct Plant
+struct Plant: public Mappable 
 {
-  int id;
-  int x;
-  int y;
   int size;
+  int growthRate;
+  int turnsUntilGrowth;
 
   friend std::ostream& operator<<(std::ostream& stream, Plant obj);
 };
@@ -116,6 +121,7 @@ struct AnimOwner: public Animation
 
 struct GameState
 {
+  std::map<int,Mappable> mappables;
   std::map<int,Creature> creatures;
   std::map<int,Plant> plants;
   std::map<int,Player> players;
@@ -125,6 +131,9 @@ struct GameState
   int gameNumber;
   int mapWidth;
   int mapHeight;
+  int energyPerBreed;
+  int energyPerAction;
+  int energyPerTurn;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);
