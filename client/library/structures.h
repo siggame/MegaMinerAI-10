@@ -5,18 +5,26 @@
 #define STRUCTURES_H
 
 struct Connection;
+struct _Mappable;
 struct _Creature;
 struct _Plant;
 struct _Player;
 
 
+struct _Mappable
+{
+  Connection* _c;
+  int id;
+  int x;
+  int y;
+};
 struct _Creature
 {
   Connection* _c;
   int id;
-  int owner;
   int x;
   int y;
+  int owner;
   int maxEnergy;
   int energyLeft;
   int carnivorism;
@@ -24,7 +32,7 @@ struct _Creature
   int speed;
   int movementLeft;
   int defense;
-  int canAttack;
+  int canEat;
   int canBreed;
   int parentID;
 };
@@ -35,6 +43,8 @@ struct _Plant
   int x;
   int y;
   int size;
+  int growthRate;
+  int turnsUntilGrowth;
 };
 struct _Player
 {

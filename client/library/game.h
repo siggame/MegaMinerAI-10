@@ -36,7 +36,12 @@ struct Connection
   int gameNumber;
   int mapWidth;
   int mapHeight;
+  int energyPerBreed;
+  int energyPerAction;
+  int energyPerTurn;
 
+  _Mappable* Mappables;
+  int MappableCount;
   _Creature* Creatures;
   int CreatureCount;
   _Plant* Plants;
@@ -83,6 +88,12 @@ DLLEXPORT int getPlayerID(Connection* c);
 DLLEXPORT int getGameNumber(Connection* c);
 DLLEXPORT int getMapWidth(Connection* c);
 DLLEXPORT int getMapHeight(Connection* c);
+DLLEXPORT int getEnergyPerBreed(Connection* c);
+DLLEXPORT int getEnergyPerAction(Connection* c);
+DLLEXPORT int getEnergyPerTurn(Connection* c);
+
+DLLEXPORT _Mappable* getMappable(Connection* c, int num);
+DLLEXPORT int getMappableCount(Connection* c);
 
 DLLEXPORT _Creature* getCreature(Connection* c, int num);
 DLLEXPORT int getCreatureCount(Connection* c);

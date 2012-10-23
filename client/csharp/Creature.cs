@@ -3,11 +3,8 @@ using System.Runtime.InteropServices;
 
 
 ///A basic creature!
-public class Creature
+public class Creature: Mappable
 {
-  public IntPtr ptr;
-  protected int ID;
-  protected int iteration;
 
   public Creature()
   {
@@ -20,7 +17,7 @@ public class Creature
     iteration = BaseAI.iteration;
   }
 
-  public bool validify()
+  public override bool validify()
   {
     if(iteration == BaseAI.iteration) return true;
     for(int i = 0; i < BaseAI.creatures.Length; i++)
@@ -59,103 +56,160 @@ public class Creature
 
     //getters
 
+
   ///Unique Identifier
-  public int getId()
+  public new int Id
   {
-    validify();
-    int value = Client.creatureGetId(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetId(ptr);
+      return value;
+    }
   }
+
+  ///X position of the object
+  public new int X
+  {
+    get
+    {
+      validify();
+      int value = Client.creatureGetX(ptr);
+      return value;
+    }
+  }
+
+  ///Y position of the object
+  public new int Y
+  {
+    get
+    {
+      validify();
+      int value = Client.creatureGetY(ptr);
+      return value;
+    }
+  }
+
   ///The owner of the creature
-  public int getOwner()
+  public int Owner
   {
-    validify();
-    int value = Client.creatureGetOwner(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetOwner(ptr);
+      return value;
+    }
   }
-  ///X position of the creature
-  public int getX()
-  {
-    validify();
-    int value = Client.creatureGetX(ptr);
-    return value;
-  }
-  ///Y position of the creature
-  public int getY()
-  {
-    validify();
-    int value = Client.creatureGetY(ptr);
-    return value;
-  }
+
   ///The maximum amount of energy this creature can have
-  public int getMaxEnergy()
+  public int MaxEnergy
   {
-    validify();
-    int value = Client.creatureGetMaxEnergy(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetMaxEnergy(ptr);
+      return value;
+    }
   }
+
   ///The current amount of energy this creature has.
-  public int getEnergyLeft()
+  public int EnergyLeft
   {
-    validify();
-    int value = Client.creatureGetEnergyLeft(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetEnergyLeft(ptr);
+      return value;
+    }
   }
+
   ///The carnivore level of the creature
-  public int getCarnivorism()
+  public int Carnivorism
   {
-    validify();
-    int value = Client.creatureGetCarnivorism(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetCarnivorism(ptr);
+      return value;
+    }
   }
+
   ///The herbivore level of the creature
-  public int getHerbivorism()
+  public int Herbivorism
   {
-    validify();
-    int value = Client.creatureGetHerbivorism(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetHerbivorism(ptr);
+      return value;
+    }
   }
+
   ///The speed of the creature
-  public int getSpeed()
+  public int Speed
   {
-    validify();
-    int value = Client.creatureGetSpeed(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetSpeed(ptr);
+      return value;
+    }
   }
+
   ///The amount of moves this creature has left this turn
-  public int getMovementLeft()
+  public int MovementLeft
   {
-    validify();
-    int value = Client.creatureGetMovementLeft(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetMovementLeft(ptr);
+      return value;
+    }
   }
+
   ///The defense of the creature
-  public int getDefense()
+  public int Defense
   {
-    validify();
-    int value = Client.creatureGetDefense(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetDefense(ptr);
+      return value;
+    }
   }
-  ///Indicated whether or not this creature can attack this turn.
-  public int getCanAttack()
+
+  ///Indicated whether or not this creature can eat this turn.
+  public int CanEat
   {
-    validify();
-    int value = Client.creatureGetCanAttack(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetCanEat(ptr);
+      return value;
+    }
   }
+
   ///Indicated whether or not this creature can breed this turn.
-  public int getCanBreed()
+  public int CanBreed
   {
-    validify();
-    int value = Client.creatureGetCanBreed(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetCanBreed(ptr);
+      return value;
+    }
   }
+
   ///ID of the creature that gave birth to this one.
-  public int getParentID()
+  public int ParentID
   {
-    validify();
-    int value = Client.creatureGetParentID(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.creatureGetParentID(ptr);
+      return value;
+    }
   }
 
 }
+

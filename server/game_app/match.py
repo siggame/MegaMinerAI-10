@@ -184,38 +184,35 @@ class Match(DefaultGameWorld):
     return True
 
   def checkWinner(self):
-    player1 = self.players[0]
-    player2 = self.players[1]
-    p1c = sum(creature.owner == self.objects.players[0].id for creature in self.objects.creatures)
-    p2c = sum(creature.owner == self.objects.players[1].id for creature in self.objects.creatures)
-    if p1c == 0 or p2c == 0 or self.turnNumber >= self.turnLimit:
+    player1 = self.objects.players[0]
+    player2 = self.objects.players[1]
+    p1c = sum(creature.owner == player1.id for creature in self.objects.creatures)
+    p2c = sum(creature.owner == player2.id for creature in self.objects.creatures)
+    if p1c == 0 or p2c == 0 or self.turnNumber >= self.turnLimit - 1:
       if p1c > p2c:
-        self.declareWinner(player1, "Player 1 wins through creature domination")
+        self.declareWinner(self.players[0], "Player 1 wins through creature domination")
       elif p1c < p2c:
-        self.declareWinner(player2, "Player 2 wins through creature domination")
+        self.declareWinner(self.players[1], "Player 2 wins through creature domination")
       #Defaults player 1 as winner if both players have same number of creatures at end
       else:
-        self.declareWinner(player1, "The game was a tie.")       
+        self.declareWinner(random.choice(self.players), "The game was a tie.")       
 
 
   def declareWinner(self, winner, reason=''):
-    print "Player", self.getPlayerIndex(self.winner), "wins game", self.id
+    print "Game", self.id, "over"
     self.winner = winner
-
+    self.sendStatus(self.spectators)
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
     self.scribe.writeSExpr(msg)
     self.scribe.finalize()
     self.removePlayer(self.scribe)
-
     for p in self.players + self.spectators:
       p.writeSExpr(msg)
-
     self.sendStatus([self.turn])
     self.playerID ^= 1
     self.sendStatus([self.players[self.playerID]])
     self.playerID ^= 1
     self.turn = None
-    self.objects.clear()
 
   def logPath(self):
     return "logs/" + str(self.id) + ".glog"
