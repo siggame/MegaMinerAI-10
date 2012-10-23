@@ -6,6 +6,7 @@
 #include <utility>
 #include <time.h>
 #include <list>
+#include <glm/glm.hpp>
 
 namespace visualizer
 {
@@ -183,6 +184,8 @@ namespace visualizer
     
     Map* pPrevMap = nullptr;
 
+    std::multimap<int,SmartPointer<Animatable>> animations;
+
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
     {
@@ -227,6 +230,25 @@ namespace visualizer
       {
       	SmartPointer<Creature> creature = new Creature();
 
+        if( (state + 1) != m_game->states.size() )
+        {
+          if( m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end() )
+          {
+            // todo: need to make this tweakable
+            for(int i = 1; i <= 7; ++i)
+            {
+                SpriteAnimation* deathAni = new SpriteAnimation();
+                deathAni->x = p.second.x;
+                deathAni->y = p.second.y;
+                deathAni->frame = i - 1; // todo: need to make this tweakable
+                deathAni->addKeyFrame(new DrawAnimation(deathAni));
+
+                animations.insert(make_pair(state+i,deathAni));
+            }
+          }
+
+        }
+
         creature->x = p.second.x;
         creature->y = p.second.y;
         creature->energyLeft = p.second.energyLeft;
@@ -250,7 +272,11 @@ namespace visualizer
         turn[p.second.id]["Defence"] = p.second.defense;
       }
 
-
+      auto rangePair = animations.equal_range(state);
+      for(auto iter = rangePair.first; iter != rangePair.second; ++iter)
+      {
+          turn.addAnimatable((iter->second));
+      }
 
       // end of parsing this state in the glog, build the turn
       animationEngine->buildAnimations(turn);
