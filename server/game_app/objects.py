@@ -1,3 +1,4 @@
+import math
 class Mappable:
   def __init__(self, game, id, x, y):
     self.game = game
@@ -206,25 +207,25 @@ class Creature(Mappable):
    
    
   def newBreed(self,mate):
+    #Create a dictionary of the parent's stats
     fatherStats = {'energy':(self.maxEnergy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
     motherStats = {'energy':(mate.maxEnergy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
-    fatherCheck = {}
-    motherCheck = {}
-    if self.game.maxStat in fatherStats.values():
-      fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
-    for ii in fatherStats:
-          if fatherStats[ii]==self.game.maxStat:
-            del fatherStats[ii]
-      
-    if self.game.minStat in motherStats.values:
-      motherCheck = {ii:motherStats[ii] for ii in motherStats if motherStats[ii]==self.game.minStat}
-    for ii in motherStats:
-      if motherStats[ii]==self.game.minStat:
+    
+    #Create a new baby based on the average of the parents stats
+    babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}   
+
+    print sum(fatherStats.values())
+    print sum(fatherStats.values())
+    print sum(babyStats.values())
+    #Remove fringe cases from possibilities
+    for ii in babyStats:
+      if babyStats[ii]==self.game.minStat:
         del motherStats[ii]
-    fatherStats[max(fatherStats,key=fatherStats.get)]+=1
-    motherStats[min(fatherStats,key=motherStats.get)]-=1
-    fatherStats.update(fatherCheck); motherStats.update(motherCheck)
-    babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
+      elif babyStats[ii] == self.game.maxStat:
+        del fatherStats[ii]
+    #Increment father's highest stat and lower the mother's lowest    
+    babyStats[max(fatherStats,key=fatherStats.get)]+=1
+    babyStats[min(motherStats,key=motherStats.get)]-=1
     babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
    

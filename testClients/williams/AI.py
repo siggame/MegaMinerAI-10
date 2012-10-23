@@ -101,7 +101,15 @@ class AI(BaseAI):
     
   def init(self):
     #Set up lists for highest stats among creatures
-    statCreatureList = [[] for _ in range(5)]
+    self.statCreatureList = [[] for _ in range(5)]                 
+
+  ##This function is called once, after your last turn
+  def end(self):
+    pass
+
+  ##This function is called each time it is your turn
+  ##Return true to end your turn, return false to ask the server for updated information
+  def run(self):
     self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)] 
     
     #Establishes a grid of the current objects   
@@ -111,15 +119,8 @@ class AI(BaseAI):
       if creature.owner == self.playerID:
         self.grid[creature.x][creature.y] = [creature] 
         stats = [(creature.maxEnergy - 100)/10, creature.carnivorism, creature.herbivorism, creature.defense, creature.speed] 
-        statCreatureList[stats.index(max(stats))].append(creature)               
-
-  ##This function is called once, after your last turn
-  def end(self):
-    pass
-
-  ##This function is called each time it is your turn
-  ##Return true to end your turn, return false to ask the server for updated information
-  def run(self):
+        self.statCreatureList[stats.index(max(stats))].append(creature)  
+  
     self.theirCreatures = [creature for creature in self.creatures if creature.owner != self.playerID]
     self.myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
     print self.turnNumber

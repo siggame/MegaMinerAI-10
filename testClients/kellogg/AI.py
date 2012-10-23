@@ -49,7 +49,7 @@ class AI(BaseAI):
             creature.eat(thing.x,thing.y)
           if isinstance(thing,Creature):
             if thing.owner==self.playerID:
-              creature.breed(thing,thing.x,thing.y)
+              creature.breed(thing)
             else:
               creature.eat(thing.x,thing.y)
     return 1
