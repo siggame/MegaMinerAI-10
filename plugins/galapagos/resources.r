@@ -4,3 +4,4 @@ texture grass textures/grass.png
 texture leaf textures/leaf.png
 texture sand textures/sand.jpg 
 animation creatureani textures/body_set.png
+animation death textures/death.png
