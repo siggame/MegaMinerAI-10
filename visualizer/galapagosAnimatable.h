@@ -82,6 +82,13 @@ namespace visualizer
     	// todo: add more
     };
 
+    struct SpriteAnimation : public Animatable
+    {
+        int x;
+        int y;
+        int frame;
+    };
+
 } // visualizer
 
 #endif // GALAPAGOS_ANIMATABLE_H

@@ -7,6 +7,7 @@ import com.sun.jna.Pointer;
 ///The provided AI class does just that.
 public abstract class BaseAI
 {
+  static Mappable[] mappables;
   static Creature[] creatures;
   static Plant[] plants;
   static Player[] players;
@@ -43,6 +44,12 @@ public abstract class BaseAI
   {
     iteration++;
     int count = 0;
+    count = Client.INSTANCE.getMappableCount(connection);
+    mappables = new Mappable[count];
+    for(int i = 0; i < count; i++)
+    {
+      mappables[i] = new Mappable(Client.INSTANCE.getMappable(connection, i));
+    }
     count = Client.INSTANCE.getCreatureCount(connection);
     creatures = new Creature[count];
     for(int i = 0; i < count; i++)
@@ -95,5 +102,20 @@ public abstract class BaseAI
   int mapHeight()
   {
     return Client.INSTANCE.getMapHeight(connection);
+  }
+  ///The amount of energy required from each creature in order to breed.
+  int energyPerBreed()
+  {
+    return Client.INSTANCE.getEnergyPerBreed(connection);
+  }
+  ///The amount of energy required to try to eat or to move.
+  int energyPerAction()
+  {
+    return Client.INSTANCE.getEnergyPerAction(connection);
+  }
+  ///The amount of energy lost from the passage of time.
+  int energyPerTurn()
+  {
+    return Client.INSTANCE.getEnergyPerTurn(connection);
   }
 }

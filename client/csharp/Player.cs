@@ -46,26 +46,39 @@ public class Player
 
     //getters
 
+
   ///Unique Identifier
-  public int getId()
+  public int Id
   {
-    validify();
-    int value = Client.playerGetId(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.playerGetId(ptr);
+      return value;
+    }
   }
+
   ///Player's Name
-  public string getPlayerName()
+  public string PlayerName
   {
-    validify();
-    IntPtr value = Client.playerGetPlayerName(ptr);
-    return Marshal.PtrToStringAuto(value);
+    get
+    {
+      validify();
+      IntPtr value = Client.playerGetPlayerName(ptr);
+      return Marshal.PtrToStringAuto(value);
+    }
   }
+
   ///Time remaining, updated at start of turn
-  public float getTime()
+  public float Time
   {
-    validify();
-    float value = Client.playerGetTime(ptr);
-    return value;
+    get
+    {
+      validify();
+      float value = Client.playerGetTime(ptr);
+      return value;
+    }
   }
 
 }
+

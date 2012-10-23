@@ -63,6 +63,25 @@ namespace visualizer
             Creature *m_Creature;
 
      }; // DrawCreature
+
+     class DrawAnimation : public Anim
+     {
+     public:
+         DrawAnimation( SpriteAnimation* animation ) : m_animation(animation) {}
+         void animate( const float& t, AnimData* d, IGame* game );
+
+         float controlDuration() const
+         { return 0; }
+
+         float totalDuration() const
+         { return 0; }
+
+         // todo: need to implement
+         bool IsDone() const { return false; }
+
+     private:
+         SpriteAnimation* m_animation;
+     };
     
 }
 
