@@ -1,12 +1,30 @@
-import math
-
-class Creature:
-  def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
+class Mappable:
+  def __init__(self, game, id, x, y):
     self.game = game
     self.id = id
-    self.owner = owner
     self.x = x
     self.y = y
+
+  def toList(self):
+    value = [
+      self.id,
+      self.x,
+      self.y,
+      ]
+    return value
+
+  def nextTurn(self):
+    pass
+
+
+
+class Creature(Mappable):
+  def __init__(self, game, id, x, y, owner, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
+    self.game = game
+    self.id = id
+    self.x = x
+    self.y = y
+    self.owner = owner
     self.maxEnergy = maxEnergy
     self.energyLeft = energyLeft
     self.carnivorism = carnivorism
@@ -21,9 +39,9 @@ class Creature:
   def toList(self):
     value = [
       self.id,
-      self.owner,
       self.x,
       self.y,
+      self.owner,
       self.maxEnergy,
       self.energyLeft,
       self.carnivorism,
@@ -33,7 +51,7 @@ class Creature:
       self.defense,
       self.canEat,
       self.canBreed,
-      self.parentID
+      self.parentID,
       ]
     return value
 
@@ -192,22 +210,22 @@ class Creature:
     fatherCheck = {}
     motherCheck = {}
     if self.game.maxStat in fatherStats.values():
-  	fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
-	for ii in fatherStats:
+      fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
+    for ii in fatherStats:
           if fatherStats[ii]==self.game.maxStat:
             del fatherStats[ii]
-	    
+      
     if self.game.minStat in motherStats.values:
-	motherCheck = {ii:motherStats[ii] for ii in motherStats if motherStats[ii]==self.game.minStat}
-	for ii in motherStats:
-  	  if motherStats[ii]==self.game.minStat:
-	    del motherStats[ii]
+      motherCheck = {ii:motherStats[ii] for ii in motherStats if motherStats[ii]==self.game.minStat}
+    for ii in motherStats:
+      if motherStats[ii]==self.game.minStat:
+        del motherStats[ii]
     fatherStats[max(fatherStats,key=fatherStats.get)]+=1
     motherStats[min(fatherStats,key=motherStats.get)]-=1
     fatherStats.update(fatherCheck); motherStats.update(motherCheck)
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
     babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
-    return babyList	
+    return babyList
    
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
     #Create a list of equivilent stats
@@ -227,14 +245,18 @@ class Creature:
     stats[0] = (stats[0]*10) + 100
     
     return stats
-    
-class Plant:
-  def __init__(self, game, id, x, y, size):
+
+
+
+class Plant(Mappable):
+  def __init__(self, game, id, x, y, size, growthRate, turnsUntilGrowth):
     self.game = game
     self.id = id
     self.x = x
     self.y = y
     self.size = size
+    self.growthRate = growthRate
+    self.turnsUntilGrowth = turnsUntilGrowth
 
   def toList(self):
     value = [
@@ -242,6 +264,8 @@ class Plant:
       self.x,
       self.y,
       self.size,
+      self.growthRate,
+      self.turnsUntilGrowth,
       ]
     return value
 
