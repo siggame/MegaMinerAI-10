@@ -25,11 +25,31 @@ int BaseAI::mapHeight()
 {
   return getMapHeight(c);
 }
+int BaseAI::energyPerBreed()
+{
+  return getEnergyPerBreed(c);
+}
+int BaseAI::energyPerAction()
+{
+  return getEnergyPerAction(c);
+}
+int BaseAI::energyPerTurn()
+{
+  return getEnergyPerTurn(c);
+}
 
 bool BaseAI::startTurn()
 {
   static bool initialized = false;
   int count = 0;
+  count = getMappableCount(c);
+  mappables.clear();
+  mappables.resize(count);
+  for(int i = 0; i < count; i++)
+  {
+    mappables[i] = Mappable(getMappable(c, i));
+  }
+
   count = getCreatureCount(c);
   creatures.clear();
   creatures.resize(count);

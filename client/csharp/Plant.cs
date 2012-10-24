@@ -3,11 +3,8 @@ using System.Runtime.InteropServices;
 
 
 ///A basic plant!
-public class Plant
+public class Plant: Mappable
 {
-  public IntPtr ptr;
-  protected int ID;
-  protected int iteration;
 
   public Plant()
   {
@@ -20,7 +17,7 @@ public class Plant
     iteration = BaseAI.iteration;
   }
 
-  public bool validify()
+  public override bool validify()
   {
     if(iteration == BaseAI.iteration) return true;
     for(int i = 0; i < BaseAI.plants.Length; i++)
@@ -40,33 +37,72 @@ public class Plant
 
     //getters
 
+
   ///Unique Identifier
-  public int getId()
+  public new int Id
   {
-    validify();
-    int value = Client.plantGetId(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.plantGetId(ptr);
+      return value;
+    }
   }
-  ///X position of the plant
-  public int getX()
+
+  ///X position of the object
+  public new int X
   {
-    validify();
-    int value = Client.plantGetX(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.plantGetX(ptr);
+      return value;
+    }
   }
-  ///Y position of the plant
-  public int getY()
+
+  ///Y position of the object
+  public new int Y
   {
-    validify();
-    int value = Client.plantGetY(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.plantGetY(ptr);
+      return value;
+    }
   }
+
   ///The size of the plant
-  public int getSize()
+  public int Size
   {
-    validify();
-    int value = Client.plantGetSize(ptr);
-    return value;
+    get
+    {
+      validify();
+      int value = Client.plantGetSize(ptr);
+      return value;
+    }
+  }
+
+  ///The number of turns it takes this plant to grow in size.
+  public int GrowthRate
+  {
+    get
+    {
+      validify();
+      int value = Client.plantGetGrowthRate(ptr);
+      return value;
+    }
+  }
+
+  ///The number of turns left until this plant will grow again.
+  public int TurnsUntilGrowth
+  {
+    get
+    {
+      validify();
+      int value = Client.plantGetTurnsUntilGrowth(ptr);
+      return value;
+    }
   }
 
 }
+

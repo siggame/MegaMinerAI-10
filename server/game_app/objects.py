@@ -1,12 +1,31 @@
 import math
 
-class Creature:
-  def __init__(self, game, id, owner, x, y, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
+class Mappable:
+  def __init__(self, game, id, x, y):
     self.game = game
     self.id = id
-    self.owner = owner
     self.x = x
     self.y = y
+
+  def toList(self):
+    return [self.id, self.x, self.y, ]
+    
+  # This will not work if the object has variables other than primitives
+  def toJson(self):
+    return dict(id = self.id, x = self.x, y = self.y, )
+
+  def nextTurn(self):
+    pass
+
+
+
+class Creature(Mappable):
+  def __init__(self, game, id, x, y, owner, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
+    self.game = game
+    self.id = id
+    self.x = x
+    self.y = y
+    self.owner = owner
     self.maxEnergy = maxEnergy
     self.energyLeft = energyLeft
     self.carnivorism = carnivorism
@@ -19,23 +38,12 @@ class Creature:
     self.parentID = parentID
 
   def toList(self):
-    value = [
-      self.id,
-      self.owner,
-      self.x,
-      self.y,
-      self.maxEnergy,
-      self.energyLeft,
-      self.carnivorism,
-      self.herbivorism,
-      self.speed,
-      self.movementLeft,
-      self.defense,
-      self.canEat,
-      self.canBreed,
-      self.parentID
-      ]
-    return value
+    return [self.id, self.x, self.y, self.owner, self.maxEnergy, self.energyLeft, self.carnivorism, self.herbivorism, self.speed, self.movementLeft, self.defense, self.canEat, self.canBreed, self.parentID, ]
+  
+  # This will not work if the object has variables other than primitives
+  def toJson(self):
+    return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, maxEnergy = self.maxEnergy, energyLeft = self.energyLeft, carnivorism = self.carnivorism, herbivorism = self.herbivorism, speed = self.speed, movementLeft = self.movementLeft, defense = self.defense, canEat = self.canEat, canBreed = self.canBreed, parentID = self.parentID, )
+  
 
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
@@ -43,22 +51,24 @@ class Creature:
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
       creature.game.removeObject(creature)
-      creature.game.animations.append(['death', creature.id])
+      #creature.game.animations.append(['death', creature.id])
+      creature.game.addAnimation(DeathAnimation(creature.id))
       return False
     return True
 
   def nextTurn(self):
     #If creatures are stacked they are unable to perform any actions
-    if len(self.game.grid[self.x][self.y]) > 1:
-      if(self.decrementEnergy(self.game.energyPerAction, self)):
-        self.canEat = False
-        self.canBreed = False
-        self.movementLeft = 0
-    #Else, we decrement energy like normal and reset stats
-    elif(self.decrementEnergy(self.game.energyPerAction, self)):
-      self.movementLeft = self.speed
-      self.canEat= True
-      self.canBreed = True
+    if self.game.grid[self.x][self.y] is not None:
+      if len(self.game.grid[self.x][self.y]) > 1:
+        if(self.decrementEnergy(self.game.energyPerAction, self)):
+          self.canEat = False
+          self.canBreed = False
+          self.movementLeft = 0
+      #Else, we decrement energy like normal and reset stats
+      elif(self.decrementEnergy(self.game.energyPerAction, self)):
+        self.movementLeft = self.speed
+        self.canEat= True
+        self.canBreed = True
     return True
 
   def move(self, x, y):
@@ -74,20 +84,24 @@ class Creature:
     elif abs(self.x-x) + abs(self.y-y) != 1:
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
-    #Make all objects into a map to reduce check times
-    if self.game.getObject(x,y) is not None:
-      return "There is already an object in that location."
-      
+    #Make all objects into a map to reduce check times if isinstance(lifeform, Plant):
+    elif isinstance(self.game.getObject(x,y), Plant):
+      if self.game.getObject(x,y).size > 0:
+        return "There is a plant there!."
+    elif isinstance(self.game.getObject(x,y), Creature):
+      return "There is a creature there!."     
     if(self.decrementEnergy(self.game.energyPerAction, self)):
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
-            
-      print "moving a creature"
       self.x = x
       self.y = y
       self.movementLeft -= 1
-      self.game.animations.append(['move', self.id, self.x, self.y, x, y])  
+      #self.game.animations.append(['move', self.id, self.x, self.y, x, y])  
+      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))
+      if isinstance(self.game.getObject(x,y), Plant):
+        self.game.removeObject(self.game.getObject(x,y))
+        self.game.grid[x][y].remove(self.game.getObject(x,y))
       return True
     return "Your creature died of starvation as it tried to move"
 
@@ -110,7 +124,6 @@ class Creature:
     if lifeform is None:
       return "No lifeforms at that location."  
     if isinstance(lifeform, Plant):
-      print "trying to eat a plant"
       plant = lifeform
       if plant.size == 0:
         return "That plant is too small to eat."
@@ -118,9 +131,9 @@ class Creature:
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
       plant.size -= 1
-      self.game.animations.append(['eat', self.id, plant.id])
+      #self.game.animations.append(['eat', self.id, plant.id])
+      self.game.addAnimation(EatAnimation(self.id, plant.id))
     else:
-      print "trying to eat a creature"
       creature = lifeform
       damage = self.carnivorism - creature.defense
       if damage < 1:
@@ -131,13 +144,15 @@ class Creature:
         #Updating the grid
         self.game.removeObject(creature)
         self.energyLeft += self.carnivorism * 5
-        self.game.animations.append(['death', creature.id])
+        #self.game.animations.append(['death', creature.id])
+        self.game.addAnimation(DeathAnimation(creature.id))
       else:
         self.decrementEnergy(self.game.energyPerAction, self)
       if self.energyLeft > self.maxEnergy:
         self.energyLeft = self.maxEnergy
       
-      self.game.animations.append(['eat', self.id, creature.id])
+      #self.game.animations.append(['eat', self.id, creature.id])
+      self.game.addAnimation(EatAnimation(self.id, creature.id))
     self.canEat = False
     return True
 
@@ -161,7 +176,6 @@ class Creature:
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
   
-    print "giggity"
   # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
@@ -169,13 +183,13 @@ class Creature:
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
      
-#    newbaby = self.game.addObject(Creature,[self.owner, self.x, self.y] + self.babyStats(newEnergy, newCarnivorism, newHerbivorism, newSpeed, newDefense) + [self.id])
-    newbaby = self.game.addObject(Creature,[self.owner,self.x,self.y]+self.newBreed(mate)+[self.id])
-    self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])    
+    newbaby = self.game.addObject(Creature,[self.x,self.y, self.owner]+self.newBreed(mate)+[self.id])
+    #self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
+    self.game.addAnimation(BreedAnimation(self.id, mate.id, newbaby.id))
     self.canBreed = False
     mate.canBreed = False
-    self.canAttack = False
-    mate.canAttack = False
+    self.canEat = False
+    mate.canEat = False
     self.movementLeft = 0
     mate.movementLeft = 0
     self.decrementEnergy(self.game.energyPerBreed, self)
@@ -187,27 +201,27 @@ class Creature:
    
    
   def newBreed(self,mate):
+    #Create a dictionary of the parent's stats
     fatherStats = {'energy':(self.maxEnergy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
     motherStats = {'energy':(mate.maxEnergy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
-    fatherCheck = {}
-    motherCheck = {}
-    if self.game.maxStat in fatherStats.values():
-  	fatherCheck = {ii:fatherStats[ii] for ii in fatherStats if fatherStats[ii]==self.game.maxStat}
-	for ii in fatherStats:
-          if fatherStats[ii]==self.game.maxStat:
-            del fatherStats[ii]
-	    
-    if self.game.minStat in motherStats.values:
-	motherCheck = {ii:motherStats[ii] for ii in motherStats if motherStats[ii]==self.game.minStat}
-	for ii in motherStats:
-  	  if motherStats[ii]==self.game.minStat:
-	    del motherStats[ii]
-    fatherStats[max(fatherStats,key=fatherStats.get)]+=1
-    motherStats[min(fatherStats,key=motherStats.get)]-=1
-    fatherStats.update(fatherCheck); motherStats.update(motherCheck)
-    babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}
+    
+    #Create a new baby based on the average of the parents stats
+    babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}   
+
+    print "Sum of the father's stats:", sum(fatherStats.values())
+    print "Sum of the mothers's stats:", sum(motherStats.values())
+    print "Sum of the baby's stats:", sum(babyStats.values())
+    #Remove fringe cases from possibilities
+    for ii in babyStats:
+      if babyStats[ii]==self.game.minStat:
+        del motherStats[ii]
+      elif babyStats[ii] == self.game.maxStat:
+        del fatherStats[ii]
+    #Increment father's highest stat and lower the mother's lowest    
+    babyStats[max(fatherStats,key=fatherStats.get)]+=1
+    babyStats[min(motherStats,key=motherStats.get)]-=1
     babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
-    return babyList	
+    return babyList
    
   def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
     #Create a list of equivilent stats
@@ -227,46 +241,31 @@ class Creature:
     stats[0] = (stats[0]*10) + 100
     
     return stats
-    
-class Plant:
-  def __init__(self, game, id, x, y, size):
+
+class Plant(Mappable):
+  def __init__(self, game, id, x, y, size, growthRate, turnsUntilGrowth):
     self.game = game
     self.id = id
     self.x = x
     self.y = y
     self.size = size
+    self.growthRate = growthRate
+    self.turnsUntilGrowth = turnsUntilGrowth
 
   def toList(self):
-    value = [
-      self.id,
-      self.x,
-      self.y,
-      self.size,
-      ]
-    return value
+    return [self.id, self.x, self.y, self.size, self.growthRate, self.turnsUntilGrowth, ]
+  
+  # This will not work if the object has variables other than primitives
+  def toJson(self):
+    return dict(id = self.id, x = self.x, y = self.y, size = self.size, growthRate = self.growthRate, turnsUntilGrowth = self.turnsUntilGrowth, )
+  
 
   def nextTurn(self):
-    #Grow slower if at zero
-    if self.size == 0:
-      if self.game.turnNumber % self.game.plantGrowthRate *2 == 0:
-        if self.x < self.game.mapWidth /2:
-          self.size += 1
-      if (self.game.turnNumber + 1) % self.game.plantGrowthRate *2 == 0:
-        if self.x >= self.game.mapWidth /2:
-          self.size += 1
-    #Grow normal if not at zero
-    else:
-      if self.game.turnNumber % self.game.plantGrowthRate == 0:
-        if self.x < self.game.mapWidth /2:
-          if self.size < self.game.plantMaxSize:
-            self.size += 1
-      if (self.game.turnNumber + 1) % self.game.plantGrowthRate == 0:
-        if self.x >= self.game.mapWidth /2:
-          if self.size < self.game.plantMaxSize:
-            self.size += 1
+    self.turnsUntilGrowth -= 1
+    if self.turnsUntilGrowth == 0 and self.size < 10:
+      self.size += 1
+      self.turnsUntilGrowth = self.growthRate     
     return True
-
-
 
 class Player:
   def __init__(self, game, id, playerName, time):
@@ -276,12 +275,11 @@ class Player:
     self.time = time
 
   def toList(self):
-    value = [
-      self.id,
-      self.playerName,
-      self.time,
-      ]
-    return value
+    return [self.id, self.playerName, self.time, ]
+  
+  # This will not work if the object has variables other than primitives
+  def toJson(self):
+    return dict(id = self.id, playerName = self.playerName, time = self.time, )
 
   def nextTurn(self):
     pass
@@ -290,4 +288,63 @@ class Player:
     pass
 
 
+
+# The following are animations and do not need to have any logic added
+class MoveAnimation:
+  def __init__(self, actingID, fromX, fromY, toX, toY):
+    self.actingID = actingID
+    self.fromX = fromX
+    self.fromY = fromY
+    self.toX = toX
+    self.toY = toY
+
+  def toList(self):
+    return ["move", self.actingID, self.fromX, self.fromY, self.toX, self.toY, ]
+
+  def toJson(self):
+    return dict(type = "move", actingID = self.actingID, fromX = self.fromX, fromY = self.fromY, toX = self.toX, toY = self.toY)
+
+class PlayerTalkAnimation:
+  def __init__(self, actingID, message):
+    self.actingID = actingID
+    self.message = message
+
+  def toList(self):
+    return ["playerTalk", self.actingID, self.message, ]
+
+  def toJson(self):
+    return dict(type = "playerTalk", actingID = self.actingID, message = self.message)
+
+class DeathAnimation:
+  def __init__(self, actingID):
+    self.actingID = actingID
+
+  def toList(self):
+    return ["death", self.actingID, ]
+
+  def toJson(self):
+    return dict(type = "death", actingID = self.actingID)
+
+class EatAnimation:
+  def __init__(self, actingID, targetID):
+    self.actingID = actingID
+    self.targetID = targetID
+
+  def toList(self):
+    return ["eat", self.actingID, self.targetID, ]
+
+  def toJson(self):
+    return dict(type = "eat", actingID = self.actingID, targetID = self.targetID)
+
+class BreedAnimation:
+  def __init__(self, actingID, targetID, childID):
+    self.actingID = actingID
+    self.targetID = targetID
+    self.childID = childID
+
+  def toList(self):
+    return ["breed", self.actingID, self.targetID, self.childID, ]
+
+  def toJson(self):
+    return dict(type = "breed", actingID = self.actingID, targetID = self.targetID, childID = self.childID)
 

@@ -6,6 +6,7 @@
 #include <utility>
 #include <time.h>
 #include <list>
+#include <glm/glm.hpp>
 
 namespace visualizer
 {
@@ -175,24 +176,25 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Carn" << "Herb" << "Speed" << "Defence";
+    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Max Energy" << "Carn" << "Herb" << "Speed" << "Defence";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
     animationEngine->registerGame(0, 0);
     
-    // Starting color
     Map* pPrevMap = nullptr;
+
+    std::multimap<int,SmartPointer<Animatable>> animations;
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
     {
-      float halfWidth = m_game->states[state].mapWidth / 2.0f;
-    
       Frame turn;  // The frame that will be drawn
-      float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
-      float xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
       SmartPointer<Map> map;
+
+      float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
+      float halfWidth = m_game->states[state].mapWidth / 2.0f;
+      float xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
       
       if(pPrevMap == nullptr)
       {
@@ -227,11 +229,35 @@ namespace visualizer
       for( auto& p : m_game->states[ state ].creatures )
       {
       	SmartPointer<Creature> creature = new Creature();
+
+        if( (state + 1) != m_game->states.size() )
+        {
+          if( m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end() )
+          {
+            // todo: need to make this tweakable
+            for(int i = 1; i <= 7; ++i)
+            {
+                SpriteAnimation* deathAni = new SpriteAnimation();
+                deathAni->x = p.second.x;
+                deathAni->y = p.second.y;
+                deathAni->frame = i - 1; // todo: need to make this tweakable
+                deathAni->addKeyFrame(new DrawAnimation(deathAni));
+
+                animations.insert(make_pair(state+i,deathAni));
+            }
+          }
+
+        }
+
         creature->x = p.second.x;
         creature->y = p.second.y;
+        creature->energyLeft = p.second.energyLeft;
+        creature->maxEnergy = p.second.maxEnergy;
         creature->owner = p.second.owner;
-        (*map)(creature->y,creature->x) = Map::Tile("sand",state);
         creature->addKeyFrame( new DrawCreature( creature ) );
+
+        (*map)(creature->y,creature->x) = Map::Tile("sand",state);
+
         turn.addAnimatable( creature );
         
         turn[p.second.id]["ID"] = p.second.id;
@@ -239,10 +265,18 @@ namespace visualizer
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
         turn[p.second.id]["Energy"] = p.second.energyLeft;
+        turn[p.second.id]["Max Energy"] = p.second.maxEnergy;
         turn[p.second.id]["Carn"] = p.second.carnivorism;
         turn[p.second.id]["Herb"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
         turn[p.second.id]["Defence"] = p.second.defense;
+      }
+
+      auto rangePair = animations.equal_range(state);
+      for(auto iter = rangePair.first; iter != rangePair.second; ++iter)
+      {
+          turn.addAnimatable((iter->second));
+          animations.erase(iter);
       }
 
       // end of parsing this state in the glog, build the turn

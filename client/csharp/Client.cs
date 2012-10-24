@@ -44,7 +44,17 @@ public class Client {
   public static extern int getMapWidth(IntPtr connection);
   [DllImport("client")]
   public static extern int getMapHeight(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getEnergyPerBreed(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getEnergyPerAction(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getEnergyPerTurn(IntPtr connection);
 
+  [DllImport("client")]
+  public static extern IntPtr getMappable(IntPtr connection, int num);
+  [DllImport("client")]
+  public static extern int getMappableCount(IntPtr connection);
   [DllImport("client")]
   public static extern IntPtr getCreature(IntPtr connection, int num);
   [DllImport("client")]
@@ -61,13 +71,20 @@ public class Client {
 
     //getters
   [DllImport("client")]
-  public static extern int creatureGetId(IntPtr ptr);
+  public static extern int mappableGetId(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetOwner(IntPtr ptr);
+  public static extern int mappableGetX(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int mappableGetY(IntPtr ptr);
+
+  [DllImport("client")]
+  public static extern int creatureGetId(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetX(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetY(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int creatureGetOwner(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetMaxEnergy(IntPtr ptr);
   [DllImport("client")]
@@ -83,7 +100,7 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureGetDefense(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetCanAttack(IntPtr ptr);
+  public static extern int creatureGetCanEat(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetCanBreed(IntPtr ptr);
   [DllImport("client")]
@@ -97,6 +114,10 @@ public class Client {
   public static extern int plantGetY(IntPtr ptr);
   [DllImport("client")]
   public static extern int plantGetSize(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int plantGetGrowthRate(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int plantGetTurnsUntilGrowth(IntPtr ptr);
 
   [DllImport("client")]
   public static extern int playerGetId(IntPtr ptr);

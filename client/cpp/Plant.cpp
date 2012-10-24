@@ -29,6 +29,16 @@ int Plant::size()
   return ((_Plant*)ptr)->size;
 }
 
+int Plant::growthRate()
+{
+  return ((_Plant*)ptr)->growthRate;
+}
+
+int Plant::turnsUntilGrowth()
+{
+  return ((_Plant*)ptr)->turnsUntilGrowth;
+}
+
 
 
 
@@ -38,5 +48,7 @@ std::ostream& operator<<(std::ostream& stream,Plant ob)
   stream << "x: " << ((_Plant*)ob.ptr)->x  <<'\n';
   stream << "y: " << ((_Plant*)ob.ptr)->y  <<'\n';
   stream << "size: " << ((_Plant*)ob.ptr)->size  <<'\n';
+  stream << "growthRate: " << ((_Plant*)ob.ptr)->growthRate  <<'\n';
+  stream << "turnsUntilGrowth: " << ((_Plant*)ob.ptr)->turnsUntilGrowth  <<'\n';
   return stream;
 }

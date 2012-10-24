@@ -1,16 +1,11 @@
 import com.sun.jna.Pointer;
 
 ///A basic creature!
-class Creature
+class Creature extends Mappable
 {
-  Pointer ptr;
-  int ID;
-  int iteration;
   public Creature(Pointer p)
   {
-    ptr = p;
-    ID = Client.INSTANCE.creatureGetId(ptr);
-    iteration = BaseAI.iteration;
+    super(p);
   }
   boolean validify()
   {
@@ -57,23 +52,23 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetId(ptr);
   }
-  ///The owner of the creature
-  public int getOwner()
-  {
-    validify();
-    return Client.INSTANCE.creatureGetOwner(ptr);
-  }
-  ///X position of the creature
+  ///X position of the object
   public int getX()
   {
     validify();
     return Client.INSTANCE.creatureGetX(ptr);
   }
-  ///Y position of the creature
+  ///Y position of the object
   public int getY()
   {
     validify();
     return Client.INSTANCE.creatureGetY(ptr);
+  }
+  ///The owner of the creature
+  public int getOwner()
+  {
+    validify();
+    return Client.INSTANCE.creatureGetOwner(ptr);
   }
   ///The maximum amount of energy this creature can have
   public int getMaxEnergy()
@@ -117,11 +112,11 @@ class Creature
     validify();
     return Client.INSTANCE.creatureGetDefense(ptr);
   }
-  ///Indicated whether or not this creature can attack this turn.
-  public int getCanAttack()
+  ///Indicated whether or not this creature can eat this turn.
+  public int getCanEat()
   {
     validify();
-    return Client.INSTANCE.creatureGetCanAttack(ptr);
+    return Client.INSTANCE.creatureGetCanEat(ptr);
   }
   ///Indicated whether or not this creature can breed this turn.
   public int getCanBreed()

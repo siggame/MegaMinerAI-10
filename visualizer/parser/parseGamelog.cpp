@@ -24,6 +24,42 @@ char *ToLower( char *str )
 }
 
 
+static bool parseMappable(Mappable& object, sexp_t* expression)
+{
+  sexp_t* sub;
+  if ( !expression ) return false;
+  sub = expression->list;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseMappable.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.id = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseMappable.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.x = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseMappable.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.y = atoi(sub->val);
+  sub = sub->next;
+
+  return true;
+
+}
 static bool parseCreature(Creature& object, sexp_t* expression)
 {
   sexp_t* sub;
@@ -45,15 +81,6 @@ static bool parseCreature(Creature& object, sexp_t* expression)
     return false;
   }
 
-  object.owner = atoi(sub->val);
-  sub = sub->next;
-
-  if ( !sub ) 
-  {
-    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
-    return false;
-  }
-
   object.x = atoi(sub->val);
   sub = sub->next;
 
@@ -64,6 +91,15 @@ static bool parseCreature(Creature& object, sexp_t* expression)
   }
 
   object.y = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.owner = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -135,7 +171,7 @@ static bool parseCreature(Creature& object, sexp_t* expression)
     return false;
   }
 
-  object.canAttack = atoi(sub->val);
+  object.canEat = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -199,6 +235,24 @@ static bool parsePlant(Plant& object, sexp_t* expression)
   }
 
   object.size = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.growthRate = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parsePlant.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.turnsUntilGrowth = atoi(sub->val);
   sub = sub->next;
 
   return true;
@@ -414,6 +468,28 @@ static bool parseSexp(Game& game, sexp_t* expression)
           if ( !sub ) return false;
           gs.mapHeight = atoi(sub->val);
           sub = sub->next;
+          if ( !sub ) return false;
+          gs.energyPerBreed = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.energyPerAction = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.energyPerTurn = atoi(sub->val);
+          sub = sub->next;
+      }
+      else if(string(sub->val) == "Mappable")
+      {
+        sub = sub->next;
+        bool flag = true;
+        while(sub && flag)
+        {
+          Mappable object;
+          flag = parseMappable(object, sub);
+          gs.mappables[object.id] = object;
+          sub = sub->next;
+        }
+        if ( !flag ) return false;
       }
       else if(string(sub->val) == "Creature")
       {
