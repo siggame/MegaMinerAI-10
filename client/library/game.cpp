@@ -235,7 +235,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   {
    return 0;
   }
-  else if (!(0<=x<=c->mapWidth) or !(0<=y<=c->mapHeight))
+  else if((x<0||x>c->mapWidth)||(y<0||y>c->mapHeight))
   {
     return 0;
   }

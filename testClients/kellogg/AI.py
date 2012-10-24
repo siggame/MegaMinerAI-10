@@ -168,31 +168,30 @@ class AI(BaseAI):
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism == self.maxStat(creature)]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism == self.maxStat(creature)] 
     print "length of herbivores,carnivores",len(herbivores),len(carnivores)
-    for herb in herbivores:
-      self.eatPlant(herb)
-    for carn in carnivores:
-      self.eatPlant(carn)
+   # for herb in herbivores:
+   #   self.eatPlant(herb)
+   # for carn in carnivores:
+   #   self.eatPlant(carn)
     
-   # for creature in self.creatures:
-   #   if creature.owner == self.playerID:
-        
-    if False:
-        randx=random.randrange(-1,2); 
-        randy = abs(randx)^1*((-1)**random.randrange(1,100)%6)
-        x=0;y=0
-        if isinstance(self.getObject(creature.x+randx,creature.y+randy),int) and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
-          creature.move(creature.x+randx,creature.y+randy)
-          x=creature.x+randx;
-          y=creature.y+randy
-        for location in adjacent:
-          thing=self.getObject(x+location[0],y+location[1])
-          if isinstance(thing,Plant):
+    for creature in self.creatures:
+     if creature.owner == self.playerID:       
+      randx=random.randrange(-1,2); 
+      randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
+      x=0;y=0
+#      if self.getObject(creature.x+randx,creature.y+randy)is not None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
+      creature.move(creature.x+randx,creature.y+randy)
+      print "moving"
+      x=creature.x+randx;
+      y=creature.y+randy
+      for location in adjacent:
+        thing=self.getObject(x+location[0],y+location[1])
+        if isinstance(thing,Plant):
+          creature.eat(thing.x,thing.y)
+        if isinstance(thing,Creature):
+          if thing.owner==self.playerID:
+            creature.breed(thing)
+          else:
             creature.eat(thing.x,thing.y)
-          if isinstance(thing,Creature):
-            if thing.owner==self.playerID:
-              creature.breed(thing)
-            else:
-              creature.eat(thing.x,thing.y)
     return 1
 
   def __init__(self, conn):
