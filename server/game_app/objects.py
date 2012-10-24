@@ -188,8 +188,8 @@ class Creature(Mappable):
     self.game.addAnimation(BreedAnimation(self.id, mate.id, newbaby.id))
     self.canBreed = False
     mate.canBreed = False
-    self.canAttack = False
-    mate.canAttack = False
+    self.canEat = False
+    mate.canEat = False
     self.movementLeft = 0
     mate.movementLeft = 0
     self.decrementEnergy(self.game.energyPerBreed, self)

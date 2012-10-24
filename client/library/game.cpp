@@ -361,6 +361,40 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
+  //game state update
+  Connection * c = object->_c;
+  if(object->owner!=c->playerID)
+  {
+    return 0;
+  }
+  else if(object->energyLeft<=c->energyPerBreed)
+  {
+   return 0;
+  }
+  else if(mate->energyLeft<=c->energyPerBreed)
+  {
+   return 0;
+  }
+  else if(abs(object->x-mate->x)+abs(object->y+mate->y)!=1)
+  {
+   return 0;
+  }
+  else if(mate->owner!=c->playerID)
+  {
+   return 0;
+  }
+  else if(!(object->canBreed && mate->canBreed))
+  {
+   return 0;
+  }
+  object->canBreed = false;
+  mate->canBreed = false;
+  object->canEat= false;
+  mate->canEat = false;
+  object->movementLeft = 0;
+  mate->movementLeft = 0;
+  object->energyLeft-=c->energyPerBreed;
+  mate->energyLeft-=c->energyPerBreed;
   return 1;
 }
 
