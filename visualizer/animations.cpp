@@ -92,31 +92,32 @@ namespace visualizer
     Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 );
   	game->renderer->setColor( color );
   	
-    int frame = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
-    int frame1 = (m_Creature->carnivorism) -1;
-    int frame2 = (m_Creature->herbivorism) -1;
-    int frame3 = (m_Creature->defense) -1;
-    int frame4 = (m_Creature->speed) -1;
+    int frame_sp = (m_Creature->speed) -1;
+    int frame_en = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
+    int frame_hb = (m_Creature->herbivorism) -1;
+    int frame_df = (m_Creature->defense) -1;
+    int frame_cv = (m_Creature->carnivorism) -1;
+
 
     if(!m_Creature->m_moves.empty())
     {
         int currentPos = (int)(m_Creature->m_moves.size() * t);
 
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , 0);        
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , frame_sp);        
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , frame_en);
 	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_etc" , 0);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_arm" , 0);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_armor" , 0);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_head" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_arm" , frame_hb);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_armor" , frame_df);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_head" , frame_cv);
     }
     else
     {       
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_leg" , 0);	
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , 0);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_leg" , frame_sp);	
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame_en);
 	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_etc" , 0); 
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_arm" , 0);
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_armor" , 0);
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_head" , 0);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_arm" , frame_hb);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_armor" , frame_df);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_head" , frame_cv);
     
     }
     
