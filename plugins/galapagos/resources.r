@@ -5,3 +5,4 @@ texture leaf textures/leaf.png
 texture sand textures/sand.jpg 
 animation creatureani textures/set_body.png
 animation death textures/death.png
+animation plants textures/plants.png

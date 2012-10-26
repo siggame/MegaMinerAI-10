@@ -67,12 +67,23 @@ namespace visualizer
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     if (m_Plant->hasGrown)
     {
-      game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 2, 2, "leaf" );
+      if( m_Plant->size > 1)
+      {
+        game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-2);
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size-1), 3, IRenderer::Left);
+      }
+      game->renderer->setColor( Color( 1, 1, 1, t ) );
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
     }
     else
     {
-      game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
+      if( m_Plant->size > 0 )
+      {
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+      }
     }
+    
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   
