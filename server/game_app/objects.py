@@ -50,26 +50,24 @@ class Creature(Mappable):
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
+      self.game.grid[creature.x][creature.y].remove(creature)
       self.game.removeObject(creature)
-      #creature.game.animations.append(['death', creature.id])
       self.game.addAnimation(DeathAnimation(creature.id))
-      self.game.grid[creature.x][creature.y] = []
       return False
     return True
 
   def nextTurn(self):
-    #If creatures are stacked they are unable to perform any actions
-    if self.game.grid[self.x][self.y] is not None:
-      if len(self.game.grid[self.x][self.y]) > 1:
-        if(self.decrementEnergy(self.game.energyPerAction, self)):
-          self.canEat = False
-          self.canBreed = False
-          self.movementLeft = 0
-      #Else, we decrement energy like normal and reset stats
-      elif(self.decrementEnergy(self.game.energyPerAction, self)):
+    if len(self.game.grid[self.x][self.y]) > 1:
+      #If the creature is stacked, it loses its ability to be productive
+      if(self.decrementEnergy(self.game.energyPerAction, self)):
+        self.canEat = 0
+        self.canBreed = 0
         self.movementLeft = self.speed
-        self.canEat= True
-        self.canBreed = True
+    #Else, we decrement energy like normal and reset stats
+    elif(self.decrementEnergy(self.game.energyPerAction, self)):
+      self.movementLeft = self.speed
+      self.canEat = 1
+      self.canBreed = 1
     return True
 
   def move(self,x,y):
@@ -90,19 +88,19 @@ class Creature(Mappable):
       if self.game.getObject(x,y).size > 0:
         return "There is a plant there!."
     elif isinstance(self.game.getObject(x,y), Creature):
-      return "There is a creature there!."     
+      return "There is a creature there!."
+    #If the creature moved and didn't die in the process      
     if(self.decrementEnergy(self.game.energyPerAction, self)):
+      if isinstance(self.game.getObject(x,y), Plant):
+        self.game.grid[x][y].remove(self.game.getObject(x,y))
+        self.game.removeObject(self.game.getObject(x,y))
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
       self.x = x
       self.y = y
       self.movementLeft -= 1
-      #self.game.animations.append(['move', self.id, self.x, self.y, x, y])  
-      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))
-      if isinstance(self.game.getObject(x,y), Plant):
-        self.game.removeObject(self.game.getObject(x,y))
-        self.game.grid[x][y].remove(self.game.getObject(x,y))
+      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))     
       return True
     return "Your creature died of starvation as it tried to move"
 
@@ -139,20 +137,13 @@ class Creature(Mappable):
       damage = self.carnivorism - creature.defense
       if damage < 1:
         damage = 1
-      creature.energyLeft -= damage
-     
-      if creature.energyLeft <= 0:
-        #Updating the grid
-        self.game.removeObject(creature)
-        self.energyLeft += self.carnivorism * 5
-        #self.game.animations.append(['death', creature.id])
-        self.game.addAnimation(DeathAnimation(creature.id))
+      #Damage the target creature
+      if self.decrementEnergy(damage, creature):
+        self.energyLeft += self.carnivorism * 5    
+        if self.energyLeft > self.maxEnergy:
+          self.energyLeft = self.maxEnergy
       else:
-        self.decrementEnergy(self.game.energyPerAction, self)
-      if self.energyLeft > self.maxEnergy:
-        self.energyLeft = self.maxEnergy
-      
-      #self.game.animations.append(['eat', self.id, creature.id])
+        self.decrementEnergy(self.game.energyPerAction, self)     
       self.game.addAnimation(EatAnimation(self.id, creature.id))
     self.canEat = False
     return True
@@ -176,34 +167,28 @@ class Creature(Mappable):
     #You can't breed if either partner has already bred.
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
-    print "LISTEN, EVERYONE, I AM MAKING A BABY. ALL HAIL AND REJOICE IN MY PROCREATION."
-  # by default set all stats to average of parents
+    # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
     newCarnivorism = (self.carnivorism + mate.carnivorism) / 2
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
 
-#adding new baby to players breeding list, for game state reasons  
+    #adding new baby to players breeding list, for game state reasons  
     creatureStats = [self.x,self.y,self.owner]+self.newBreed(mate)+[self.id]
-    player = self.game.objects.players[self.game.playerID]   
- #need to keep track of baby's stats, and the mate id
+    player = self.game.objects.players[self.game.playerID]      
+    #need to keep track of baby's stats, and the mate id
     player.breeding.append((creatureStats,mate.id))
- #   newbaby = self.game.addObject(Creature,[self.x,self.y, self.owner]+self.newBreed(mate)+[self.id])
- ###   self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
-#    self.game.addAnimation(BreedAnimation(self.id, mate.id, newbaby.id))
   
     self.canBreed = False
     mate.canBreed = False
     self.canEat = False
     mate.canEat = False
-    self.movementLeft = 0
-    mate.movementLeft = 0
+    print self.energyLeft, mate.energyLeft
     self.decrementEnergy(self.game.energyPerBreed, self)
     self.decrementEnergy(self.game.energyPerBreed, mate) 
-     
-    #Update the grid with the new baby
-#    self.game.grid[self.x][self.y].append(newbaby)       
+    print self.energyLeft, mate.energyLeft
+          
     return True
    
    
@@ -272,12 +257,11 @@ class Player:
 
   def nextTurn(self):
     if self.game.playerID == self.id:
-     for eggStats,mateID in self.breeding:
-      print "making a baby",eggStats
-      newBaby = self.game.addObject(Creature,eggStats)
-      self.game.grid[newBaby.x][newBaby.y].append(newBaby)
-      self.game.addAnimation(BreedAnimation(self.id, mateID, newBaby.id))
-     self.breeding = []
+      for eggStats,mateID in self.breeding:
+        newBaby = self.game.addObject(Creature,eggStats)
+        self.game.grid[newBaby.x][newBaby.y].append(newBaby)
+        self.game.addAnimation(BreedAnimation(self.id, mateID, newBaby.id))
+      self.breeding = []
 
   def talk(self, message):
     if self.game.playerID == self.id:
