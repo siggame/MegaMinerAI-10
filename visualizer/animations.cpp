@@ -101,6 +101,7 @@ namespace visualizer
     if(!m_Creature->m_moves.empty())
     {
         int currentPos = (int)(m_Creature->m_moves.size() * t);
+
 	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , 0);        
 	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , 0);
 	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_etc" , 0);

@@ -162,9 +162,7 @@ namespace visualizer
     
     SeedRand();
 
-    // Setup the renderer as a 4 x 4 map by default
-    // TODO: Change board size to something useful
-    renderer->setCamera( 0, 0, m_game->states[0].mapWidth, m_game->states[0].mapHeight );
+    renderer->setCamera( 0, 0, m_game->states[0].mapWidth-0, m_game->states[0].mapHeight-0);
     renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight );
  
     start();
