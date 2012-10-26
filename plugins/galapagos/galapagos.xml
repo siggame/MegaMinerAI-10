@@ -7,6 +7,20 @@
     <maxvalue>1</maxvalue>
   </option>
   <option>
+    <key>Enable Lighting</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Enable Sun</key>
+    <type>Integer</type>
+    <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
     <key>Slider Bar</key>
     <type>Float</type>
     <value>100</value>

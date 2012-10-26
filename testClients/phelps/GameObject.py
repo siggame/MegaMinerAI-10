@@ -11,8 +11,63 @@ class GameObject(object):
     self._iteration = BaseAI.iteration
 
 
+##A mappable object!
+class Mappable(GameObject):
+  def __init__(self, ptr):
+    from BaseAI import BaseAI
+    self._ptr = ptr
+    self._iteration = BaseAI.iteration
+    self._id = library.mappableGetId(ptr)
+
+  #\cond
+  def validify(self):
+    from BaseAI import BaseAI
+    #if this class is pointing to an object from before the current turn it's probably
+    #somewhere else in memory now
+    if self._iteration == BaseAI.iteration:
+      return True
+    for i in BaseAI.mappables:
+      if i._id == self._id:
+        self._ptr = i._ptr
+        self._iteration = BaseAI.iteration
+        return True
+    raise ExistentialError()
+  #\endcond
+  #\cond
+  def getId(self):
+    self.validify()
+    return library.mappableGetId(self._ptr)
+  #\endcond
+  ##Unique Identifier
+  id = property(getId)
+
+  #\cond
+  def getX(self):
+    self.validify()
+    return library.mappableGetX(self._ptr)
+  #\endcond
+  ##X position of the object
+  x = property(getX)
+
+  #\cond
+  def getY(self):
+    self.validify()
+    return library.mappableGetY(self._ptr)
+  #\endcond
+  ##Y position of the object
+  y = property(getY)
+
+
+  def __str__(self):
+    self.validify()
+    ret = ""
+    ret += "id: %s\n" % self.getId()
+    ret += "x: %s\n" % self.getX()
+    ret += "y: %s\n" % self.getY()
+    return ret
+
 ##A basic creature!
-class Creature(GameObject):
+class Creature(Mappable):
   def __init__(self, ptr):
     from BaseAI import BaseAI
     self._ptr = ptr
@@ -44,12 +99,12 @@ class Creature(GameObject):
     return library.creatureEat(self._ptr, x, y)
 
   ##Breed with target adjacent creature. Spawn new creature at input location
-  def breed(self, mate, x, y):
+  def breed(self, mate):
     self.validify()
     if not isinstance(mate, Creature):
       raise TypeError('mate should be of [Creature]')
     mate.validify()
-    return library.creatureBreed(self._ptr, mate._ptr, x, y)
+    return library.creatureBreed(self._ptr, mate._ptr)
 
   #\cond
   def getId(self):
@@ -60,19 +115,11 @@ class Creature(GameObject):
   id = property(getId)
 
   #\cond
-  def getOwner(self):
-    self.validify()
-    return library.creatureGetOwner(self._ptr)
-  #\endcond
-  ##The owner of the creature
-  owner = property(getOwner)
-
-  #\cond
   def getX(self):
     self.validify()
     return library.creatureGetX(self._ptr)
   #\endcond
-  ##X position of the creature
+  ##X position of the object
   x = property(getX)
 
   #\cond
@@ -80,8 +127,16 @@ class Creature(GameObject):
     self.validify()
     return library.creatureGetY(self._ptr)
   #\endcond
-  ##Y position of the creature
+  ##Y position of the object
   y = property(getY)
+
+  #\cond
+  def getOwner(self):
+    self.validify()
+    return library.creatureGetOwner(self._ptr)
+  #\endcond
+  ##The owner of the creature
+  owner = property(getOwner)
 
   #\cond
   def getMaxEnergy(self):
@@ -140,12 +195,12 @@ class Creature(GameObject):
   defense = property(getDefense)
 
   #\cond
-  def getCanAttack(self):
+  def getCanEat(self):
     self.validify()
-    return library.creatureGetCanAttack(self._ptr)
+    return library.creatureGetCanEat(self._ptr)
   #\endcond
-  ##Indicated whether or not this creature can attack this turn.
-  canAttack = property(getCanAttack)
+  ##Indicated whether or not this creature can eat this turn.
+  canEat = property(getCanEat)
 
   #\cond
   def getCanBreed(self):
@@ -155,14 +210,22 @@ class Creature(GameObject):
   ##Indicated whether or not this creature can breed this turn.
   canBreed = property(getCanBreed)
 
+  #\cond
+  def getParentID(self):
+    self.validify()
+    return library.creatureGetParentID(self._ptr)
+  #\endcond
+  ##ID of the creature that gave birth to this one.
+  parentID = property(getParentID)
+
 
   def __str__(self):
     self.validify()
     ret = ""
     ret += "id: %s\n" % self.getId()
-    ret += "owner: %s\n" % self.getOwner()
     ret += "x: %s\n" % self.getX()
     ret += "y: %s\n" % self.getY()
+    ret += "owner: %s\n" % self.getOwner()
     ret += "maxEnergy: %s\n" % self.getMaxEnergy()
     ret += "energyLeft: %s\n" % self.getEnergyLeft()
     ret += "carnivorism: %s\n" % self.getCarnivorism()
@@ -170,12 +233,13 @@ class Creature(GameObject):
     ret += "speed: %s\n" % self.getSpeed()
     ret += "movementLeft: %s\n" % self.getMovementLeft()
     ret += "defense: %s\n" % self.getDefense()
-    ret += "canAttack: %s\n" % self.getCanAttack()
+    ret += "canEat: %s\n" % self.getCanEat()
     ret += "canBreed: %s\n" % self.getCanBreed()
+    ret += "parentID: %s\n" % self.getParentID()
     return ret
 
 ##A basic plant!
-class Plant(GameObject):
+class Plant(Mappable):
   def __init__(self, ptr):
     from BaseAI import BaseAI
     self._ptr = ptr
@@ -209,7 +273,7 @@ class Plant(GameObject):
     self.validify()
     return library.plantGetX(self._ptr)
   #\endcond
-  ##X position of the plant
+  ##X position of the object
   x = property(getX)
 
   #\cond
@@ -217,7 +281,7 @@ class Plant(GameObject):
     self.validify()
     return library.plantGetY(self._ptr)
   #\endcond
-  ##Y position of the plant
+  ##Y position of the object
   y = property(getY)
 
   #\cond
@@ -228,6 +292,22 @@ class Plant(GameObject):
   ##The size of the plant
   size = property(getSize)
 
+  #\cond
+  def getGrowthRate(self):
+    self.validify()
+    return library.plantGetGrowthRate(self._ptr)
+  #\endcond
+  ##The number of turns it takes this plant to grow in size.
+  growthRate = property(getGrowthRate)
+
+  #\cond
+  def getTurnsUntilGrowth(self):
+    self.validify()
+    return library.plantGetTurnsUntilGrowth(self._ptr)
+  #\endcond
+  ##The number of turns left until this plant will grow again.
+  turnsUntilGrowth = property(getTurnsUntilGrowth)
+
 
   def __str__(self):
     self.validify()
@@ -236,6 +316,8 @@ class Plant(GameObject):
     ret += "x: %s\n" % self.getX()
     ret += "y: %s\n" % self.getY()
     ret += "size: %s\n" % self.getSize()
+    ret += "growthRate: %s\n" % self.getGrowthRate()
+    ret += "turnsUntilGrowth: %s\n" % self.getTurnsUntilGrowth()
     return ret
 
 ##

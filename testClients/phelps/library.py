@@ -48,7 +48,7 @@ library.creatureEat.restype = c_int
 library.creatureEat.argtypes = [c_void_p, c_int, c_int]
 
 library.creatureBreed.restype = c_int
-library.creatureBreed.argtypes = [c_void_p, c_void_p, c_int, c_int]
+library.creatureBreed.argtypes = [c_void_p, c_void_p]
 
 library.playerTalk.restype = c_int
 library.playerTalk.argtypes = [c_void_p, c_char_p]
@@ -71,6 +71,21 @@ library.getMapWidth.argtypes = [c_void_p]
 library.getMapHeight.restype = c_int
 library.getMapHeight.argtypes = [c_void_p]
 
+library.getEnergyPerBreed.restype = c_int
+library.getEnergyPerBreed.argtypes = [c_void_p]
+
+library.getEnergyPerAction.restype = c_int
+library.getEnergyPerAction.argtypes = [c_void_p]
+
+library.getEnergyPerTurn.restype = c_int
+library.getEnergyPerTurn.argtypes = [c_void_p]
+
+library.getMappable.restype = c_void_p
+library.getMappable.argtypes = [c_void_p, c_int]
+
+library.getMappableCount.restype = c_int
+library.getMappableCount.argtypes = [c_void_p]
+
 library.getCreature.restype = c_void_p
 library.getCreature.argtypes = [c_void_p, c_int]
 
@@ -92,17 +107,26 @@ library.getPlayerCount.argtypes = [c_void_p]
 # getters
 
 #Data
+library.mappableGetId.restype = c_int
+library.mappableGetId.argtypes = [c_void_p]
+
+library.mappableGetX.restype = c_int
+library.mappableGetX.argtypes = [c_void_p]
+
+library.mappableGetY.restype = c_int
+library.mappableGetY.argtypes = [c_void_p]
+
 library.creatureGetId.restype = c_int
 library.creatureGetId.argtypes = [c_void_p]
-
-library.creatureGetOwner.restype = c_int
-library.creatureGetOwner.argtypes = [c_void_p]
 
 library.creatureGetX.restype = c_int
 library.creatureGetX.argtypes = [c_void_p]
 
 library.creatureGetY.restype = c_int
 library.creatureGetY.argtypes = [c_void_p]
+
+library.creatureGetOwner.restype = c_int
+library.creatureGetOwner.argtypes = [c_void_p]
 
 library.creatureGetMaxEnergy.restype = c_int
 library.creatureGetMaxEnergy.argtypes = [c_void_p]
@@ -125,11 +149,14 @@ library.creatureGetMovementLeft.argtypes = [c_void_p]
 library.creatureGetDefense.restype = c_int
 library.creatureGetDefense.argtypes = [c_void_p]
 
-library.creatureGetCanAttack.restype = c_int
-library.creatureGetCanAttack.argtypes = [c_void_p]
+library.creatureGetCanEat.restype = c_int
+library.creatureGetCanEat.argtypes = [c_void_p]
 
 library.creatureGetCanBreed.restype = c_int
 library.creatureGetCanBreed.argtypes = [c_void_p]
+
+library.creatureGetParentID.restype = c_int
+library.creatureGetParentID.argtypes = [c_void_p]
 
 library.plantGetId.restype = c_int
 library.plantGetId.argtypes = [c_void_p]
@@ -142,6 +169,12 @@ library.plantGetY.argtypes = [c_void_p]
 
 library.plantGetSize.restype = c_int
 library.plantGetSize.argtypes = [c_void_p]
+
+library.plantGetGrowthRate.restype = c_int
+library.plantGetGrowthRate.argtypes = [c_void_p]
+
+library.plantGetTurnsUntilGrowth.restype = c_int
+library.plantGetTurnsUntilGrowth.argtypes = [c_void_p]
 
 library.playerGetId.restype = c_int
 library.playerGetId.argtypes = [c_void_p]

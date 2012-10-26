@@ -6,23 +6,23 @@
 #include <iostream>
 #include "structures.h"
 
+#include "Mappable.h"
 class Creature;
 
 ///A basic creature!
-class Creature {
+class Creature : public Mappable {
   public:
-  void* ptr;
   Creature(_Creature* ptr = NULL);
 
   // Accessors
   ///Unique Identifier
   int id();
+  ///X position of the object
+  int x();
+  ///Y position of the object
+  int y();
   ///The owner of the creature
   int owner();
-  ///X position of the creature
-  int x();
-  ///Y position of the creature
-  int y();
   ///The maximum amount of energy this creature can have
   int maxEnergy();
   ///The current amount of energy this creature has.
@@ -37,8 +37,8 @@ class Creature {
   int movementLeft();
   ///The defense of the creature
   int defense();
-  ///Indicated whether or not this creature can attack this turn.
-  int canAttack();
+  ///Indicated whether or not this creature can eat this turn.
+  int canEat();
   ///Indicated whether or not this creature can breed this turn.
   int canBreed();
   ///ID of the creature that gave birth to this one.
