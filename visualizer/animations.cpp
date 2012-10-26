@@ -101,7 +101,7 @@ namespace visualizer
     }
     else
     {
-        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
+        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame);
     }
     
   }
