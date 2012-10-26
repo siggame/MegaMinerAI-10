@@ -228,7 +228,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   //game state update
   Connection * c = object->_c;
   //Cannot move a creature you do not own.
-  if(object->owner!=c->playerID)
+  if(object->owner !=c->playerID)
   {
     return 0;
   }
@@ -265,9 +265,11 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   //Decrement energy and movement
   object->energyLeft = object->energyLeft-c->energyPerAction;
   object->movementLeft = object->movementLeft-1;
+  
   //Apply new movement
   object->x = x;
   object->y = y;
+  
   return 1;
 }
 
