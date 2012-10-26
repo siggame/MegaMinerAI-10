@@ -50,9 +50,10 @@ class Creature(Mappable):
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
-      creature.game.removeObject(creature)
+      self.game.removeObject(creature)
       #creature.game.animations.append(['death', creature.id])
-      creature.game.addAnimation(DeathAnimation(creature.id))
+      self.game.addAnimation(DeathAnimation(creature.id))
+      self.game.grid[creature.x][creature.y] = []
       return False
     return True
 
@@ -71,7 +72,7 @@ class Creature(Mappable):
         self.canBreed = True
     return True
 
-  def move(self, x, y):
+  def move(self,x,y):
     if self.owner != self.game.playerID:
       return "You cannot move your oppenent's creature."
     #You can't move if you have no moves left
@@ -175,17 +176,23 @@ class Creature(Mappable):
     #You can't breed if either partner has already bred.
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
-  
+    print "LISTEN, EVERYONE, I AM MAKING A BABY. ALL HAIL AND REJOICE IN MY PROCREATION."
   # by default set all stats to average of parents
     newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
     newDefense = (self.defense + mate.defense) / 2
     newCarnivorism = (self.carnivorism + mate.carnivorism) / 2
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
     newSpeed = (self.speed + mate.speed) / 2
-     
-    newbaby = self.game.addObject(Creature,[self.x,self.y, self.owner]+self.newBreed(mate)+[self.id])
-    #self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
-    self.game.addAnimation(BreedAnimation(self.id, mate.id, newbaby.id))
+
+#adding new baby to players breeding list, for game state reasons  
+    creatureStats = [self.x,self.y,self.owner]+self.newBreed(mate)+[self.id]
+    player = self.game.objects.players[self.game.playerID]   
+ #need to keep track of baby's stats, and the mate id
+    player.breeding.append((creatureStats,mate.id))
+ #   newbaby = self.game.addObject(Creature,[self.x,self.y, self.owner]+self.newBreed(mate)+[self.id])
+ ###   self.game.animations.append(['Breed', self.id, mate.id, newbaby.id])
+#    self.game.addAnimation(BreedAnimation(self.id, mate.id, newbaby.id))
+  
     self.canBreed = False
     mate.canBreed = False
     self.canEat = False
@@ -196,7 +203,7 @@ class Creature(Mappable):
     self.decrementEnergy(self.game.energyPerBreed, mate) 
      
     #Update the grid with the new baby
-    self.game.grid[self.x][self.y].append(newbaby)       
+#    self.game.grid[self.x][self.y].append(newbaby)       
     return True
    
    
@@ -222,25 +229,6 @@ class Creature(Mappable):
     babyStats[min(motherStats,key=motherStats.get)]-=1
     babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
-   
-  def babyStats(self, energy, carnivorism, herbivorism, speed, defense):
-    #Create a list of equivilent stats
-    stats = [energy, 0, carnivorism, herbivorism, speed, 0, defense]
-    #Identify which stat is the highest
-    maxStatIndex = stats.index(max(stats))   
-    count = 0
-    #If the highest stat is maxed, we move until the nex
-    #If all are maxed, we just have a perfect creature
-    while stats[maxStatIndex] != self.game.maxStat and count < len(stats):
-      maxStatIndex = (maxStatIndex + 1) % len(stats)
-      count = count+1
-    #Increase that stat by 1
-    if count < 5:
-      stats[maxStatIndex] = stats[maxStatIndex] + 1
-    #Convert energy back to its normal format
-    stats[0] = (stats[0]*10) + 100
-    
-    return stats
 
 class Plant(Mappable):
   def __init__(self, game, id, x, y, size, growthRate, turnsUntilGrowth):
@@ -251,7 +239,7 @@ class Plant(Mappable):
     self.size = size
     self.growthRate = growthRate
     self.turnsUntilGrowth = turnsUntilGrowth
-
+    
   def toList(self):
     return [self.id, self.x, self.y, self.size, self.growthRate, self.turnsUntilGrowth, ]
   
@@ -273,21 +261,30 @@ class Player:
     self.id = id
     self.playerName = playerName
     self.time = time
+    self.breeding = []
 
   def toList(self):
     return [self.id, self.playerName, self.time, ]
   
   # This will not work if the object has variables other than primitives
-  def toJson(self):
-    return dict(id = self.id, playerName = self.playerName, time = self.time, )
+  def toJson(self): 
+    return dict(id = self.id, playerName = self.playerName, timee = self.time, )
 
   def nextTurn(self):
-    pass
+    if self.game.playerID == self.id:
+     for eggStats,mateID in self.breeding:
+      print "making a baby",eggStats
+      newBaby = self.game.addObject(Creature,eggStats)
+      self.game.grid[newBaby.x][newBaby.y].append(newBaby)
+      self.game.addAnimation(BreedAnimation(self.id, mateID, newBaby.id))
+     self.breeding = []
 
   def talk(self, message):
-    pass
-
-
+    if self.game.playerID == self.id:
+      self.game.addAnimation(PlayerTalkAnimation(self.id,message))
+    else:
+      return "You cannot speak for your opponent"
+    return True
 
 # The following are animations and do not need to have any logic added
 class MoveAnimation:

@@ -127,7 +127,7 @@ class AI(BaseAI):
     return target
     
   def distance(self,sourceX,sourceY,destX,destY):
-    return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
+    return int(math.sqrt((sourceX-destX)**2+(sourceY-destY)**2))
     
   def getNearestPlant(self,creature):
     dist = 1000
@@ -160,14 +160,21 @@ class AI(BaseAI):
     
   def maxStat(self,creature):
     return max([creature.herbivorism,creature.carnivorism,creature.speed,(creature.maxEnergy-100)/10,creature.defense])
-    
+#TODO FIX    
+  def findMate(self,creature):
+      mateList = [mate for mate in self.creatures if mate.owner == creature.owner and mate.id != creature.id]
+      if len(mateList)>0:
+        mate = min(mateList,key = lambda x:self.distance(x.x,x.y,creature.x,creature.y))
+        mate = [min({self.distance(creature.x,mate.x,creature.y,mate.y):mate} for mate in mateList)]
+        print "mate is ",mate
+        
      ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
     adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism == self.maxStat(creature)]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism == self.maxStat(creature)] 
-    print "length of herbivores,carnivores",len(herbivores),len(carnivores)
+#    print "length of herbivores,carnivores",len(herbivores),len(carnivores)
    # for herb in herbivores:
    #   self.eatPlant(herb)
    # for carn in carnivores:
@@ -175,23 +182,24 @@ class AI(BaseAI):
     
     for creature in self.creatures:
      if creature.owner == self.playerID:       
-      randx=random.randrange(-1,2); 
-      randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
-      x=0;y=0
-#      if self.getObject(creature.x+randx,creature.y+randy)is not None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
-      creature.move(creature.x+randx,creature.y+randy)
-      print "moving"
-      x=creature.x+randx;
-      y=creature.y+randy
-      for location in adjacent:
-        thing=self.getObject(x+location[0],y+location[1])
-        if isinstance(thing,Plant):
+      
+       randx=random.randrange(-1,2); 
+       randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
+       x=0;y=0
+       if self.getObject(creature.x+randx,creature.y+randy)is not None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
+         creature.move(creature.x+randx,creature.y+randy)
+       print "moving"
+       #x=creature.x+randx;
+       #y=creature.y+randy
+       for location in adjacent:
+         thing=self.getObject(creature.x+location[0],creature.y+location[1])
+         if isinstance(thing,Plant):
           creature.eat(thing.x,thing.y)
-        if isinstance(thing,Creature):
-          if thing.owner==self.playerID:
-            creature.breed(thing)
-          else:
-            creature.eat(thing.x,thing.y)
+         if isinstance(thing,Creature):
+           if thing.owner==self.playerID:
+             creature.breed(thing)
+           else:
+             creature.eat(thing.x,thing.y)
     return 1
 
   def __init__(self, conn):
