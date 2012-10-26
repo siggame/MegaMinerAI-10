@@ -161,10 +161,13 @@ namespace visualizer
     // END: Initial Setup
     
     SeedRand();
+    
+    m_IslandVisualOffset = 1;
+    m_GUIHeight = 4;
 
-    renderer->setCamera( 0, 0, m_game->states[0].mapWidth-0, m_game->states[0].mapHeight-0);
-    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight );
- 
+    renderer->setCamera( m_IslandVisualOffset, m_IslandVisualOffset, m_game->states[0].mapWidth-m_IslandVisualOffset, m_game->states[0].mapHeight+m_GUIHeight-m_IslandVisualOffset);
+    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight );
+    
     start();
   } // Galapagos::loadGamelog()
   
