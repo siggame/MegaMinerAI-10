@@ -8,13 +8,7 @@
 namespace visualizer
 {
   // todo: move this to the core?
-  template< class T >
-  static string toString(const T& in)
-  {
-    stringstream ss;
-    ss << in;
-    return ss.str();
-  }
+  
    
   void StartAnim::animate( const float& /* t */, AnimData * /* d */, IGame* /*game*/ )
   {
@@ -112,5 +106,10 @@ namespace visualizer
     game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , m_animation->frame);
 
   }
-  
+  void DrawSplashScreen::animate(const float& t, AnimData* d, IGame* game )
+  {
+    game->renderer->setColor( Color(0.0f,0.0f,0.0f,1.0f) );
+    game->renderer->drawText( m_ss->width / 4, m_ss->height / 2, "Roboto", "Winner: ", 6, IRenderer::Right);
+    game->renderer->drawText( m_ss->width / 2, m_ss->height / 2, "Roboto", m_ss->winner, 6, IRenderer::Center);
+  }
 }

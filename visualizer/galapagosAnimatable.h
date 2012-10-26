@@ -93,6 +93,14 @@ namespace visualizer
         int frame;
     };
 
+    struct SplashScreen : public Animatable
+    {
+        string winner;
+        string message;
+	int width;
+	int height;
+    };
+
 } // visualizer
 
 #endif // GALAPAGOS_ANIMATABLE_H

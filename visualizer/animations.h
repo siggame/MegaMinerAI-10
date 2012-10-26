@@ -5,6 +5,13 @@
 
 namespace visualizer
 {
+    template< class T >
+    static string toString(const T& in)
+    {
+    stringstream ss;
+    ss << in;
+    return ss.str();
+    }
 
     struct StartAnim: public Anim
     {
@@ -81,6 +88,22 @@ namespace visualizer
 
      private:
          SpriteAnimation* m_animation;
+     };
+
+     class DrawSplashScreen : public Anim
+     {
+         public:
+            DrawSplashScreen( SplashScreen* ss ) : m_ss(ss) {}
+            void animate( const float& t, AnimData* d, IGame* game );
+
+            float controlDuration() const
+            { return 0; }
+
+            float totalDuration() const
+            { return 0; }
+        
+        private:
+            SplashScreen *m_ss;
      };
     
 }

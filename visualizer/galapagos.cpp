@@ -290,6 +290,19 @@ namespace visualizer
         turn[p.second.id]["Defence"] = p.second.defense;
       }
 
+      if( m_game->states.size() == state + 1 )
+      {
+        SmartPointer<SplashScreen> ss = new SplashScreen();
+
+	ss->winner = m_game->states[0].players[m_game->winner].playerName;
+	ss->width = m_game->states[0].mapWidth;
+	ss->height = m_game->states[0].mapHeight;
+
+        ss->addKeyFrame( new DrawSplashScreen( ss ) );
+
+        turn.addAnimatable( ss );
+      }
+
       auto rangePair = animations.equal_range(state);
       for(auto iter = rangePair.first; iter != rangePair.second; ++iter)
       {
@@ -313,7 +326,7 @@ namespace visualizer
           timeManager->play();
         }
       }
-    }
+    }    
     
     if(!m_suicide)
     {

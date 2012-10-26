@@ -144,7 +144,7 @@ struct Game
   std::vector<GameState> states;
   std::string players[2];
   int winner;
-	std::string winReason;
+  std::string winReason;
 
   Game();
 };
