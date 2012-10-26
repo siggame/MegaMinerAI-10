@@ -227,14 +227,17 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   UNLOCK( &object->_c->mutex);
   //game state update
   Connection * c = object->_c;
+  //Cannot move a creature you do not own.
   if(object->owner!=c->playerID)
   {
     return 0;
   }
+  //Cannot move if there is no movement left.
   else if(object->movementLeft<=0)
   {
    return 0;
   }
+  //Cannot move out of bounds
   else if((x<0||x>c->mapWidth)||(y<0||y>c->mapHeight))
   {
     return 0;
@@ -243,6 +246,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   {
    return 0;
   }
+  //Do not move on top of another creature.
   for (int ii=0;ii<c->CreatureCount;ii++)
   {
    if (c->Creatures[ii].x == x && c->Creatures[ii].y == y)
@@ -250,6 +254,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
      return 0;
    }
   }
+  //Do not move on top of a plant.
   for(int ii=0;ii<c->PlantCount;ii++)
   {
    if(c->Plants[ii].x == x && c->Plants[ii].y == y)
@@ -257,9 +262,10 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
       return 0;
     }
   }
-  
+  //Decrement energy and movement
   object->energyLeft = object->energyLeft-c->energyPerAction;
   object->movementLeft = object->movementLeft-1;
+  //Apply new movement
   object->x = x;
   object->y = y;
   return 1;
@@ -277,6 +283,7 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
   UNLOCK( &object->_c->mutex);
   //game state update
   Connection * c = object->_c;
+  
   if(object->owner != c->playerID)
   {
     return 0;
