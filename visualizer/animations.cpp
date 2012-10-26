@@ -65,7 +65,25 @@ namespace visualizer
   void DrawPlant::animate( const float& t, AnimData* /*d*/, IGame* game )
   {
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
-    game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
+    if (m_Plant->hasGrown)
+    {
+      if( m_Plant->size > 1)
+      {
+        game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-2);
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size-1), 3, IRenderer::Left);
+      }
+      game->renderer->setColor( Color( 1, 1, 1, t ) );
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+    }
+    else
+    {
+      if( m_Plant->size > 0 )
+      {
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+      }
+    }
+    
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   
@@ -79,11 +97,11 @@ namespace visualizer
     if(!m_Creature->m_moves.empty())
     {
         int currentPos = (int)(m_Creature->m_moves.size() * t);
-        game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creatureani" , frame);
+        game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , frame);
     }
     else
     {
-        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
+        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame);
     }
     
   }
