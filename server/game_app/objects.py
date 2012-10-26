@@ -227,7 +227,7 @@ class Creature(Mappable):
     #Increment father's highest stat and lower the mother's lowest    
     babyStats[max(fatherStats,key=fatherStats.get)]+=1
     babyStats[min(motherStats,key=motherStats.get)]-=1
-    babyList = [babyStats['energy']*10+100,0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    babyList = [int(babyStats['energy']*10+100),0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
 
 class Plant(Mappable):
