@@ -93,18 +93,35 @@ namespace visualizer
   	game->renderer->setColor( color );
   	
     int frame = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
+    int frame1 = (m_Creature->carnivorism) -1;
+    int frame2 = (m_Creature->herbivorism) -1;
+    int frame3 = (m_Creature->defense) -1;
+    int frame4 = (m_Creature->speed) -1;
 
     if(!m_Creature->m_moves.empty())
     {
         int currentPos = (int)(m_Creature->m_moves.size() * t);
-        game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , frame);
+
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , 0);        
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_etc" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_arm" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_armor" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_head" , 0);
     }
     else
-    {
-        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame);
+    {       
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_leg" , 0);	
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , 0);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_etc" , 0); 
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_arm" , 0);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_armor" , 0);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_head" , 0);
+    
     }
     
   }
+
 
   void DrawAnimation::animate(const float& t, AnimData* d, IGame* game )
   {

@@ -273,6 +273,17 @@ namespace visualizer
         creature->energyLeft = p.second.energyLeft;
         creature->maxEnergy = p.second.maxEnergy;
         creature->owner = p.second.owner;
+
+	//more stats, not sure how many are needed purely for animation
+	creature->carnivorism = p.second.carnivorism;
+	creature->herbivorism = p.second.herbivorism;
+	creature->speed = p.second.speed;
+	creature->movementLeft = p.second.movementLeft;
+	creature->defense = p.second.defense;
+	creature->canEat = p.second.canEat;
+	creature->canBreed = p.second.canBreed;
+	creature->parentID = p.second.parentID;
+
         creature->addKeyFrame( new DrawCreature( creature ) );
 
         (*map)(creature->y,creature->x) = Map::Tile("sand",state);
