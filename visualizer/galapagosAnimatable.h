@@ -1,11 +1,12 @@
 #ifndef GALAPAGOS_ANIMATABLE_H
 #define GALAPAGOS_ANIMATABLE_H
 
-//#include "galapagosAnimatable.h"
 #include "irenderer.h"
 #include "parser/structures.h"
 
 #include "math.h"
+
+#include <glm/glm.hpp>
 #include <string>
 
 namespace visualizer
@@ -79,6 +80,8 @@ namespace visualizer
         int energyLeft;
         int maxEnergy;
     	int owner;
+
+        std::vector<glm::vec2> m_moves;
     	// todo: add more
     };
 

@@ -71,12 +71,20 @@ namespace visualizer
   
   void DrawCreature::animate(const float& t, AnimData* d, IGame* game )
   {
-    Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1 ) : Color( 0.1, 0.1, 0.8, 1 );
+    Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 );
   	game->renderer->setColor( color );
   	
     int frame = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
-  	
-    game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
+
+    if(!m_Creature->m_moves.empty())
+    {
+        int currentPos = (int)(m_Creature->m_moves.size() * t);
+        game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creatureani" , frame);
+    }
+    else
+    {
+        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
+    }
     
   }
 

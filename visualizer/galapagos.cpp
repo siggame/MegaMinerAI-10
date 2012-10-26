@@ -230,6 +230,23 @@ namespace visualizer
       {
       	SmartPointer<Creature> creature = new Creature();
 
+        for(auto& j : m_game->states[state].animations[p.second.id])
+        {
+            switch(j->type)
+            {
+                case parser::MOVE:
+                {
+                    parser::move& move = (parser::move&)*j;
+                    creature->m_moves.push_back(glm::vec2( move.toX, move.toY ));
+
+                    // todo: fix this
+                    (*map)(move.toY,move.toX) = Map::Tile("sand",state);
+
+                    break;
+                }
+            }
+        }
+
         if( (state + 1) != m_game->states.size() )
         {
           if( m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end() )
@@ -237,7 +254,7 @@ namespace visualizer
             // todo: need to make this tweakable
             for(int i = 1; i <= 7; ++i)
             {
-                SpriteAnimation* deathAni = new SpriteAnimation();
+                SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation();
                 deathAni->x = p.second.x;
                 deathAni->y = p.second.y;
                 deathAni->frame = i - 1; // todo: need to make this tweakable
