@@ -57,19 +57,17 @@ class Creature(Mappable):
     return True
 
   def nextTurn(self):
-    #If creatures are stacked they are unable to perform any actions
-    if self.game.grid[self.x][self.y] is not None:
-      if len(self.game.grid[self.x][self.y]) > 1:
-        #If the creature is stacked, it loses its ability to be productive
-        if(self.decrementEnergy(self.game.energyPerAction, self)):
-          self.canEat = False
-          self.canBreed = False
-          self.movementLeft = self.speed
-      #Else, we decrement energy like normal and reset stats
-      elif(self.decrementEnergy(self.game.energyPerAction, self)):
+    if len(self.game.grid[self.x][self.y]) > 1:
+      #If the creature is stacked, it loses its ability to be productive
+      if(self.decrementEnergy(self.game.energyPerAction, self)):
+        self.canEat = 0
+        self.canBreed = 0
         self.movementLeft = self.speed
-        self.canEat= True
-        self.canBreed = True
+    #Else, we decrement energy like normal and reset stats
+    elif(self.decrementEnergy(self.game.energyPerAction, self)):
+      self.movementLeft = self.speed
+      self.canEat = 1
+      self.canBreed = 1
     return True
 
   def move(self,x,y):
@@ -93,10 +91,9 @@ class Creature(Mappable):
       return "There is a creature there!."
     #If the creature moved and didn't die in the process      
     if(self.decrementEnergy(self.game.energyPerAction, self)):
-      #
       if isinstance(self.game.getObject(x,y), Plant):
-        self.game.removeObject(self.game.getObject(x,y))
         self.game.grid[x][y].remove(self.game.getObject(x,y))
+        self.game.removeObject(self.game.getObject(x,y))
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
