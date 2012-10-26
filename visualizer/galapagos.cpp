@@ -161,12 +161,13 @@ namespace visualizer
     // END: Initial Setup
     
     SeedRand();
+    
+    m_IslandVisualOffset = 1;
+    m_GUIHeight = 4;
 
-    // Setup the renderer as a 4 x 4 map by default
-    // TODO: Change board size to something useful
-    renderer->setCamera( 0, 0, m_game->states[0].mapWidth, m_game->states[0].mapHeight );
-    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight );
- 
+    renderer->setCamera( m_IslandVisualOffset, m_IslandVisualOffset, m_game->states[0].mapWidth-m_IslandVisualOffset, m_game->states[0].mapHeight+m_GUIHeight-m_IslandVisualOffset);
+    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight );
+    
     start();
   } // Galapagos::loadGamelog()
   
@@ -218,6 +219,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
+        plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -271,6 +273,17 @@ namespace visualizer
         creature->energyLeft = p.second.energyLeft;
         creature->maxEnergy = p.second.maxEnergy;
         creature->owner = p.second.owner;
+
+	//more stats, not sure how many are needed purely for animation
+	creature->carnivorism = p.second.carnivorism;
+	creature->herbivorism = p.second.herbivorism;
+	creature->speed = p.second.speed;
+	creature->movementLeft = p.second.movementLeft;
+	creature->defense = p.second.defense;
+	creature->canEat = p.second.canEat;
+	creature->canBreed = p.second.canBreed;
+	creature->parentID = p.second.parentID;
+
         creature->addKeyFrame( new DrawCreature( creature ) );
 
         (*map)(creature->y,creature->x) = Map::Tile("sand",state);

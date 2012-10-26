@@ -65,7 +65,25 @@ namespace visualizer
   void DrawPlant::animate( const float& t, AnimData* /*d*/, IGame* game )
   {
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
-    game->renderer->drawTexturedQuad( m_Plant->x, m_Plant->y, 1, 1, "leaf" );
+    if (m_Plant->hasGrown)
+    {
+      if( m_Plant->size > 1)
+      {
+        game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-2);
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size-1), 3, IRenderer::Left);
+      }
+      game->renderer->setColor( Color( 1, 1, 1, t ) );
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+    }
+    else
+    {
+      if( m_Plant->size > 0 )
+      {
+        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+      }
+    }
+    
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   
@@ -74,19 +92,37 @@ namespace visualizer
     Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 );
   	game->renderer->setColor( color );
   	
-    int frame = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
+    int frame_sp = (m_Creature->speed) -1;
+    int frame_en = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
+    int frame_hb = (m_Creature->herbivorism) -1;
+    int frame_df = (m_Creature->defense) -1;
+    int frame_cv = (m_Creature->carnivorism) -1;
+
 
     if(!m_Creature->m_moves.empty())
     {
         int currentPos = (int)(m_Creature->m_moves.size() * t);
-        game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creatureani" , frame);
+
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , frame_sp);        
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , frame_en);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_etc" , 0);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_arm" , frame_hb);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_armor" , frame_df);
+	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_head" , frame_cv);
     }
     else
-    {
-        game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creatureani" , frame);
+    {       
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_leg" , frame_sp);	
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame_en);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_etc" , 0); 
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_arm" , frame_hb);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_armor" , frame_df);
+	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_head" , frame_cv);
+    
     }
     
   }
+
 
   void DrawAnimation::animate(const float& t, AnimData* d, IGame* game )
   {

@@ -68,11 +68,12 @@ class AI(BaseAI):
     
   def findNearestFriendlyCreatureXY(self, creature):
     #Doesn't work if I only have one creature left
-    if len(self.myCreatures) > 1:    
+    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
+    if len(myCreatures) > 1:    
       #Creates a dictionary of the distances to each creature I control that isn't at the calling creature's position
-      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in self.myCreatures if target.x != creature.x and creature.y != target.y}  
+      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}  
       #Returns the object that is the closest creature      
-      bestCreature = next(target for target in self.myCreatures if target.id == min(dict, key=dict.get))
+      bestCreature = next(target for target in myCreatures if target.id == min(dict, key=dict.get))
       #Returns the x and y value of that creature's location
       return [bestCreature.x, bestCreature.y]     
     return [-1,-1]
@@ -81,9 +82,9 @@ class AI(BaseAI):
   #to see which has the best hueristic  
   def findNearestEnemyCreatureXY(self, creature):   
     #Creates a dictionary of the distances to each enemy creature
-    dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in self.enemyCreatures}  
+    dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in self.creatures if creature.owner != self.playerID}  
     #Returns the object that is the closest creature      
-    bestCreature = next(target for target in self.enemyCreatures if target.id == min(dict, key=dict.get))
+    bestCreature = next(target for target in enemyCreatures if target.id == min(dict, key=dict.get))
     #Returns the x and y value of that creature's location
     return [bestCreature.x, bestCreature.y]  
   
@@ -101,7 +102,7 @@ class AI(BaseAI):
     
   def init(self):
     #Set up lists for highest stats among creatures
-    self.statCreatureList = [[] for _ in range(5)]                 
+    self.statCreatureList = {"energy": [], "carnivorism": [], "herbivorism": [], "speed": [], "defense": []}    
 
   ##This function is called once, after your last turn
   def end(self):
@@ -116,33 +117,35 @@ class AI(BaseAI):
     for plant in self.plants:
       self.grid[plant.x][plant.y] = [plant]
     for creature in self.creatures:
+      self.grid[creature.x][creature.y] = [creature] 
       if creature.owner == self.playerID:
-        self.grid[creature.x][creature.y] = [creature] 
-        stats = [(creature.maxEnergy - 100)/10, creature.carnivorism, creature.herbivorism, creature.defense, creature.speed] 
-        self.statCreatureList[stats.index(max(stats))].append(creature)  
+        stats = {"energy": (creature.maxEnergy - 100)/10, "carnivorism": creature.carnivorism, "herbivorism": creature.herbivorism, "defense": creature.defense,"speed": creature.speed} 
+        self.statCreatureList[max(stats, key=stats.get)].append(creature)
   
-    self.theirCreatures = [creature for creature in self.creatures if creature.owner != self.playerID]
-    self.myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
     print self.turnNumber
-    for creature in self.myCreatures:
+    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
+    for creature in myCreatures:
+      #If my creature is hungry, find food despite the type
       if creature.energyLeft < creature.maxEnergy/2:
         coords = self.findNearestEdiblePlantXY(creature) 
         path = self.findPath(creature.x, creature.y, coords[0], coords[1])
-        movementLeft = creature.movementLeft
-        currentLoc = [creature.x, creature.y]
         #Move until we are to the plant or can move no more
-        #while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, coords[0], coords[1]) > 1:
-        while len(path) > 0 and movementLeft > 0 and self.distance(currentLoc[0], currentLoc[1], coords[0], coords[1]) > 1:
-          creature.move(path[0][0], path[0][1]) 
-          currentLoc = path[0]         
+        while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, coords[0], coords[1]) > 1 and creature.energyLeft > 0:
+          creature.move(path[0][0], path[0][1])         
           path.remove(path[0])
-          movementLeft -= 1
         #We are next to a plant! Eat it!
-        #if self.distance(creature.x, creatue.y, coords[0], coords[1]) == 1:
-        if self.distance(currentLoc[0], currentLoc[1], coords[0], coords[1]) == 1.0:
+        if self.distance(creature.x, creature.y, coords[0], coords[1]) == 1 and creature.canEat == True:
           creature.eat(coords[0], coords[1])  
-
-                
+      elif creature.energyLeft > creature.maxEnergy/2 and creature.energyLeft > self.energyPerBreed + 15:
+        coords = self.findNearestFriendlyCreatureXY(creature) 
+        path = self.findPath(creature.x, creature.y, coords[0], coords[1])
+        while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, coords[0], coords[1]) > 1 and creature.energyLeft > 0:
+          creature.move(path[0][0], path[0][1])         
+          path.remove(path[0])
+        if self.distance(creature.x, creature.y, coords[0], coords[1]) == 1 and creature.canBreed == True and creature.energyLeft > self.energyPerBreed:
+          if(len(self.grid[coords[0]][coords[1]])):
+            print self.grid[coords[0]][coords[1]][0]
+            creature.breed(self.grid[coords[0]][coords[1]][0])
     return 1
 
   def __init__(self, conn):

@@ -70,6 +70,7 @@ namespace visualizer
        int x;
        int y;
        int size;
+       bool hasGrown;
        // todo: add more
     };
     
@@ -77,9 +78,20 @@ namespace visualizer
     {
     	int x;
     	int y;
+    	int owner;
+
         int energyLeft;
         int maxEnergy;
-    	int owner;
+ 	int carnivorism;
+  	int herbivorism;
+ 	int speed;
+ 	int defense;
+
+	//useful for visualizer?
+  	int movementLeft;
+ 	int canEat;
+ 	int canBreed;
+ 	int parentID;
 
         std::vector<glm::vec2> m_moves;
     	// todo: add more
