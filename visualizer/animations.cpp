@@ -90,10 +90,10 @@ namespace visualizer
     int frame_cv = (m_Creature->carnivorism) -1;
 
     int currentPos = (int)((m_Creature->m_moves.size()) * t);
-    float posX = m_Creature->m_moves[currentPos].to.x;
-    float posY = m_Creature->m_moves[currentPos].to.y;
+    float posX = (float)m_Creature->m_moves[currentPos].to.x;
+    float posY = (float)m_Creature->m_moves[currentPos].to.y;
 
-    if(m_Creature->m_moves.size() > 1)
+    //if(m_Creature->m_moves.size() > 1)
     {
         posX = linearTween(t,m_Creature->m_moves[currentPos].from.x,posX - m_Creature->m_moves[currentPos].from.x,1.0);
         posY = linearTween(t,m_Creature->m_moves[currentPos].from.y,posY - m_Creature->m_moves[currentPos].from.y,1.0);
