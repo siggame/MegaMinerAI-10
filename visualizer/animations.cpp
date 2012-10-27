@@ -83,24 +83,17 @@ namespace visualizer
   
   void DrawCreature::animate(const float& t, AnimData*, IGame* game )
   {
-    int frame_sp = (m_Creature->speed) -1;
+    int frame_sp = m_Creature->speed - 1;
     int frame_en = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
-    int frame_hb = (m_Creature->herbivorism) -1;
-    int frame_df = (m_Creature->defense) -1;
-    int frame_cv = (m_Creature->carnivorism) -1;
+    int frame_hb = m_Creature->herbivorism - 1;
+    int frame_df = m_Creature->defense - 1;
+    int frame_cv = m_Creature->carnivorism - 1;
 
-    int currentPos = (int)((m_Creature->m_moves.size()) * t);
-    float posX = (float)m_Creature->m_moves[currentPos].to.x;
-    float posY = (float)m_Creature->m_moves[currentPos].to.y;
+    unsigned int index = (unsigned int)(m_Creature->m_moves.size() * t);
+    float subT = m_Creature->m_moves.size() * t - index;
 
-    //if(m_Creature->m_moves.size() > 1)
-    {
-        posX = linearTween(t,m_Creature->m_moves[currentPos].from.x,posX - m_Creature->m_moves[currentPos].from.x,1.0);
-        posY = linearTween(t,m_Creature->m_moves[currentPos].from.y,posY - m_Creature->m_moves[currentPos].from.y,1.0);
-        //posX += (float)(posX - m_Creature->m_moves[currentPos].from.x)*t;
-        //posY += (float)(posY - m_Creature->m_moves[currentPos].from.y)*t;
-        //cout<<linearTween(t,m_Creature->m_moves[currentPos].from.x,posX - m_Creature->m_moves[currentPos].from.x,1.0/m_Creature->m_moves.size())<<endl;
-    }
+    float posX = m_Creature->m_moves[index].from.x + (m_Creature->m_moves[index].to.x - m_Creature->m_moves[index].from.x) * subT;
+    float posY = m_Creature->m_moves[index].from.y + (m_Creature->m_moves[index].to.y - m_Creature->m_moves[index].from.y) * subT;
 
     game->renderer->setColor( m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 ) );
 
