@@ -7,6 +7,7 @@
 #include <time.h>
 #include <list>
 #include <glm/glm.hpp>
+#include <stack>
 
 namespace visualizer
 {
@@ -184,7 +185,7 @@ namespace visualizer
     
     Map* pPrevMap = nullptr;
 
-    std::multimap<int,SmartPointer<Animatable>> animations;
+    std::stack<SmartPointer<Animatable>> animations;
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
@@ -198,12 +199,11 @@ namespace visualizer
       
       if(pPrevMap == nullptr)
       {
-        map = new Map(m_game->states[state].mapWidth,
-        m_game->states[state].mapHeight,0.6f,mapColor,xPos);
+        map = new Map(m_game->states[state].mapWidth,m_game->states[state].mapHeight,0.6f,mapColor,xPos);
       }
       else
       {
-        map = new Map(*pPrevMap,mapColor,xPos); 
+        map = new Map(*pPrevMap,mapColor,xPos);
       }
      
       pPrevMap = map;
@@ -211,6 +211,13 @@ namespace visualizer
 
       map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
+
+      while(!animations.empty())
+      {
+          turn.addAnimatable(animations.top());
+          animations.pop();
+      }
+
       
       for( auto& p : m_game->states[ state ].plants )
       {
@@ -218,7 +225,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
-        plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
+        //plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -238,7 +245,6 @@ namespace visualizer
                 case parser::MOVE:
                 {
                     parser::move& move = (parser::move&)*j;
-                    cout<<move.fromX - move.toX<<endl;
                     creature->m_moves.push_back(Creature::Moves(glm::vec2(move.toX, move.toY),glm::vec2(move.fromX, move.fromY)));
 
                     // todo: fix this
@@ -254,21 +260,19 @@ namespace visualizer
             creature->m_moves.push_back(Creature::Moves(glm::vec2(p.second.x, p.second.y),glm::vec2(p.second.x, p.second.y)));
         }
 
-        if( (state + 1) != m_game->states.size() )
+        if( (state + 1) < m_game->states.size() )
         {
-          if( m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end() )
+          if(m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end())
           {
-            // todo: need to make this tweakable
-            for(int i = 1; i <= 7; ++i)
-            {
-                SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation();
-                deathAni->x = p.second.x;
-                deathAni->y = p.second.y;
-                deathAni->frame = i - 1; // todo: need to make this tweakable
-                deathAni->addKeyFrame(new DrawAnimation(deathAni));
+              SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation();
+              deathAni->x = p.second.x;
+              deathAni->y = p.second.y;
+              deathAni->frame = 7; // todo: need to make this tweakable
+              deathAni->addKeyFrame(new DrawAnimation(deathAni));
 
-                animations.insert(make_pair(state+i,deathAni));
-            }
+              cout<<"Death, energy left: "<<p.second.energyLeft<<endl;
+
+              animations.push(deathAni);
           }
 
         }
@@ -316,13 +320,6 @@ namespace visualizer
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
 
         turn.addAnimatable( ss );
-      }
-
-      auto rangePair = animations.equal_range(state);
-      for(auto iter = rangePair.first; iter != rangePair.second; ++iter)
-      {
-          turn.addAnimatable((iter->second));
-          animations.erase(iter);
       }
 
       // end of parsing this state in the glog, build the turn

@@ -110,8 +110,7 @@ namespace visualizer
   void DrawAnimation::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
-    game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , m_animation->frame);
-
+    game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , (int)(m_animation->frame * t));
   }
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
