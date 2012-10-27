@@ -14,7 +14,7 @@ namespace visualizer
   {
   }
 
-  void DrawMap::animate( const float& t, AnimData * /*d*/, IGame* game )
+  void DrawMap::animate( const float& t, AnimData *, IGame* game )
   {
     int middleY = m_Map->GetHeight() / 2;
     
@@ -50,13 +50,13 @@ namespace visualizer
         } 
         
         game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
-        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 7) < game->timeManager->getTurn() ? "grass" : tile.texture );
+        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 3) < game->timeManager->getTurn() ? "grass" : tile.texture );
       }
     }
     
   }
   
-  void DrawPlant::animate( const float& t, AnimData* /*d*/, IGame* game )
+  void DrawPlant::animate( const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     if (m_Plant->hasGrown)
@@ -81,50 +81,46 @@ namespace visualizer
     game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   
-  void DrawCreature::animate(const float& t, AnimData* d, IGame* game )
+  void DrawCreature::animate(const float& t, AnimData*, IGame* game )
   {
-    Color color = m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 );
-  	game->renderer->setColor( color );
-  	
     int frame_sp = (m_Creature->speed) -1;
     int frame_en = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy);
     int frame_hb = (m_Creature->herbivorism) -1;
     int frame_df = (m_Creature->defense) -1;
     int frame_cv = (m_Creature->carnivorism) -1;
 
+    int currentPos = (int)((m_Creature->m_moves.size()) * t);
+    float posX = m_Creature->m_moves[currentPos].to.x;
+    float posY = m_Creature->m_moves[currentPos].to.y;
 
-    if(!m_Creature->m_moves.empty())
+    if(m_Creature->m_moves.size() > 1)
     {
-        int currentPos = (int)(m_Creature->m_moves.size() * t);
+        posX = linearTween(t,m_Creature->m_moves[currentPos].from.x,posX - m_Creature->m_moves[currentPos].from.x,1.0);
+        posY = linearTween(t,m_Creature->m_moves[currentPos].from.y,posY - m_Creature->m_moves[currentPos].from.y,1.0);
+        //posX += (float)(posX - m_Creature->m_moves[currentPos].from.x)*t;
+        //posY += (float)(posY - m_Creature->m_moves[currentPos].from.y)*t;
+        //cout<<linearTween(t,m_Creature->m_moves[currentPos].from.x,posX - m_Creature->m_moves[currentPos].from.x,1.0/m_Creature->m_moves.size())<<endl;
+    }
 
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_leg" , frame_sp);        
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_body" , frame_en);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_etc" , 0);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_arm" , frame_hb);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_armor" , frame_df);
-	game->renderer->drawAnimQuad( m_Creature->m_moves[currentPos].x, m_Creature->m_moves[currentPos].y, 1, 1, "creature_head" , frame_cv);
-    }
-    else
-    {       
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_leg" , frame_sp);	
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_body" , frame_en);
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_etc" , 0); 
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_arm" , frame_hb);
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_armor" , frame_df);
-	game->renderer->drawAnimQuad( m_Creature->x, m_Creature->y, 1, 1, "creature_head" , frame_cv);
-    
-    }
-    
+    game->renderer->setColor( m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 ) );
+
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , frame_sp);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , frame_en);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , frame_hb);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , frame_df);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , frame_cv);
+
   }
 
 
-  void DrawAnimation::animate(const float& t, AnimData* d, IGame* game )
+  void DrawAnimation::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
     game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , m_animation->frame);
 
   }
-  void DrawSplashScreen::animate(const float& t, AnimData* d, IGame* game )
+  void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(0.0f,0.0f,0.0f,1.0f) );
     game->renderer->drawText( m_ss->width / 4, m_ss->height / 2, "Roboto", "Winner: ", 6, IRenderer::Right);

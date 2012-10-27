@@ -53,14 +53,13 @@ namespace visualizer
     int width = input.sx - input.x;
     int height = input.sy - input.y;
     
-    int right = input.x+width;
-    int bottom = input.y+height;
+    int right = input.x + width;
+    int bottom = input.y + height;
     
     R.left = min(x,right);
     R.top = min(y,bottom);
     R.right = max(x,right);
     R.bottom = max(y,bottom);
-    
   }
 
   void Galapagos::preDraw()
@@ -239,7 +238,8 @@ namespace visualizer
                 case parser::MOVE:
                 {
                     parser::move& move = (parser::move&)*j;
-                    creature->m_moves.push_back(glm::vec2( move.toX, move.toY ));
+                    cout<<move.fromX - move.toX<<endl;
+                    creature->m_moves.push_back(Creature::Moves(glm::vec2(move.toX, move.toY),glm::vec2(move.fromX, move.fromY)));
 
                     // todo: fix this
                     (*map)(move.toY,move.toX) = Map::Tile("sand",state);
@@ -247,6 +247,11 @@ namespace visualizer
                     break;
                 }
             }
+        }
+
+        if(creature->m_moves.empty())
+        {
+            creature->m_moves.push_back(Creature::Moves(glm::vec2(p.second.x, p.second.y),glm::vec2(p.second.x, p.second.y)));
         }
 
         if( (state + 1) != m_game->states.size() )
@@ -268,25 +273,23 @@ namespace visualizer
 
         }
 
-        creature->x = p.second.x;
-        creature->y = p.second.y;
         creature->energyLeft = p.second.energyLeft;
         creature->maxEnergy = p.second.maxEnergy;
         creature->owner = p.second.owner;
 
-	//more stats, not sure how many are needed purely for animation
-	creature->carnivorism = p.second.carnivorism;
-	creature->herbivorism = p.second.herbivorism;
-	creature->speed = p.second.speed;
-	creature->movementLeft = p.second.movementLeft;
-	creature->defense = p.second.defense;
-	creature->canEat = p.second.canEat;
-	creature->canBreed = p.second.canBreed;
-	creature->parentID = p.second.parentID;
+        //more stats, not sure how many are needed purely for animation
+        creature->carnivorism = p.second.carnivorism;
+        creature->herbivorism = p.second.herbivorism;
+        creature->speed = p.second.speed;
+        creature->movementLeft = p.second.movementLeft;
+        creature->defense = p.second.defense;
+        creature->canEat = p.second.canEat;
+        creature->canBreed = p.second.canBreed;
+        creature->parentID = p.second.parentID;
 
         creature->addKeyFrame( new DrawCreature( creature ) );
 
-        (*map)(creature->y,creature->x) = Map::Tile("sand",state);
+        (*map)(p.second.y,p.second.x) = Map::Tile("sand",state);
 
         turn.addAnimatable( creature );
         
@@ -306,9 +309,9 @@ namespace visualizer
       {
         SmartPointer<SplashScreen> ss = new SplashScreen();
 
-	ss->winner = m_game->states[0].players[m_game->winner].playerName;
-	ss->width = m_game->states[0].mapWidth;
-	ss->height = m_game->states[0].mapHeight;
+        ss->winner = m_game->states[0].players[m_game->winner].playerName;
+        ss->width = m_game->states[0].mapWidth;
+        ss->height = m_game->states[0].mapHeight;
 
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
 

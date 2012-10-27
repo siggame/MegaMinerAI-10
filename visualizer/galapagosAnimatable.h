@@ -76,24 +76,34 @@ namespace visualizer
     
     struct Creature : public Animatable
     {
-    	int x;
-    	int y;
+        struct Moves
+        {
+            Moves() {}
+            Moves(const glm::vec2& t, const glm::vec2& f) : to(t), from(f)
+            {
+            }
+
+            // todo: maybe rename these
+            glm::vec2 to;
+            glm::vec2 from;
+        };
+
     	int owner;
 
         int energyLeft;
         int maxEnergy;
- 	int carnivorism;
-  	int herbivorism;
- 	int speed;
- 	int defense;
+        int carnivorism;
+        int herbivorism;
+        int speed;
+        int defense;
 
-	//useful for visualizer?
-  	int movementLeft;
- 	int canEat;
- 	int canBreed;
- 	int parentID;
+        //useful for visualizer?
+        int movementLeft;
+        int canEat;
+        int canBreed;
+        int parentID;
 
-        std::vector<glm::vec2> m_moves;
+        std::vector<Moves> m_moves;
     	// todo: add more
     };
 

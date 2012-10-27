@@ -97,10 +97,10 @@ class Creature(Mappable):
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
-      self.x = x
-      self.y = y
       self.movementLeft -= 1
-      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))     
+      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))
+      self.x = x
+      self.y = y     
       return True
     return "Your creature died of starvation as it tried to move"
 
