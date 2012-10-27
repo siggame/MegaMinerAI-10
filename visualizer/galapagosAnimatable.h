@@ -118,8 +118,8 @@ namespace visualizer
     {
         string winner;
         string message;
-	int width;
-	int height;
+        int width;
+        int height;
     };
 
 } // visualizer

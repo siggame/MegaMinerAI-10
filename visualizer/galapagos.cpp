@@ -51,11 +51,11 @@ namespace visualizer
     
     int x = input.x;
     int y = input.y;
-    int width = input.sx - input.x;
-    int height = input.sy - input.y;
+    int width = input.sx - x;
+    int height = input.sy - y;
     
-    int right = input.x + width;
-    int bottom = input.y + height;
+    int right = x + width;
+    int bottom = y + height;
     
     R.left = min(x,right);
     R.top = min(y,bottom);
@@ -185,7 +185,7 @@ namespace visualizer
     
     Map* pPrevMap = nullptr;
 
-    std::stack<SmartPointer<Animatable>> animations;
+    std::stack<SmartPointer<Animatable>> turnAni;
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
@@ -212,10 +212,10 @@ namespace visualizer
       map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
 
-      while(!animations.empty())
+      while(!turnAni.empty())
       {
-          turn.addAnimatable(animations.top());
-          animations.pop();
+          turn.addAnimatable(turnAni.top());
+          turnAni.pop();
       }
 
       
@@ -225,7 +225,7 @@ namespace visualizer
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
-        //plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
+        plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -270,9 +270,9 @@ namespace visualizer
               deathAni->frame = 7; // todo: need to make this tweakable
               deathAni->addKeyFrame(new DrawAnimation(deathAni));
 
-              cout<<"Death, energy left: "<<p.second.energyLeft<<endl;
+              cout<<"Death, energy left: "<<p.second.energyLeft<<" turn: "<<state<<endl;
 
-              animations.push(deathAni);
+              turnAni.push(deathAni);
           }
 
         }
