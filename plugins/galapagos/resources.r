@@ -11,4 +11,4 @@ animation creature_armor textures/set_armor.png
 animation creature_etc textures/set_etc.png
 animation death textures/death.png
 animation plants textures/plants.png
-
+texture tile_water textures/tile_water.png
