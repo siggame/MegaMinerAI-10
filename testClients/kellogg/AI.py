@@ -186,9 +186,9 @@ class AI(BaseAI):
        randx=random.randrange(-1,2); 
        randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
        x=0;y=0
-       if self.getObject(creature.x+randx,creature.y+randy)is not None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
+       if self.getObject(creature.x+randx,creature.y+randy) is None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
          creature.move(creature.x+randx,creature.y+randy)
-       print "moving"
+         print "moving"
        #x=creature.x+randx;
        #y=creature.y+randy
        for location in adjacent:

@@ -50,8 +50,8 @@ class Creature(Mappable):
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
-      self.game.grid[creature.x][creature.y].remove(creature)
       self.game.removeObject(creature)
+      self.game.grid[creature.x][creature.y].remove(creature)      
       self.game.addAnimation(DeathAnimation(creature.id))
       return False
     return True
@@ -59,12 +59,12 @@ class Creature(Mappable):
   def nextTurn(self):
     if len(self.game.grid[self.x][self.y]) > 1:
       #If the creature is stacked, it loses its ability to be productive
-      if(self.decrementEnergy(self.game.energyPerAction, self)):
+      if(self.decrementEnergy(self.game.energyPerTurn, self)):
         self.canEat = 0
         self.canBreed = 0
         self.movementLeft = self.speed
     #Else, we decrement energy like normal and reset stats
-    elif(self.decrementEnergy(self.game.energyPerAction, self)):
+    elif(self.decrementEnergy(self.game.energyPerTurn, self)):
       self.movementLeft = self.speed
       self.canEat = 1
       self.canBreed = 1
@@ -84,23 +84,22 @@ class Creature(Mappable):
       return "Units can only move to adjacent locations"
     #You can't move into the space of another object
     #Make all objects into a map to reduce check times if isinstance(lifeform, Plant):
-    elif isinstance(self.game.getObject(x,y), Plant):
-      if self.game.getObject(x,y).size > 0:
-        return "There is a plant there!."
+    elif isinstance(self.game.getObject(x,y), Plant) and self.game.getObject(x,y).size > 0:
+      return "There is a plant there!."
     elif isinstance(self.game.getObject(x,y), Creature):
       return "There is a creature there!."
     #If the creature moved and didn't die in the process      
     if(self.decrementEnergy(self.game.energyPerAction, self)):
       if isinstance(self.game.getObject(x,y), Plant):
-        self.game.grid[x][y].remove(self.game.getObject(x,y))
         self.game.removeObject(self.game.getObject(x,y))
+        self.game.grid[x][y].remove(self.game.getObject(x,y))
       #Update the grid where the target is moving
       self.game.grid[self.x][self.y].remove(self)
       self.game.grid[x][y].append(self)
       self.movementLeft -= 1
-      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))
+      self.game.addAnimation(MoveAnimation(self.id, self.x, self.y, x, y))  
       self.x = x
-      self.y = y     
+      self.y = y       
       return True
     return "Your creature died of starvation as it tried to move"
 
@@ -184,7 +183,6 @@ class Creature(Mappable):
     mate.canBreed = False
     self.canEat = False
     mate.canEat = False
-    print self.energyLeft, mate.energyLeft
     self.decrementEnergy(self.game.energyPerBreed, self)
     self.decrementEnergy(self.game.energyPerBreed, mate) 
     print self.energyLeft, mate.energyLeft
@@ -212,7 +210,7 @@ class Creature(Mappable):
     #Increment father's highest stat and lower the mother's lowest    
     babyStats[max(fatherStats,key=fatherStats.get)]+=1
     babyStats[min(motherStats,key=motherStats.get)]-=1
-    babyList = [int(babyStats['energy']*10+100),0,babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    babyList = [int(babyStats['energy']*10+100),int(babyStats['energy']*10+100),babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
 
 class Plant(Mappable):
