@@ -177,4 +177,16 @@ namespace visualizer
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
     game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
   }
+
+  void DrawHUD::animate(const float& t, AnimData*, IGame* game )
+  {
+    game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
+    int x = m_HUD->playerID * m_HUD->mapWidth;
+    auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
+
+    game->renderer->setColor( PlayerColor( m_HUD->playerID) );
+    game->renderer->drawText( x, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
+    game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
+    game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
+  }
 }

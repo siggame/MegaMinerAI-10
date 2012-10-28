@@ -219,6 +219,15 @@ namespace visualizer
           turnAni.pop();
       }
 
+      // for each player in the current turn, draw them on the HUD
+      for( auto& p : m_game->states[ state ].players )
+      {
+        auto player = p.second;
+        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time );
+        hud->addKeyFrame(new DrawHUD( hud ) );
+        turn.addAnimatable( hud );
+      }
+
       // for each plant in the current turn
       for( auto& p : m_game->states[ state ].plants )
       {

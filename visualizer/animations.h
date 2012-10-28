@@ -121,6 +121,22 @@ namespace visualizer
         private:
             EatAnimation *m_EatAnimation;
      };
+
+     class DrawHUD : public Anim
+     {
+        public:
+            DrawHUD( HUD* hud ) : m_HUD(hud) {}
+            void animate( const float& t, AnimData* d, IGame* game );
+
+            float controlDuration() const
+            { return 0; }
+
+            float totalDuration() const
+            { return 0; }
+        
+        private:
+            HUD *m_HUD;
+     };
     
 }
 

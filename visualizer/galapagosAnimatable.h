@@ -69,11 +69,11 @@ namespace visualizer
     
     struct Plant : public Animatable
     {
-       int x;
-       int y;
-       int size;
-       int growth;
-       // todo: add more
+      int x;
+      int y;
+      int size;
+      int growth;
+      // todo: add more
     };
     
     struct Creature : public Animatable
@@ -133,6 +133,18 @@ namespace visualizer
       
       int x;
       int y;
+    };
+
+    struct HUD : public Animatable
+    {
+      explicit HUD(int mw, int mh, int h, string name, int id, float t) : mapWidth(mw), mapHeight(mh), height(h), playerName(name), playerID(id), time(t) {}
+      
+      float time;
+      string playerName;
+      int playerID;
+      int mapWidth;
+      int mapHeight;
+      int height;
     };
 
 } // visualizer
