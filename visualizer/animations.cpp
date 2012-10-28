@@ -78,7 +78,6 @@ namespace visualizer
     else
     // else the plant had some sort of size change so we need to fade in and out some plants
     {
-      cout << "this is where ther frames hit the fan: " << m_Plant->size << " - " << m_Plant->growth << " = " << m_Plant->size - m_Plant->growth << endl;
       // Draw the previous plant fading out
       game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
       game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size - m_Plant->growth);
@@ -128,6 +127,17 @@ namespace visualizer
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
     game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , (int)(m_animation->frame * t));
   }
+  
+  
+  void DrawEatAnimation::animate(const float& t, AnimData*, IGame* game)
+  {
+    float trans = t < 0.1f ? t * 10.0f : t > 0.9f ? 1-(t-0.9f)*10.0f : 1;  
+    game->renderer->setColor( Color(1.0f,1.0f,1.0f,trans) );
+    game->renderer->drawTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - (1-t)*0.25f - 0.125f, 1, 1, "teeth");
+    game->renderer->drawRotatedTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - t*0.25f + 0.375f, 1, 1, 180, "teeth");
+  } // DrawEatAnimation
+  
+  
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(0.0f,0.0f,0.0f,1.0f) );

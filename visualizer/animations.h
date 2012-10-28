@@ -105,6 +105,22 @@ namespace visualizer
         private:
             SplashScreen *m_ss;
      };
+     
+     class DrawEatAnimation : public Anim
+     {
+         public:
+            DrawEatAnimation( EatAnimation* e ) : m_EatAnimation(e) {}
+            void animate( const float& t, AnimData* d, IGame* game );
+
+            float controlDuration() const
+            { return 0; }
+
+            float totalDuration() const
+            { return 0; }
+        
+        private:
+            EatAnimation *m_EatAnimation;
+     };
     
 }
 

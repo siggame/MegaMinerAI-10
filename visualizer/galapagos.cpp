@@ -128,7 +128,7 @@ namespace visualizer
   void Galapagos::SeedRand() const
   {
     std::hash<std::string> hasher;
-    unsigned int seed = hasher(m_game->players[0]) + hasher(m_game->players[1]);
+    unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
     srand(seed);
     
     cout<<"Seed: "<<seed<<endl;
@@ -227,7 +227,6 @@ namespace visualizer
         plant->y = p.second.y;
         plant->size = p.second.size;
         plant->growth = state > 0 ? p.second.size - m_game->states[ state - 1 ].plants[p.second.id].size : 0;
-        cout << "plant size: " << plant->size << "  and growth: " << plant->growth << " because prev size was: " << m_game->states[ state - 1 ].plants[p.second.id].size << endl;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -310,6 +309,37 @@ namespace visualizer
         turn[p.second.id]["Herb"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
         turn[p.second.id]["Defence"] = p.second.defense;
+      }
+      
+      // for each eat animation in the turn, add an EatAnimation to be drawn
+      for(auto& creaturesAnims : m_game->states[state].animations)
+      {
+        for(auto& a : creaturesAnims.second)
+        {
+          if(a->type == parser::EAT)
+          {
+            parser::eat& eat = (parser::eat&)*a;
+            // the mappables map in the glog isn't currently working :(
+            int x = 0, y = 0;
+            auto creature = m_game->states[state].creatures.find( eat.targetID );
+            if( creature != m_game->states[state].creatures.end() )
+            {
+              x = creature->second.x;
+              y = creature->second.y;
+            }
+            auto plant = m_game->states[state].plants.find( eat.targetID );
+            if( plant != m_game->states[state].plants.end() )
+            {
+              x = plant->second.x;
+              y = plant->second.y;
+            }
+            //SmartPointer<EatAnimation> eatAnimation = new EatAnimation( m_game->states[ state ].mappables[ eat.targetID ].x, m_game->states[ state ].mappables[ eat.targetID ].y );
+            SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
+            eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
+            turn.addAnimatable( eatAnimation );
+            cout << "added an eat animation at: " << eatAnimation->x << "," << eatAnimation->y << " to from the targetID: " << eat.targetID << endl;
+          }
+        }
       }
 
       if( m_game->states.size() == state + 1 )
