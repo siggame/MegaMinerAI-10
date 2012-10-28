@@ -7,6 +7,7 @@
 
 namespace visualizer
 {
+  
 
   static Color PlayerColor(int id, float trans)
   {
@@ -24,6 +25,9 @@ namespace visualizer
 
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     int middleY = m_Map->GetHeight() / 2;
     
     bool bLighting = game->options->getNumber("Enable Lighting") > 0.0f;
@@ -75,11 +79,44 @@ namespace visualizer
 
       }
     }
-    
+
+    game->renderer->setColor( Color( 1, 1, 1, 1 ) );
+    // Draw the water!
+    for(int x = -Galapagos::IslandOffset(); x < m_Map->GetWidth()+Galapagos::IslandOffset(); x++)
+    {
+      // top and bottom
+      for(int y = 0; y < Galapagos::IslandOffset(); y++)
+      {
+        game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+      }
+
+      // behind the HUD
+      for(int y = 0; y < m_Map->GetHUDHeight(); y++)
+      {
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight() + Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+      }
+    }
+
+    for(int y = -Galapagos::IslandOffset(); y < m_Map->GetHeight()+Galapagos::IslandOffset(); y++)
+    {
+      // left and right
+      for(int x = 0; x < Galapagos::IslandOffset(); x++)
+      {
+        game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+        game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+      }
+    }
+
+
+    game->renderer->pop();
   }
   
   void DrawPlant::animate( const float& t, AnimData*, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     // should we draw the plant size as a number?
     bool drawSize = game->options->getNumber("Draw Plant Sizes") > 0.0f;
     
@@ -116,10 +153,15 @@ namespace visualizer
         game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
       }
     }
+
+    game->renderer->pop();
   }
   
   void DrawCreature::animate(const float& t, AnimData*, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     int frame_sp = m_Creature->speed - 1;
     int frame_en = (int)(10.0f*(m_Creature->energyLeft / (float)(m_Creature->maxEnergy + 1)));
     int frame_hb = m_Creature->herbivorism - 1;
@@ -141,27 +183,41 @@ namespace visualizer
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , frame_df);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , frame_cv);
 
+    game->renderer->pop();
   }
 
 
   void DrawAnimation::animate(const float& t, AnimData*, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
     game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , (int)(m_animation->frame * t));
+
+    game->renderer->pop();
   }
   
   
   void DrawEatAnimation::animate(const float& t, AnimData*, IGame* game)
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     float trans = t < 0.1f ? t * 10.0f : t > 0.9f ? 1-(t-0.9f)*10.0f : 1;  
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,trans) );
     game->renderer->drawTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - (1-t)*0.25f - 0.125f, 1, 1, "teeth");
     game->renderer->drawRotatedTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - t*0.25f + 0.375f, 1, 1, 180, "teeth");
+
+    game->renderer->pop();
   } // DrawEatAnimation
   
   
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     float trans = t < 0.2f ? t * 5.0f : 1;
 
     // Draw the backgroudn fading to white
@@ -176,10 +232,15 @@ namespace visualizer
     // Draw the actual winner's name in their color
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
     game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
+
+    game->renderer->pop();
   }
 
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
   {
+    game->renderer->push();
+    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
     game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
     int x = m_HUD->playerID * m_HUD->mapWidth;
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
@@ -188,5 +249,7 @@ namespace visualizer
     game->renderer->drawText( x, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
     game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
+
+    game->renderer->pop();
   }
 }

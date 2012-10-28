@@ -49,10 +49,12 @@ namespace visualizer
   {
     const Input& input = gui->getInput();
     
-    int x = input.x;
-    int y = input.y;
-    int width = input.sx - x;
-    int height = input.sy - y;
+    // offset the input
+
+    int x = input.x - IslandOffset();
+    int y = input.y - IslandOffset();
+    int width = input.sx - x - IslandOffset();
+    int height = input.sy - y - IslandOffset();
     
     int right = x + width;
     int bottom = y + height;
@@ -162,12 +164,11 @@ namespace visualizer
     
     SeedRand();
     
-    m_IslandVisualOffset = 1;
     m_GUIHeight = 4;
 
     //renderer->setCamera( m_IslandVisualOffset, m_IslandVisualOffset, m_game->states[0].mapWidth-m_IslandVisualOffset, m_game->states[0].mapHeight+m_GUIHeight-m_IslandVisualOffset);
-    renderer->setCamera( 0, 0, m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight);
-    renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight );
+    renderer->setCamera( 0, 0, m_game->states[0].mapWidth+IslandOffset()*2, m_game->states[0].mapHeight+m_GUIHeight+IslandOffset()*2);
+    renderer->setGridDimensions( m_game->states[0].mapWidth+IslandOffset()*2, m_game->states[0].mapHeight+m_GUIHeight+IslandOffset()*2);
     
     start();
   } // Galapagos::loadGamelog()
@@ -200,7 +201,7 @@ namespace visualizer
       
       if(pPrevMap == nullptr)
       {
-        map = new Map(m_game->states[state].mapWidth,m_game->states[state].mapHeight,0.6f,mapColor,xPos);
+        map = new Map(m_game->states[state].mapWidth,m_game->states[state].mapHeight,m_GUIHeight,0.6f,mapColor,xPos);
       }
       else
       {

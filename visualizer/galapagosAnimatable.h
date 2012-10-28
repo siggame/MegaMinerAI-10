@@ -26,12 +26,12 @@ namespace visualizer
           // todo: add more
         };
         
-        Map(int w, int h, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), prevMapColor(pc), mapColor(mc), xPos(xp) 
+        Map(int w, int h, int hud, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), hudHeight(hud), prevMapColor(pc), mapColor(mc), xPos(xp) 
         {
         }
         
         Map(const Map& other, float mapColor, float xPos) : m_tiles(other.m_tiles), width(other.width),
-        height(other.height), prevMapColor(other.mapColor), mapColor(mapColor), xPos(xPos)
+        height(other.height), hudHeight(other.hudHeight), prevMapColor(other.mapColor), mapColor(mapColor), xPos(xPos)
         {
           
         }
@@ -52,12 +52,14 @@ namespace visualizer
         float GetPrevMapColor() const { return prevMapColor; }
         float GetxPos() const { return xPos; }
         float GetMapColor() const { return mapColor; }
+        int GetHUDHeight() const { return hudHeight; }
 
     private:
     
         std::vector<Tile> m_tiles;
         int width;
         int height;
+        int hudHeight;
         
         // lighting
         float prevMapColor;
