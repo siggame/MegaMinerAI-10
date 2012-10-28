@@ -118,8 +118,11 @@ namespace visualizer
 
     struct SplashScreen : public Animatable
     {
+        explicit SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
+
         string winner;
-        string message;
+        string reason;
+        int winnerID;
         int width;
         int height;
     };

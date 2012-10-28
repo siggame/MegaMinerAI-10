@@ -7,6 +7,16 @@
 
 namespace visualizer
 {
+
+  static Color PlayerColor(int id, float trans)
+  {
+    return id == 0 ? Color( 0.8, 0.1, 0.1, trans ) : Color( 0.1, 0.1, 0.8, trans );
+  }
+
+  static Color PlayerColor(int id)
+  {
+    return PlayerColor(id, 1);
+  }
    
   void StartAnim::animate( const float& /* t */, AnimData * /* d */, IGame* /*game*/ )
   {
@@ -122,7 +132,7 @@ namespace visualizer
     float posX = m_Creature->m_moves[index].from.x + (m_Creature->m_moves[index].to.x - m_Creature->m_moves[index].from.x) * subT;
     float posY = m_Creature->m_moves[index].from.y + (m_Creature->m_moves[index].to.y - m_Creature->m_moves[index].from.y) * subT;
 
-    game->renderer->setColor( m_Creature->owner == 0 ? Color( 0.8, 0.1, 0.1, 1.0 ) : Color( 0.1, 0.1, 0.8, 1.0 ) );
+    game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , frame_sp);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , frame_en);
@@ -152,8 +162,19 @@ namespace visualizer
   
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
-    game->renderer->setColor( Color(0.0f,0.0f,0.0f,1.0f) );
-    game->renderer->drawText( m_ss->width / 4, m_ss->height / 2, "Roboto", "Winner: ", 6, IRenderer::Right);
-    game->renderer->drawText( m_ss->width / 2, m_ss->height / 2, "Roboto", m_ss->winner, 6, IRenderer::Center);
+    float trans = t < 0.2f ? t * 5.0f : 1;
+
+    // Draw the backgroudn fading to white
+    game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, trans) );
+    game->renderer->drawQuad(0, 0, m_SplashScreen->width, m_SplashScreen->height);
+    
+    // Draw the "Winner: " text in black and why they won
+    game->renderer->setColor( Color(0.0f, 0.0f, 0.0f, trans) );
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 4.5f, "Roboto", "Winner: ", 4.5f, IRenderer::Center);
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 + 1.33f, "Roboto", m_SplashScreen->reason, 3.5f, IRenderer::Center);
+
+    // Draw the actual winner's name in their color
+    game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
   }
 }
