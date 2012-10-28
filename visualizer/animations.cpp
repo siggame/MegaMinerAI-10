@@ -84,7 +84,7 @@ namespace visualizer
   void DrawCreature::animate(const float& t, AnimData*, IGame* game )
   {
     int frame_sp = m_Creature->speed - 1;
-    int frame_en = (int)(10.0f*(/*m_Creature->maxEnergy -*/ m_Creature->energyLeft) / (float)m_Creature->maxEnergy) % 10;
+    int frame_en = (int)(10.0f*(m_Creature->energyLeft / (float)(m_Creature->maxEnergy + 1)));
     int frame_hb = m_Creature->herbivorism - 1;
     int frame_df = m_Creature->defense - 1;
     int frame_cv = m_Creature->carnivorism - 1;
