@@ -254,12 +254,6 @@ namespace visualizer
             }
         }
 
-        float invSize = 1.0f / (creature->m_moves.size());
-
-        for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
-        {
-            (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
-        }
 
         if(creature->m_moves.empty())
         {
@@ -268,6 +262,14 @@ namespace visualizer
         }
         else
         {
+            float invSize = 1.0f / (creature->m_moves.size());
+
+
+            for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
+            {
+                (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
+            }
+
             (*map)(p.second.y,p.second.x) = Map::Tile("sand",state,invSize * (creature->m_moves.size() - 1));
         }
 
