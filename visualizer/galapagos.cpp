@@ -249,17 +249,26 @@ namespace visualizer
                     parser::move& move = (parser::move&)*j;
                     creature->m_moves.push_back(Creature::Moves(glm::vec2(move.toX, move.toY),glm::vec2(move.fromX, move.fromY)));
 
-                    // todo: fix this
-                    (*map)(move.toY,move.toX) = Map::Tile("sand",state);
-
                     break;
                 }
             }
         }
 
+        float invSize = 1.0f / (creature->m_moves.size());
+
+        for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
+        {
+            (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
+        }
+
         if(creature->m_moves.empty())
         {
             creature->m_moves.push_back(Creature::Moves(glm::vec2(p.second.x, p.second.y),glm::vec2(p.second.x, p.second.y)));
+            (*map)(p.second.y,p.second.x) = Map::Tile("sand",state);
+        }
+        else
+        {
+            (*map)(p.second.y,p.second.x) = Map::Tile("sand",state,invSize * (creature->m_moves.size() - 1));
         }
 
         if( (state + 1) < m_game->states.size() )
@@ -294,8 +303,6 @@ namespace visualizer
         creature->parentID = p.second.parentID;
 
         creature->addKeyFrame( new DrawCreature( creature ) );
-
-        (*map)(p.second.y,p.second.x) = Map::Tile("sand",state);
 
         turn.addAnimatable( creature );
         

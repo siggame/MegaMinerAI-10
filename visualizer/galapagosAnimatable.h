@@ -17,9 +17,11 @@ namespace visualizer
 
         struct Tile
         {
-          explicit Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t) {}
+            explicit Tile(const std::string& tex = "grass",int t = 1000,float st = 0.0f) :
+                texture(tex), turn(t), startTime(st) {}
 
           std::string texture;
+          float startTime;
           int turn;           
           // todo: add more
         };

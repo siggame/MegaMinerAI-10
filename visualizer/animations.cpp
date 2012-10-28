@@ -7,8 +7,6 @@
 
 namespace visualizer
 {
-  // todo: move this to the core?
-  
    
   void StartAnim::animate( const float& /* t */, AnimData * /* d */, IGame* /*game*/ )
   {
@@ -50,7 +48,21 @@ namespace visualizer
         } 
         
         game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
-        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 3) < game->timeManager->getTurn() ? "grass" : tile.texture );
+
+        // todo: this could be cleaned up a bit, but it seems to work right now
+        if(tile.turn == game->timeManager->getTurn())
+        {
+            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.startTime < t) ? tile.texture : "grass" );
+        }
+        else if((tile.turn + 2) == game->timeManager->getTurn())
+        {
+            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.startTime > t) ? tile.texture : "grass" );
+        }
+        else
+        {
+            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 2 > game->timeManager->getTurn()) ? tile.texture : "grass" );
+        }
+
       }
     }
     
