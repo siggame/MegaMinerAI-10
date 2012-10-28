@@ -70,7 +70,7 @@ namespace visualizer
        int x;
        int y;
        int size;
-       bool hasGrown;
+       int growth;
        // todo: add more
     };
     

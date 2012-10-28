@@ -58,27 +58,43 @@ namespace visualizer
   
   void DrawPlant::animate( const float& t, AnimData*, IGame* game )
   {
+    // should we draw the plant size as a number?
+    bool drawSize = game->options->getNumber("Draw Plant Sizes") > 0.0f;
+    
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
-    if (m_Plant->hasGrown)
+    
+    // Draw the dirt
+    game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", 15);
+    
+    // if the plant did not grow (the plants growth this turn was 0)
+    if (m_Plant->growth == 0)
     {
-      if( m_Plant->size > 1)
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size);
+      if( drawSize )
       {
-        game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
-        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-2);
-        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size-1), 3, IRenderer::Left);
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
       }
-      game->renderer->setColor( Color( 1, 1, 1, t ) );
-      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
     }
     else
+    // else the plant had some sort of size change so we need to fade in and out some plants
     {
-      if( m_Plant->size > 0 )
+      cout << "this is where ther frames hit the fan: " << m_Plant->size << " - " << m_Plant->growth << " = " << m_Plant->size - m_Plant->growth << endl;
+      // Draw the previous plant fading out
+      game->renderer->setColor( Color( 1, 1, 1, 1-t ) );
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size - m_Plant->growth);
+      if( drawSize )
       {
-        game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size-1);
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size - m_Plant->growth), 3, IRenderer::Left);
+      }
+      
+      // Draw the current plant fading in
+      game->renderer->setColor( Color( 1, 1, 1, t ) );
+      game->renderer->drawAnimQuad( m_Plant->x, m_Plant->y, 1, 1, "plants", m_Plant->size);
+      if( drawSize )
+      {
+        game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
       }
     }
-    
-    game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
   }
   
   void DrawCreature::animate(const float& t, AnimData*, IGame* game )

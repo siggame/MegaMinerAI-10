@@ -165,7 +165,8 @@ namespace visualizer
     m_IslandVisualOffset = 1;
     m_GUIHeight = 4;
 
-    renderer->setCamera( m_IslandVisualOffset, m_IslandVisualOffset, m_game->states[0].mapWidth-m_IslandVisualOffset, m_game->states[0].mapHeight+m_GUIHeight-m_IslandVisualOffset);
+    //renderer->setCamera( m_IslandVisualOffset, m_IslandVisualOffset, m_game->states[0].mapWidth-m_IslandVisualOffset, m_game->states[0].mapHeight+m_GUIHeight-m_IslandVisualOffset);
+    renderer->setCamera( 0, 0, m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight);
     renderer->setGridDimensions( m_game->states[0].mapWidth, m_game->states[0].mapHeight+m_GUIHeight );
     
     start();
@@ -218,14 +219,15 @@ namespace visualizer
           turnAni.pop();
       }
 
-      
+      // for each plant in the current turn
       for( auto& p : m_game->states[ state ].plants )
       {
         SmartPointer<Plant> plant = new Plant();
         plant->x = p.second.x;
         plant->y = p.second.y;
         plant->size = p.second.size;
-        plant->hasGrown = state > 0 && m_game->states[ state - 1 ].plants[p.second.id].size < p.second.size;
+        plant->growth = state > 0 ? p.second.size - m_game->states[ state - 1 ].plants[p.second.id].size : 0;
+        cout << "plant size: " << plant->size << "  and growth: " << plant->growth << " because prev size was: " << m_game->states[ state - 1 ].plants[p.second.id].size << endl;
         plant->addKeyFrame( new DrawPlant( plant ) );
         turn.addAnimatable( plant );
         
@@ -234,6 +236,7 @@ namespace visualizer
         turn[p.second.id]["Y"] = p.second.y;
       }
       
+      // for each creature in the current turn
       for( auto& p : m_game->states[ state ].creatures )
       {
       	SmartPointer<Creature> creature = new Creature();
