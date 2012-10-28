@@ -337,21 +337,14 @@ namespace visualizer
             SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
             eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
             turn.addAnimatable( eatAnimation );
-            cout << "added an eat animation at: " << eatAnimation->x << "," << eatAnimation->y << " to from the targetID: " << eat.targetID << endl;
           }
         }
       }
 
       if( m_game->states.size() == state + 1 )
       {
-        SmartPointer<SplashScreen> ss = new SplashScreen();
-
-        ss->winner = m_game->states[0].players[m_game->winner].playerName;
-        ss->width = m_game->states[0].mapWidth;
-        ss->height = m_game->states[0].mapHeight;
-
+        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, m_game->states[0].mapWidth, m_game->states[0].mapHeight);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
-
         turn.addAnimatable( ss );
       }
 

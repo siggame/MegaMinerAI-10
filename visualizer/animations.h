@@ -93,7 +93,7 @@ namespace visualizer
      class DrawSplashScreen : public Anim
      {
          public:
-            DrawSplashScreen( SplashScreen* ss ) : m_ss(ss) {}
+            DrawSplashScreen( SplashScreen* ss ) : m_SplashScreen(ss) {}
             void animate( const float& t, AnimData* d, IGame* game );
 
             float controlDuration() const
@@ -103,7 +103,7 @@ namespace visualizer
             { return 0; }
         
         private:
-            SplashScreen *m_ss;
+            SplashScreen *m_SplashScreen;
      };
      
      class DrawEatAnimation : public Anim
