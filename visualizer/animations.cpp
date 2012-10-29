@@ -197,12 +197,12 @@ namespace visualizer
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , frame_sp);
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , frame_sp);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , frame_en);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , frame_hb);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , frame_df);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , frame_cv);
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , frame_hb);
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , frame_df);
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , frame_cv);
 
   }
 
