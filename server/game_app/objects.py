@@ -81,7 +81,7 @@ class Creature(Mappable):
       return "Don't move off of the map"
     #You can't move more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
-      return "Units can only move to adjacent locations"
+      return "Units can only move to adjacent locations", self.x, self.y, x, y
     #You can't move into the space of another object
     #Make all objects into a map to reduce check times if isinstance(lifeform, Plant):
     elif isinstance(self.game.getObject(x,y), Plant) and self.game.getObject(x,y).size > 0:
@@ -136,6 +136,7 @@ class Creature(Mappable):
       damage = self.carnivorism - creature.defense
       if damage < 1:
         damage = 1
+      damage = damage * 5
       #Damage the target creature
       if self.decrementEnergy(damage, creature):
         self.energyLeft += self.carnivorism * 5    
