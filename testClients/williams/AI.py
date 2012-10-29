@@ -16,14 +16,14 @@ class AI(BaseAI):
   """The class implementing gameplay logic."""
   @staticmethod
   def username():
-    return "Shell AI"
+    return "williams"
 
   @staticmethod
   def password():
     return "password"
     
   def distance(self,x1,y1,x2,y2):
-    return math.sqrt((x1-x2)**2 + (y1-y2)**2)
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
     
   def neighborNodes(self,x,y):
     validNodes = []
@@ -71,13 +71,13 @@ class AI(BaseAI):
     myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.energyLeft > 0]
     if len(myCreatures) > 1:    
       #Creates a dictionary of the distances to each creature I control that isn't at the calling creature's position
-      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}  
+      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}    
       #Returns the object that is the closest creature   
       if len(dict) > 0:      
         bestCreature = next(target for target in myCreatures if target.id == min(dict, key=dict.get))
         #Returns the x and y value of that creature's location
         return bestCreature     
-    return [-1,-1]
+    return None
            
   #TODO Use some sort of method to find the BEST enemy to attack. This will be a function that takes in my creature and theirs
   #to see which has the best hueristic  
@@ -87,26 +87,28 @@ class AI(BaseAI):
     dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in enemyCreatures if target.energyLeft > 0}  
     #Returns the object that is the closest creature      
     if len(dict) > 0:
-      bestCreature = next(target for target in enemyCreatures if target.id == min(dict, key=dict.get))
+      bestID = min(dict, key=dict.get)
+      bestCreature = next(target for target in enemyCreatures if target.id == bestID)
       #Returns the x and y value of that creature's location
       return bestCreature 
-    return [-1, -1]
+    return None
   
   def findNearestEdiblePlantXY(self, creature):
     #Doesn't work if there are no plants left to eat
     ediblePlants = [target for target in self.plants if target.size > 0]
     if len(ediblePlants) > 0:
       #Creates a dictionary of the distances to each plant that has a size > 0
-      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in ediblePlants}  
-      #Returns the object that is the closest creature      
-      bestPlant = next(target for target in self.plants if target.id == min(dict, key=dict.get))
+      dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in ediblePlants}       
+      #Returns the object that is the closest creature  
+      bestID = min(dict, key=dict.get)
+      bestPlant = next(target for target in self.plants if target.id == bestID)
       #Returns the x and y value of that plant's location
       return bestPlant
-    return [-1, -1]
+    return None
 
   def findAndEatPlant(self, creature):
     plant = self.findNearestEdiblePlantXY(creature) 
-    if plant != [-1, -1]: 
+    if plant is not None: 
       path = self.findPath(creature.x, creature.y, plant.x, plant.y)
       #Move until we are to the plant or can move no more
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1 and creature.energyLeft > self.energyPerAction:
@@ -118,18 +120,22 @@ class AI(BaseAI):
 
   def findClosestAllyAndBreed(self,creature):
     nearestCreature = self.findNearestFriendlyCreatureXY(creature) 
-    if nearestCreature != [-1, -1]: 
+    if nearestCreature is not None: 
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.energyLeft > self.energyPerAction:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canBreed == True and creature.energyLeft > self.energyPerBreed:
         if(len(self.grid[nearestCreature.x][nearestCreature.y])):
-          creature.breed(self.grid[nearestCreature.x][nearestCreature.y][0]) 
-
+          creature.breed(self.grid[nearestCreature.x][nearestCreature.y][0])
+          if creature.energyLeft < creature.maxEnergy/3:
+            self.energyThreshold[creature.id] = (1, creature.maxEnergy*.75) 
+          if nearestCreature.energyLeft < nearestCreature.maxEnergy/3:   
+            self.energyThreshold[nearestCreature.id] = (1, nearestCreature.maxEnergy*.75) 
+                      
   def findNearestEnemyAndEat(self, creature):
     nearestCreature = self.findNearestEnemyCreatureXY(creature) 
-    if nearestCreature != [-1, -1]:    
+    if nearestCreature is not None:    
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
       #Move until we are to the plant or can move no more
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.energyLeft > self.energyPerAction:
@@ -137,15 +143,25 @@ class AI(BaseAI):
         path.remove(path[0])
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canEat == True:
         print "Attacking enemy"
-        creature.eat(nearestCreature.x, nearestCreature.y)  
+        creature.eat(nearestCreature.x, nearestCreature.y) 
+                
 
   #If health is low, eat a plant.
   #If health is very high, breed
-  def defaultActions(self,creature):     
-    if creature.energyLeft < creature.maxEnergy/2:
+  def defaultActions(self,creature): 
+    #If creature is below the energy threshold, eat plants until the threshold is reached  
+    if self.energyThreshold[creature.id][0] == 1 and creature.energyLeft < self.energyThreshold[creature.id][1]:
       self.findAndEatPlant(creature)
-    elif creature.energyLeft > creature.maxEnergy/2 and creature.energyLeft > self.energyPerBreed + 15:
+    elif self.energyThreshold[creature.id][0] == 1 and creature.energyLeft >= self.energyThreshold[creature.id][1]:
+      self.energyThreshold[creature.id] = (0, creature.maxEnergy*.75)
       self.findClosestAllyAndBreed(creature)
+    else:
+      self.findClosestAllyAndBreed(creature)   
+      
+    # if creature.energyLeft < creature.maxEnergy/2:
+      # self.findAndEatPlant(creature)
+    # elif creature.energyLeft > creature.maxEnergy/2 and creature.energyLeft > self.energyPerBreed + 15:
+      # self.findClosestAllyAndBreed(creature)
      
   #Kill    
   def carnivormActionSet(self,creature):
@@ -159,10 +175,7 @@ class AI(BaseAI):
 
   #Eat minimum and make babies
   def herbivorismActionSet(self,creature):
-    if creature.energyLeft < creature.maxEnergy*66:
-      self.findAndEatPlant(creature)
-    elif creature.energyLeft > creature.maxEnergy/2 and creature.energyLeft > self.energyPerBreed + 15:
-      self.findClosestAllyAndBreed(creature)  
+    self.defaultActions(creature)
       
   #Breed all day long, awww yeah
   def energyActionSet(self,creature):
@@ -182,7 +195,7 @@ class AI(BaseAI):
   def speedActionSet(self,creature):
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
     plant = self.findNearestEdiblePlantXY(nearestEnemy) 
-    if plant != [-1, -1]: 
+    if plant is not None: 
       path = self.findPath(creature.x, creature.y, plant.x, plant.y)
       #Move until we are to the plant or can move no more
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1 and creature.energyLeft > self.energyPerAction:
@@ -193,12 +206,11 @@ class AI(BaseAI):
         creature.eat(plant.x, plant.y)  
         if plant.size == 0 and creature.movementLeft > 0:
           creature.move(plant.x, plant.y) 
-          print "CRUSHING PLANT!"
     
     self.defaultActions(creature)
         
   def init(self):
-    pass
+    self.energyThreshold = {creature.id:(0, creature.maxEnergy*.66) for creature in self.creatures if creature.owner == self.playerID} 
     
   ##This function is called once, after your last turn
   def end(self):
@@ -208,7 +220,7 @@ class AI(BaseAI):
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):
     self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)] 
-    self.statCreatureList = {"energy": [], "carnivorism": [], "herbivorism": [], "speed": [], "defense": []} 
+    self.statCreatureList = {"energy": [], "carnivorism": [], "herbivorism": [], "speed": [], "defense": []}  
     
     #Establishes a grid of the current objects   
     for plant in self.plants:
@@ -218,6 +230,10 @@ class AI(BaseAI):
       if creature.owner == self.playerID and creature.energyLeft > 0:
         stats = {"energy": (creature.maxEnergy - 100)/10, "carnivorism": creature.carnivorism, "herbivorism": creature.herbivorism, "defense": creature.defense,"speed": creature.speed} 
         self.statCreatureList[max(stats, key=stats.get)].append(creature)
+      if creature.id not in self.energyThreshold:
+        self.energyThreshold[creature.id] = (0,creature.maxEnergy*.75)
+          
+    
   
     print self.turnNumber
     myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
@@ -228,7 +244,8 @@ class AI(BaseAI):
     for creature in self.statCreatureList["energy"]:
       self.energyActionSet(creature)
     for creature in self.statCreatureList["defense"]:
-      self.defenseActionSet(creature)
+      #self.defenseActionSet(creature)
+      self.speedActionSet(creature)
     for creature in self.statCreatureList["speed"]:
       self.speedActionSet(creature)
     return 1

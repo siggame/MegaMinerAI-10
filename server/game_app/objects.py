@@ -50,8 +50,8 @@ class Creature(Mappable):
   def decrementEnergy(self, energyDec, creature):
     creature.energyLeft -= energyDec
     if creature.energyLeft <= 0:
-      self.game.removeObject(creature)
-      self.game.grid[creature.x][creature.y].remove(creature)      
+      self.game.grid[creature.x][creature.y].remove(creature)  
+      self.game.removeObject(creature)    
       self.game.addAnimation(DeathAnimation(creature.id))
       return False
     return True
@@ -139,11 +139,11 @@ class Creature(Mappable):
       damage = damage * 5
       #Damage the target creature
       if self.decrementEnergy(damage, creature):
-        self.energyLeft += self.carnivorism * 5    
-        if self.energyLeft > self.maxEnergy:
-          self.energyLeft = self.maxEnergy
-      else:
-        self.decrementEnergy(self.game.energyPerAction, self)     
+        if creature.energyLeft <= 0:
+          self.energyLeft += self.carnivorism * 5    
+          if self.energyLeft > self.maxEnergy:
+            self.energyLeft = self.maxEnergy
+      self.decrementEnergy(self.game.energyPerAction, self)     
       self.game.addAnimation(EatAnimation(self.id, creature.id))
     self.canEat = False
     return True
