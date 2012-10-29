@@ -28,6 +28,13 @@
     <maxvalue>1</maxvalue>
   </option>
   <option>
+    <key>Show Grid</key>
+    <type>Integer</type>
+    <value>1</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
     <key>Slider Bar</key>
     <type>Float</type>
     <value>100</value>

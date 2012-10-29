@@ -131,6 +131,19 @@ namespace visualizer
     game->renderer->drawAnimQuad( -1, m_Map->GetHeight(), 1, 1, "island_sides", 4);
     game->renderer->drawAnimQuad( m_Map->GetWidth(), m_Map->GetHeight(), 1, 1, "island_sides", 5);
 
+    // Draw the grid
+    if( game->options->getNumber("Show Grid") == 1 )
+    {
+      game->renderer->setColor( Color( 0.25f, 0.25f, 0.25f, 0.5f ) );
+      for(int x = 0; x < m_Map->GetWidth() + 1; x++)
+      {
+        game->renderer->drawLine(x, 0, x, m_Map->GetHeight(), 1);
+      }
+      for(int y = 0; y < m_Map->GetHeight() + 1; y++)
+      {
+        game->renderer->drawLine(0, y, m_Map->GetWidth(), y, 1);
+      }
+    }
 
     game->renderer->pop();
   }
