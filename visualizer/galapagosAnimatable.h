@@ -18,7 +18,7 @@ namespace visualizer
         struct Tile
         {
           explicit Tile(const std::string& tex = "grass",int t = 1000,float st = 0.0f) :
-            texture(tex), turn(t), startTime(st) {}
+            texture(tex), startTime(st), turn(t)  {}
 
           std::string texture;
           float startTime;
@@ -113,6 +113,8 @@ namespace visualizer
 
     struct SpriteAnimation : public Animatable
     {
+      SpriteAnimation(int posX, int posY, int f) : x(posX), y(posY), frame(f) {}
+
       int x;
       int y;
       int frame;
@@ -120,7 +122,7 @@ namespace visualizer
 
     struct SplashScreen : public Animatable
     {
-      explicit SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
+      SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
 
       string winner;
       string reason;
@@ -131,7 +133,7 @@ namespace visualizer
     
     struct EatAnimation : public Animatable
     {
-      explicit EatAnimation(int X, int Y) : x(X), y(Y) {}
+      EatAnimation(int X, int Y) : x(X), y(Y) {}
       
       int x;
       int y;
@@ -139,7 +141,8 @@ namespace visualizer
 
     struct HUD : public Animatable
     {
-      explicit HUD(int mw, int mh, int h, string name, int id, float t) : mapWidth(mw), mapHeight(mh), height(h), playerName(name), playerID(id), time(t) {}
+      HUD(int mw, int mh, int h, string name, int id, float t) :
+          time(t), playerName(name), playerID(id), mapWidth(mw), mapHeight(mh), height(h) {}
       
       float time;
       string playerName;
@@ -151,7 +154,7 @@ namespace visualizer
 
     struct Nest
     {
-      explicit Nest(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
+      Nest(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
 
       int momX;
       int momY;
@@ -161,7 +164,7 @@ namespace visualizer
 
     struct Lovin
     {
-      explicit Lovin(int X, int Y) : x(X), y(Y) {}
+      Lovin(int X, int Y) : x(X), y(Y) {}
 
       int x;
       int y;

@@ -82,21 +82,17 @@ namespace visualizer
             template< class T >
             bool DrawQuadAroundObj(const T& datastruct, const typename T::key_type& key)
             {       
-              renderer->push();
-              renderer->translate(IslandOffset(), IslandOffset());
-              
               auto iter = datastruct.find(key);
       
               if(iter != datastruct.end())
               {
                 const auto& obj = iter->second;
                 
-                renderer->setColor( Color( 1.0, 0.5, 0.5, 0.5 ) );
+                renderer->setColor( Color( 1.0, 0.4, 0.4, 0.6 ) );
                 renderer->drawQuad(obj.x,obj.y,1,1);
-                renderer->pop();
                 return true;
               }
-              renderer->pop();
+
               return false;
             }
     }; 

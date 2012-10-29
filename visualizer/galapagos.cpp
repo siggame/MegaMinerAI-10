@@ -71,7 +71,6 @@ namespace visualizer
     if( input.leftRelease )
     {
       int turn = timeManager->getTurn();
-      //float t = timeManager->getTurnPercent();
       
       Rect selectedRect;
       GetSelectedRect(selectedRect);
@@ -80,9 +79,12 @@ namespace visualizer
       
       AddSelectedObjsToList(m_game->states[ turn ].creatures,selectedRect);
       AddSelectedObjsToList(m_game->states[ turn ].plants,selectedRect);
-   
-      
+
     }
+
+    renderer->push();
+    renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
+
   }
 
   void Galapagos::postDraw()
@@ -97,7 +99,9 @@ namespace visualizer
         DrawQuadAroundObj(m_game->states[turn].plants,*iter);
       }
     }
-       
+
+    renderer->pop();
+
   }
 
 
@@ -274,10 +278,19 @@ namespace visualizer
         {
             float invSize = 1.0f / (creature->m_moves.size());
 
-
             for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
             {
-                (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
+                Map::Tile& tile = (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x);
+                if(tile.turn + 2 != state || tile.startTime < invSize*i)
+                {
+                    tile = Map::Tile("sand",state,invSize*i);
+                }
+                else if(tile.turn + 2 == state)
+                {
+
+                }
+
+                //(*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
             }
 
             (*map)(p.second.y,p.second.x) = Map::Tile("sand",state,invSize * (creature->m_moves.size() - 1));
@@ -287,13 +300,8 @@ namespace visualizer
         {
           if(m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end())
           {
-              SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation();
-              deathAni->x = p.second.x;
-              deathAni->y = p.second.y;
-              deathAni->frame = 7; // todo: need to make this tweakable
+              SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation(p.second.x,p.second.y,7);
               deathAni->addKeyFrame(new DrawAnimation(deathAni));
-
-              cout<<"Death, energy left: "<<p.second.energyLeft<<" turn: "<<state<<endl;
 
               turnAni.push(deathAni);
           }

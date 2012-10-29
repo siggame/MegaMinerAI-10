@@ -7,16 +7,10 @@
 
 namespace visualizer
 {
-  
 
-  static Color PlayerColor(int id, float trans)
+  static Color PlayerColor(int id, float trans = 1.0f)
   {
     return id == 0 ? Color( 0.8, 0.1, 0.1, trans ) : Color( 0.1, 0.1, 0.8, trans );
-  }
-
-  static Color PlayerColor(int id)
-  {
-    return PlayerColor(id, 1);
   }
    
   void StartAnim::animate( const float& /* t */, AnimData * /* d */, IGame* /*game*/ )
@@ -25,8 +19,6 @@ namespace visualizer
 
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     int middleY = m_Map->GetHeight() / 2;
     
@@ -132,7 +124,7 @@ namespace visualizer
     game->renderer->drawAnimQuad( m_Map->GetWidth(), m_Map->GetHeight(), 1, 1, "island_sides", 5);
 
     // Draw the grid
-    if( game->options->getNumber("Show Grid") == 1 )
+    if( game->options->getNumber("Show Grid") > 0.0f )
     {
       game->renderer->setColor( Color( 0.25f, 0.25f, 0.25f, 0.5f ) );
       for(int x = 0; x < m_Map->GetWidth() + 1; x++)
@@ -145,13 +137,10 @@ namespace visualizer
       }
     }
 
-    game->renderer->pop();
   }
   
   void DrawPlant::animate( const float& t, AnimData*, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     // should we draw the plant size as a number?
     bool drawSize = game->options->getNumber("Draw Plant Sizes") > 0.0f;
@@ -189,14 +178,10 @@ namespace visualizer
         game->renderer->drawText( m_Plant->x, m_Plant->y, "Roboto", toString(m_Plant->size), 3, IRenderer::Left);
       }
     }
-
-    game->renderer->pop();
   }
   
   void DrawCreature::animate(const float& t, AnimData*, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     int frame_sp = m_Creature->speed - 1;
     int frame_en = (int)(10.0f*(m_Creature->energyLeft / (float)(m_Creature->maxEnergy + 1)));
@@ -219,40 +204,31 @@ namespace visualizer
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , frame_df);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , frame_cv);
 
-    game->renderer->pop();
   }
 
 
   void DrawAnimation::animate(const float& t, AnimData*, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
     game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , (int)(m_animation->frame * t));
 
-    game->renderer->pop();
   }
   
   
   void DrawEatAnimation::animate(const float& t, AnimData*, IGame* game)
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     float trans = t < 0.1f ? t * 10.0f : t > 0.9f ? 1-(t-0.9f)*10.0f : 1;  
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,trans) );
     game->renderer->drawTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - (1-t)*0.25f - 0.125f, 1, 1, "teeth");
     game->renderer->drawRotatedTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - t*0.25f + 0.375f, 1, 1, 180, "teeth");
 
-    game->renderer->pop();
   } // DrawEatAnimation
   
   
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     float trans = t < 0.2f ? t * 5.0f : 1;
 
@@ -269,13 +245,10 @@ namespace visualizer
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
     game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
 
-    game->renderer->pop();
   }
 
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
   {
-    game->renderer->push();
-    game->renderer->translate(Galapagos::IslandOffset(), Galapagos::IslandOffset());
 
     game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
     int x = m_HUD->playerID * m_HUD->mapWidth;
@@ -286,6 +259,5 @@ namespace visualizer
     game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
     game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
 
-    game->renderer->pop();
   }
 }
