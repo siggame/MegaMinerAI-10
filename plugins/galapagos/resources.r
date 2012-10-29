@@ -13,3 +13,6 @@ animation death textures/death.png
 animation plants textures/plants.png
 texture tile_water textures/tile_water.png
 texture teeth textures/teeth.png
+texture heart textures/heart.png
+texture nest textures/nest.png
+animation island_sides textures/island_sides.png

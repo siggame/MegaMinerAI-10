@@ -13,12 +13,12 @@ namespace visualizer
 {
     class Map : public Animatable
     {
-    public:
+      public:
 
         struct Tile
         {
-            explicit Tile(const std::string& tex = "grass",int t = 1000,float st = 0.0f) :
-                texture(tex), turn(t), startTime(st) {}
+          explicit Tile(const std::string& tex = "grass",int t = 1000,float st = 0.0f) :
+            texture(tex), turn(t), startTime(st) {}
 
           std::string texture;
           float startTime;
@@ -56,15 +56,15 @@ namespace visualizer
 
     private:
     
-        std::vector<Tile> m_tiles;
-        int width;
-        int height;
-        int hudHeight;
-        
-        // lighting
-        float prevMapColor;
-        float mapColor;
-        float xPos;
+      std::vector<Tile> m_tiles;
+      int width;
+      int height;
+      int hudHeight;
+      
+      // lighting
+      float prevMapColor;
+      float mapColor;
+      float xPos;
         
         // todo: add more?
     };
@@ -80,53 +80,53 @@ namespace visualizer
     
     struct Creature : public Animatable
     {
-        struct Moves
+      struct Moves
+      {
+        Moves() {}
+        Moves(const glm::vec2& t, const glm::vec2& f) : to(t), from(f)
         {
-            Moves() {}
-            Moves(const glm::vec2& t, const glm::vec2& f) : to(t), from(f)
-            {
-            }
+        }
 
-            // todo: maybe rename these
-            glm::vec2 to;
-            glm::vec2 from;
-        };
+        // todo: maybe rename these
+        glm::vec2 to;
+        glm::vec2 from;
+      };
 
     	int owner;
 
-        int energyLeft;
-        int maxEnergy;
-        int carnivorism;
-        int herbivorism;
-        int speed;
-        int defense;
+      int energyLeft;
+      int maxEnergy;
+      int carnivorism;
+      int herbivorism;
+      int speed;
+      int defense;
 
-        //useful for visualizer?
-        int movementLeft;
-        int canEat;
-        int canBreed;
-        int parentID;
+      //useful for visualizer?
+      int movementLeft;
+      int canEat;
+      int canBreed;
+      int parentID;
 
-        std::vector<Moves> m_moves;
+      std::vector<Moves> m_moves;
     	// todo: add more
     };
 
     struct SpriteAnimation : public Animatable
     {
-        int x;
-        int y;
-        int frame;
+      int x;
+      int y;
+      int frame;
     };
 
     struct SplashScreen : public Animatable
     {
-        explicit SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
+      explicit SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
 
-        string winner;
-        string reason;
-        int winnerID;
-        int width;
-        int height;
+      string winner;
+      string reason;
+      int winnerID;
+      int width;
+      int height;
     };
     
     struct EatAnimation : public Animatable
@@ -147,6 +147,24 @@ namespace visualizer
       int mapWidth;
       int mapHeight;
       int height;
+    };
+
+    struct Nest
+    {
+      explicit Nest(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
+
+      int momX;
+      int momY;
+      int dadX;
+      int dadY;
+    };
+
+    struct Lovin
+    {
+      explicit Lovin(int X, int Y) : x(X), y(Y) {}
+
+      int x;
+      int y;
     };
 
 } // visualizer

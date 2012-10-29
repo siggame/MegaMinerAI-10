@@ -63,6 +63,11 @@ namespace visualizer
         
         game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
 
+        if( !bLighting && !bSunEffect )
+        {
+          game->renderer->setColor(Color(1,1,1,1));
+        }
+
         // todo: this could be cleaned up a bit, but it seems to work right now
         if(tile.turn == game->timeManager->getTurn())
         {
@@ -90,6 +95,12 @@ namespace visualizer
         game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
         game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
       }
+      // draw the island sides
+      if( x >= 0 && x < m_Map->GetWidth() )
+      {
+        game->renderer->drawAnimQuad( x, -1, 1, 1, "island_sides", 1);
+        game->renderer->drawAnimQuad( x, m_Map->GetHeight(), 1, 1, "island_sides", 0);
+      }
 
       // behind the HUD
       for(int y = 0; y < m_Map->GetHUDHeight(); y++)
@@ -106,7 +117,19 @@ namespace visualizer
         game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
         game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
       }
+      // draw the island sides
+      if( y >= 0 && y < m_Map->GetHeight() )
+      {
+        game->renderer->drawAnimQuad( -1, y, 1, 1, "island_sides", 2);
+        game->renderer->drawAnimQuad( m_Map->GetWidth(), y, 1, 1, "island_sides", 3);
+      }
     }
+
+    // draw the island side corners
+    game->renderer->drawAnimQuad( -1, -1, 1, 1, "island_sides", 6);
+    game->renderer->drawAnimQuad( m_Map->GetWidth(), -1, 1, 1, "island_sides", 7);
+    game->renderer->drawAnimQuad( -1, m_Map->GetHeight(), 1, 1, "island_sides", 4);
+    game->renderer->drawAnimQuad( m_Map->GetWidth(), m_Map->GetHeight(), 1, 1, "island_sides", 5);
 
 
     game->renderer->pop();
