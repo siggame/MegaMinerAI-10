@@ -11,7 +11,7 @@ class Scribe:
     self.messages = [] #A list of messages this player has received
     self.user = "Scribe"
     self.screenName = "Scribe"
-    self.logPath = logPath
+    self.logPath = logPath + ".glog"
     if (not os.path.exists("logs/")):
       os.mkdir("logs/")
     if (os.path.exists(self.logPath)):

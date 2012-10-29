@@ -249,7 +249,7 @@ class Match(DefaultGameWorld):
     self.turn = None
 
   def logPath(self):
-    return "logs/" + str(self.id) + ".glog"
+    return "logs/" + str(self.id)
 
   @derefArgs(Creature, None, None)
   def move(self, object, x, y):

@@ -5,7 +5,7 @@ import os
 class JsonLogger:
 
   def __init__(self, logPath):
-    self.logPath = logPath + ".json"
+    self.logPath = logPath + ".json.gz"
     if (not os.path.exists("logs/")):
       os.mkdir("logs/")
     if (os.path.exists(self.logPath)):
