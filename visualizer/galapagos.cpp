@@ -281,11 +281,11 @@ namespace visualizer
             for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
             {
                 Map::Tile& tile = (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x);
-                if(tile.turn + 2 != state || tile.startTime < invSize*i)
+                //if(tile.turn + 2 != state || tile.startTime < invSize*i)
                 {
                     tile = Map::Tile("sand",state,invSize*i);
                 }
-                else if(tile.turn + 2 == state)
+                //else if(tile.turn + 2 == state)
                 {
 
                 }
