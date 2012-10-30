@@ -1,12 +1,5 @@
 <options>
   <option>
-    <key>Check Box</key>
-    <type>Integer</type>
-    <value>1</value>
-    <minvalue>0</minvalue>
-    <maxvalue>1</maxvalue>
-  </option>
-  <option>
     <key>Draw Plant Sizes</key>
     <type>Integer</type>
     <value>1</value>
@@ -29,6 +22,13 @@
   </option>
   <option>
     <key>Show Grid</key>
+    <type>Integer</type>
+    <value>1</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Show Health Bars</key>
     <type>Integer</type>
     <value>1</value>
     <minvalue>0</minvalue>

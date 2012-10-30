@@ -15,3 +15,4 @@ texture teeth textures/teeth.png
 texture heart textures/heart.png
 texture nest textures/nest.png
 animation island_sides textures/island_sides.png
+texture healthbar textures/healthbar.png
