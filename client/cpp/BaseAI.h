@@ -43,6 +43,10 @@ public:
   int energyPerAction();
   ///The amount of energy lost from the passage of time.
   int energyPerTurn();
+  ////Comment
+  Plant& getPlantAtLocation(int x,int y);
+  ///Comment
+  Creature& getCreatureAtLocation(int x,int );  
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

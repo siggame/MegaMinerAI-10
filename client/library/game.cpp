@@ -407,7 +407,31 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   return 1;
 }
 
-
+DLLEXPORT _Plant* getPlantAtLocation(Connection* c, int x, int y)
+{
+  _Plant *p = NULL;
+  for(int ii=0;ii<c->PlantCount;ii++)
+  {
+    if(c->Plants[ii].x == x && c->Plants[ii].y == y)
+    {
+      *p = c->Plants[ii];
+    }
+  }
+  return p;
+}
+ 
+DLLEXPORT _Creature* getCreatureAtLocation(Connection* c, int x, int y)
+{
+  _Creature *cr = NULL;
+  for(int ii=0;ii<c->CreatureCount;ii++)
+  {
+    if(c->Creatures[ii].x == x && c->Creatures[ii].y == y)
+    {
+      *cr = c->Creatures[ii];
+    }
+  }
+  return cr;
+}
 
 DLLEXPORT int playerTalk(_Player* object, char* message)
 {

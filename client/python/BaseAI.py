@@ -88,3 +88,16 @@ class BaseAI:
   energyPerTurn = property(getEnergyPerTurn)
   def __init__(self, connection):
     self.connection = connection
+  
+  def getPlantAtLocation(self,x,y):
+    for plant in self.plants:
+      if plant.x == x and plant.y == y:
+        return plant
+    return None
+#    return library.getPlantAtLocation(x,y)
+  
+  def getCreatureAtLocation(self,x,y):
+    for creature in self.creatures:
+      if creature.x == x and creature.y == y:
+        return creature
+    return None
