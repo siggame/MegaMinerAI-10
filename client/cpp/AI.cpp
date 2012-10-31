@@ -20,33 +20,40 @@ void AI::init(){}
 //Return true to end your turn, return false to ask the server for updated information.
 bool AI::run()
 {
-  for(int ii=0; ii<creatures.size();ii++)
-  {/*
+  for(int ii=0;ii<creatures.size();ii++)
+  {
     if (creatures[ii].owner() == playerID())
     {
-      if (getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y()) == NULL)// && getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y) == NULL)
+      int plantIn = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
+      if ((plantIn == -1 || (plantIn !=1 && plants[plantIn].size()==0)) && getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y()) == -1)
       {
-        if(0<creatures[ii].x()+1<mapWidth() && 0<creatures[ii].y<mapHeight())
-	{
-          creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
+        if(0<=creatures[ii].x()+1 && creatures[ii].x()+1<mapWidth() && 0<=creatures[ii].y() && creatures[ii].y()<mapHeight())
+        {
+          if (creatures[ii].energyLeft()>energyPerAction() && creatures[ii].movementLeft()>0)
+	  {
+	    creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
+          }
 	}
+      }      
+      plantIn = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
+      int creatIn = getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y());
+      if (plantIn != -1 && plants[plantIn].size()>0 && creatures[ii].canEat()==1)
+      {
+        creatures[ii].eat(plants[plantIn].x(),plants[plantIn].y());
       }
-      /*
-		Plant plant = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
-		Creature creat = getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y());
-		if (plant != NULL && plant.size()>0)
-		{
-			creatures[ii].eat(creatures[ii].x()+1,creatures[ii].y());
-		}
-		else if (creat!=NULL && creat.owner()!=playerID())
-		{
-			creatures[ii].eat(creatures[ii].x()+1,creatures[ii].y());
-		}
-		else if (creat!=NULL && creat.owner()==playerID())
-		{
-			creatures[ii].breed(creat);
-		}*/
-	}
+      else if (creatIn!=-1 && creatures[creatIn].owner()!=playerID() && creatures[ii].canEat()==1)
+      {
+        creatures[ii].eat(creatures[creatIn].x(),creatures[creatIn].y());
+      }
+      else if (creatIn!=-1 && creatures[creatIn].owner()==playerID() && creatures[ii].canBreed()==1 && creatures[creatIn].canBreed()==1)
+      {
+        if (creatures[ii].energyLeft()>=energyPerBreed() && creatures[creatIn].energyLeft()>=energyPerBreed())
+        {
+          creatures[ii].breed(creatures[creatIn]);
+        }
+      }
+    }
+  }
   return true;
 }
 

@@ -44,9 +44,9 @@ public:
   ///The amount of energy lost from the passage of time.
   int energyPerTurn();
   ////Comment
-  Plant getPlantAtLocation(int x,int y);
+  int getPlantAtLocation(int x,int y);
   ///Comment
-  Creature getCreatureAtLocation(int x,int y);  
+  int getCreatureAtLocation(int x,int y);  
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

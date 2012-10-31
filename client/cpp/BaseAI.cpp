@@ -38,28 +38,28 @@ int BaseAI::energyPerTurn()
   return getEnergyPerTurn(c);
 }
 
-Plant BaseAI::getPlantAtLocation(int x, int y)
+int BaseAI::getPlantAtLocation(int x, int y)
 {
   for(int ii=0; ii<plants.size();ii++)
   {
     if (plants[ii].x() == x && plants[ii].y() == y)
     {		
-    	return plants[ii];
+    	return ii;
     }
   }
-  return NULL;
+  return -1;
 }
 
-Creature BaseAI::getCreatureAtLocation(int x, int y)
+int BaseAI::getCreatureAtLocation(int x, int y)
 {
   for(int ii=0; ii<creatures.size();ii++)
   {
     if (creatures[ii].x() == x && creatures[ii].y() == y)
     {
-      return creatures[ii];
+      return ii;
     }
   }
-  return NULL;
+  return -1;
 }
 
 bool BaseAI::startTurn()

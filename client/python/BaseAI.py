@@ -92,12 +92,12 @@ class BaseAI:
   def getPlantAtLocation(self,x,y):
     for plant in self.plants:
       if plant.x == x and plant.y == y:
-        return plant
-    return None
+        return self.plants.index(plant)
+    return -1
 #    return library.getPlantAtLocation(x,y)
   
   def getCreatureAtLocation(self,x,y):
     for creature in self.creatures:
       if creature.x == x and creature.y == y:
-        return creature
-    return None
+        return self.creatures.index(creature)
+    return -1

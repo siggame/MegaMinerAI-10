@@ -119,28 +119,28 @@ public abstract class BaseAI
     return Client.INSTANCE.getEnergyPerTurn(connection);
   }
 
-  Creature getCreatureAtLocation(int x, int y)
+  int getCreatureAtLocation(int x, int y)
   {
     for(int ii=0;ii<creatures.length;ii++)
     {
       if (creatures[ii].getX()==x && creatures[ii].getY()==y)
       {
-        return creatures[ii];
+        return ii;
       }
     }
-    return null;
+    return -1;
   }
   
-  Plant getPlantAtLocation(int x, int y)
+  int getPlantAtLocation(int x, int y)
   {
     for(int ii=0;ii<plants.length;ii++)
     {
       if (plants[ii].getX()==x && plants[ii].getY()==y)
       {
-        return plants[ii];
+        return ii;
       }
     }
-    return null;
+    return -1;
   }
   
 }

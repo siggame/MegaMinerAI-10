@@ -25,21 +25,21 @@ class AI(BaseAI):
   def run(self):
     for creature in self.creatures:
      if creature.owner == self.playerID:
-      plant = self.getPlantAtLocation(creature.x+1,creature.y)
-      if (plant == None or (isinstance(plant,Plant) and plant.size==0)) and self.getCreatureAtLocation(creature.x+1,creature.y)==None:
+      plantIn = self.getPlantAtLocation(creature.x+1,creature.y)
+      if (plantIn == -1 or (plantIn!= -1 and self.plants[plantIn].size==0)) and self.getCreatureAtLocation(creature.x+1,creature.y)==-1:
         if (0<=creature.x+1<self.mapWidth) and (0<=creature.y<self.mapHeight) and creature.energyLeft>=self.energyPerAction and creature.movementLeft>0:
           creature.move(creature.x+1,creature.y)
-      plant = self.getPlantAtLocation(creature.x+1,creature.y)
-      creat = self.getCreatureAtLocation(creature.x+1,creature.y)
+      plantIn = self.getPlantAtLocation(creature.x+1,creature.y)
+      creatIn = self.getCreatureAtLocation(creature.x+1,creature.y)
       if creature.canEat:
-        if plant != None and plant.size>0 and creature.energyLeft >= self.energyPerAction:
-          creature.eat(plant.x,plant.y)
-        elif creat != None and creat.owner != self.playerID and creature.energyLeft >= self.energyPerAction:
-          creature.eat(creat.x,creat.y)
-      elif creat != None and creat.owner == self.playerID:
-        if  creature.energyLeft>=self.energyPerBreed and creat.energyLeft>=self.energyPerBreed:
-          if creature.canBreed and creat.canBread:
-            creature.breed(creat)
+        if plantIn != -1 and self.plants[plantIn].size>0 and creature.energyLeft >= self.energyPerAction:
+          creature.eat(self.plants[plantIn].x,self.plants[plantIn].y)
+        elif creatIn != -1 and self.creatures[creatIn].owner != self.playerID and creature.energyLeft >= self.energyPerAction:
+          creature.eat(self.creatures[creatIn].x,self.creatures[creatIn].y)
+      elif creatIn != -1 and self.creatures[creatIn].owner == self.playerID:
+        if  creature.energyLeft>=self.energyPerBreed and self.creatures[creatIn].energyLeft>=self.energyPerBreed:
+          if creature.canBreed and self.creatures[creatIn].canBread:
+            creature.breed(self.creatures[creatIn])
     return 1
 
   def __init__(self, conn):
