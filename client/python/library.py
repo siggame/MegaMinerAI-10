@@ -71,14 +71,17 @@ library.getMapWidth.argtypes = [c_void_p]
 library.getMapHeight.restype = c_int
 library.getMapHeight.argtypes = [c_void_p]
 
-library.getEnergyPerBreed.restype = c_int
-library.getEnergyPerBreed.argtypes = [c_void_p]
+library.getHealthPerBreed.restype = c_int
+library.getHealthPerBreed.argtypes = [c_void_p]
 
-library.getEnergyPerAction.restype = c_int
-library.getEnergyPerAction.argtypes = [c_void_p]
+library.getHealthPerMove.restype = c_int
+library.getHealthPerMove.argtypes = [c_void_p]
 
-library.getEnergyPerTurn.restype = c_int
-library.getEnergyPerTurn.argtypes = [c_void_p]
+library.getHealthPerTurn.restype = c_int
+library.getHealthPerTurn.argtypes = [c_void_p]
+
+library.getBaseHealth.restype = c_int
+library.getBaseHealth.argtypes = [c_void_p]
 
 library.getMappable.restype = c_void_p
 library.getMappable.argtypes = [c_void_p, c_int]
@@ -128,11 +131,14 @@ library.creatureGetY.argtypes = [c_void_p]
 library.creatureGetOwner.restype = c_int
 library.creatureGetOwner.argtypes = [c_void_p]
 
-library.creatureGetMaxEnergy.restype = c_int
-library.creatureGetMaxEnergy.argtypes = [c_void_p]
+library.creatureGetMaxHelth.restype = c_int
+library.creatureGetMaxHelth.argtypes = [c_void_p]
 
-library.creatureGetEnergyLeft.restype = c_int
-library.creatureGetEnergyLeft.argtypes = [c_void_p]
+library.creatureGetCurrentHealth.restype = c_int
+library.creatureGetCurrentHealth.argtypes = [c_void_p]
+
+library.creatureGetEnergy.restype = c_int
+library.creatureGetEnergy.argtypes = [c_void_p]
 
 library.creatureGetCarnivorism.restype = c_int
 library.creatureGetCarnivorism.argtypes = [c_void_p]

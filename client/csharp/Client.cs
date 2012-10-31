@@ -45,11 +45,13 @@ public class Client {
   [DllImport("client")]
   public static extern int getMapHeight(IntPtr connection);
   [DllImport("client")]
-  public static extern int getEnergyPerBreed(IntPtr connection);
+  public static extern int getHealthPerBreed(IntPtr connection);
   [DllImport("client")]
-  public static extern int getEnergyPerAction(IntPtr connection);
+  public static extern int getHealthPerMove(IntPtr connection);
   [DllImport("client")]
-  public static extern int getEnergyPerTurn(IntPtr connection);
+  public static extern int getHealthPerTurn(IntPtr connection);
+  [DllImport("client")]
+  public static extern int getBaseHealth(IntPtr connection);
 
   [DllImport("client")]
   public static extern IntPtr getMappable(IntPtr connection, int num);
@@ -86,9 +88,11 @@ public class Client {
   [DllImport("client")]
   public static extern int creatureGetOwner(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetMaxEnergy(IntPtr ptr);
+  public static extern int creatureGetMaxHelth(IntPtr ptr);
   [DllImport("client")]
-  public static extern int creatureGetEnergyLeft(IntPtr ptr);
+  public static extern int creatureGetCurrentHealth(IntPtr ptr);
+  [DllImport("client")]
+  public static extern int creatureGetEnergy(IntPtr ptr);
   [DllImport("client")]
   public static extern int creatureGetCarnivorism(IntPtr ptr);
   [DllImport("client")]

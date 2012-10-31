@@ -10,7 +10,6 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
-#include <cmath>
 
 #include "game.h"
 #include "network.h"
@@ -60,9 +59,10 @@ DLLEXPORT Connection* createConnection()
   c->gameNumber = 0;
   c->mapWidth = 0;
   c->mapHeight = 0;
-  c->energyPerBreed = 0;
-  c->energyPerAction = 0;
-  c->energyPerTurn = 0;
+  c->healthPerBreed = 0;
+  c->healthPerMove = 0;
+  c->healthPerTurn = 0;
+  c->baseHealth = 0;
   c->Mappables = NULL;
   c->MappableCount = 0;
   c->Creatures = NULL;
@@ -215,6 +215,8 @@ DLLEXPORT void getStatus(Connection* c)
   UNLOCK( &c->mutex );
 }
 
+
+
 DLLEXPORT int creatureMove(_Creature* object, int x, int y)
 {
   stringstream expr;
@@ -225,7 +227,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
-  //game state update
+  
   Connection * c = object->_c;
   //Cannot move a creature you do not own.
   if(object->owner !=c->playerID)
@@ -262,8 +264,9 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
       return 0;
     }
   }
+  
   //Decrement energy and movement
-  object->energyLeft = object->energyLeft-c->energyPerAction;
+  object->energyLeft = object->energyLeft-c->healthPerMove;
   object->movementLeft = object->movementLeft-1;
   
   //Apply new movement
@@ -283,14 +286,12 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
-  //game state update
   Connection * c = object->_c;
-  
   if(object->owner != c->playerID)
   {
     return 0;
   }
-  else if(object->energyLeft<=0)
+  else if(object->currentHealth<=0)
   {
     return 0;
   }
@@ -317,24 +318,21 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
         c->Creatures[ii].energyLeft -=damage;
         if(c->Creatures[ii].energyLeft<=0)
         {
-          object->energyLeft+=object->carnivorism*5;
-          if(object->energyLeft>object->maxEnergy)
+          object->energyLeft+=object->carnivorism*10;
+          if(object->energyLeft>object->maxHealth)
           {
-            object->energyLeft = object->maxEnergy;
+            object->energyLeft = object->maxHealth;
           }
-        }
-        else
-        {
-          object->energyLeft-=c->energyPerAction;
         }
         object->canEat=false;
         looking=false;
         return 1;
       }
     }
- if(looking)
- { 
-  for(int ii=0;ii<c->PlantCount;ii++)
+  }
+  if(looking)
+  { 
+    for(int ii=0;ii<c->PlantCount;ii++)
     {
       if(c->Plants[ii].x == x && c->Plants[ii].y == y)
       {
@@ -343,9 +341,9 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
           return 0;
         }
         object->energyLeft+=object->herbivorism*5;
-        if(object->energyLeft > object->maxEnergy)
+        if(object->energyLeft > object->maxHealth)
         {
-          object->energyLeft=object->maxEnergy;
+          object->energyLeft=object->maxHealth;
         }
         c->Plants[ii].size-=1;
         object->canEat=false;
@@ -354,11 +352,10 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
       }
     }
   }
- }
- if(looking)
- {
-   return 0;
- }
+  if(looking)
+  {
+    return 0;
+  }
 }
 
 DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
@@ -370,17 +367,16 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   LOCK( &object->_c->mutex);
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
-  //game state update
   Connection * c = object->_c;
   if(object->owner!=c->playerID)
   {
     return 0;
   }
-  else if(object->energyLeft<=c->energyPerBreed)
+  else if(object->energyLeft<=c->healthPerBreed)
   {
    return 0;
   }
-  else if(mate->energyLeft<=c->energyPerBreed)
+  else if(mate->energyLeft<=c->healthPerBreed)
   {
    return 0;
   }
@@ -402,8 +398,8 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   mate->canEat = false;
   object->movementLeft = 0;
   mate->movementLeft = 0;
-  object->energyLeft-=c->energyPerBreed;
-  mate->energyLeft-=c->energyPerBreed;
+  object->currentLeft-=c->healthPerBreed;
+  mate->currentLeft-=c->healthPerBreed;
   return 1;
 }
 
@@ -432,6 +428,8 @@ DLLEXPORT _Creature* getCreatureAtLocation(Connection* c, int x, int y)
   }
   return cr;
 }
+
+
 
 DLLEXPORT int playerTalk(_Player* object, char* message)
 {
@@ -477,9 +475,11 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->owner = atoi(sub->val);
   sub = sub->next;
-  object->maxEnergy = atoi(sub->val);
+  object->maxHelth = atoi(sub->val);
   sub = sub->next;
-  object->energyLeft = atoi(sub->val);
+  object->currentHealth = atoi(sub->val);
+  sub = sub->next;
+  object->energy = atoi(sub->val);
   sub = sub->next;
   object->carnivorism = atoi(sub->val);
   sub = sub->next;
@@ -621,13 +621,16 @@ DLLEXPORT int networkLoop(Connection* c)
           c->mapHeight = atoi(sub->val);
           sub = sub->next;
 
-          c->energyPerBreed = atoi(sub->val);
+          c->healthPerBreed = atoi(sub->val);
           sub = sub->next;
 
-          c->energyPerAction = atoi(sub->val);
+          c->healthPerMove = atoi(sub->val);
           sub = sub->next;
 
-          c->energyPerTurn = atoi(sub->val);
+          c->healthPerTurn = atoi(sub->val);
+          sub = sub->next;
+
+          c->baseHealth = atoi(sub->val);
           sub = sub->next;
 
         }
@@ -771,15 +774,19 @@ DLLEXPORT int getMapHeight(Connection* c)
 {
   return c->mapHeight;
 }
-DLLEXPORT int getEnergyPerBreed(Connection* c)
+DLLEXPORT int getHealthPerBreed(Connection* c)
 {
-  return c->energyPerBreed;
+  return c->healthPerBreed;
 }
-DLLEXPORT int getEnergyPerAction(Connection* c)
+DLLEXPORT int getHealthPerMove(Connection* c)
 {
-  return c->energyPerAction;
+  return c->healthPerMove;
 }
-DLLEXPORT int getEnergyPerTurn(Connection* c)
+DLLEXPORT int getHealthPerTurn(Connection* c)
 {
-  return c->energyPerTurn;
+  return c->healthPerTurn;
+}
+DLLEXPORT int getBaseHealth(Connection* c)
+{
+  return c->baseHealth;
 }

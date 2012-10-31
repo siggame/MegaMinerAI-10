@@ -29,9 +29,10 @@ public interface Client extends Library {
   int getGameNumber(Pointer connection);
   int getMapWidth(Pointer connection);
   int getMapHeight(Pointer connection);
-  int getEnergyPerBreed(Pointer connection);
-  int getEnergyPerAction(Pointer connection);
-  int getEnergyPerTurn(Pointer connection);
+  int getHealthPerBreed(Pointer connection);
+  int getHealthPerMove(Pointer connection);
+  int getHealthPerTurn(Pointer connection);
+  int getBaseHealth(Pointer connection);
 
   Pointer getMappable(Pointer connection, int num);
   int getMappableCount(Pointer connection);
@@ -52,8 +53,9 @@ public interface Client extends Library {
   int creatureGetX(Pointer ptr);
   int creatureGetY(Pointer ptr);
   int creatureGetOwner(Pointer ptr);
-  int creatureGetMaxEnergy(Pointer ptr);
-  int creatureGetEnergyLeft(Pointer ptr);
+  int creatureGetMaxHelth(Pointer ptr);
+  int creatureGetCurrentHealth(Pointer ptr);
+  int creatureGetEnergy(Pointer ptr);
   int creatureGetCarnivorism(Pointer ptr);
   int creatureGetHerbivorism(Pointer ptr);
   int creatureGetSpeed(Pointer ptr);

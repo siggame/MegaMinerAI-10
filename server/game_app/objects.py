@@ -20,14 +20,15 @@ class Mappable:
 
 
 class Creature(Mappable):
-  def __init__(self, game, id, x, y, owner, maxEnergy, energyLeft, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
+  def __init__(self, game, id, x, y, owner, maxHealth, currentHealth, energy, carnivorism, herbivorism, speed, movementLeft, defense, parentID):
     self.game = game
     self.id = id
     self.x = x
     self.y = y
     self.owner = owner
-    self.maxEnergy = maxEnergy
-    self.energyLeft = energyLeft
+    self.maxHealth = maxHealth
+    self.currentHealth = currentHealth
+    self.energy = energy
     self.carnivorism = carnivorism
     self.herbivorism = herbivorism
     self.speed = speed
@@ -38,18 +39,18 @@ class Creature(Mappable):
     self.parentID = parentID
 
   def toList(self):
-    return [self.id, self.x, self.y, self.owner, self.maxEnergy, self.energyLeft, self.carnivorism, self.herbivorism, self.speed, self.movementLeft, self.defense, self.canEat, self.canBreed, self.parentID, ]
+    return [self.id, self.x, self.y, self.owner, self.maxHealth, self.currentHealth, self.energy, self.carnivorism, self.herbivorism, self.speed, self.movementLeft, self.defense, self.canEat, self.canBreed, self.parentID, ]
   
   # This will not work if the object has variables other than primitives
   def toJson(self):
-    return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, maxEnergy = self.maxEnergy, energyLeft = self.energyLeft, carnivorism = self.carnivorism, herbivorism = self.herbivorism, speed = self.speed, movementLeft = self.movementLeft, defense = self.defense, canEat = self.canEat, canBreed = self.canBreed, parentID = self.parentID, )
+    return dict(id = self.id, x = self.x, y = self.y, owner = self.owner, maxHealth = self.maxHealth, currentHealth = self.currentHealth, energy = self.energy, carnivorism = self.carnivorism, herbivorism = self.herbivorism, speed = self.speed, movementLeft = self.movementLeft, defense = self.defense, canEat = self.canEat, canBreed = self.canBreed, parentID = self.parentID, )
   
 
   #Decrements the energy of the creature by energyDec. If the creature runs out of energy, it dies.
   #Returns true if the creature lives, returns false if it dies.
   def decrementEnergy(self, energyDec, creature):
-    creature.energyLeft -= energyDec
-    if creature.energyLeft <= 0:
+    creature.currentHealth -= energyDec
+    if creature.currentHealth <= 0:
       self.game.grid[creature.x][creature.y].remove(creature)  
       self.game.removeObject(creature)    
       self.game.addAnimation(DeathAnimation(creature.id))
@@ -59,12 +60,12 @@ class Creature(Mappable):
   def nextTurn(self):
     if len(self.game.grid[self.x][self.y]) > 1:
       #If the creature is stacked, it loses its ability to be productive
-      if(self.decrementEnergy(self.game.energyPerTurn, self)):
+      if(self.decrementEnergy(self.game.healthPerTurn, self)):
         self.canEat = 0
         self.canBreed = 0
         self.movementLeft = self.speed
     #Else, we decrement energy like normal and reset stats
-    elif(self.decrementEnergy(self.game.energyPerTurn, self)):
+    elif(self.decrementEnergy(self.game.healthPerTurn, self)):
       self.movementLeft = self.speed
       self.canEat = 1
       self.canBreed = 1
@@ -89,7 +90,7 @@ class Creature(Mappable):
     elif isinstance(self.game.getObject(x,y), Creature):
       return "There is a creature there!."
     #If the creature moved and didn't die in the process      
-    if(self.decrementEnergy(self.game.energyPerAction, self)):
+    if(self.decrementEnergy(self.game.healthPerMove, self)):
       if isinstance(self.game.getObject(x,y), Plant):
         self.game.removeObject(self.game.getObject(x,y))
         self.game.grid[x][y].remove(self.game.getObject(x,y))
@@ -108,7 +109,7 @@ class Creature(Mappable):
     if self.owner != self.game.playerID:
       return "You cannot eat with your oppenent's creature"
     #You can't move if you have no moves left
-    elif self.energyLeft <= 0:
+    elif self.currentHealth <= 0:
       return "That creature has no energy left"
     #You can't eat more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
@@ -125,9 +126,9 @@ class Creature(Mappable):
       plant = lifeform
       if plant.size == 0:
         return "That plant is too small to eat."
-      self.energyLeft += self.herbivorism * 5
-      if self.energyLeft > self.maxEnergy:
-        self.energyLeft = self.maxEnergy
+      self.currentHealth += self.herbivorism * 5
+      if self.currentHealth > self.maxHealth:
+        self.currentHealth = self.maxHealth
       plant.size -= 1
       #self.game.animations.append(['eat', self.id, plant.id])
       self.game.addAnimation(EatAnimation(self.id, plant.id))
@@ -139,12 +140,11 @@ class Creature(Mappable):
       damage = damage * self.game.damageMul
       #Damage the target creature
       if not self.decrementEnergy(damage, creature):
-        #if creature.energyLeft <= 0:
-        print "I'VE KILLED IT",self.id,creature.id,creature.energyLeft
-        self.energyLeft += self.carnivorism * 5    
-        if self.energyLeft > self.maxEnergy:
-          self.energyLeft = self.maxEnergy
-      self.decrementEnergy(self.game.energyPerAction, self)     
+        #if creature.currentHealth <= 0:
+        print "I'VE KILLED IT",self.id,creature.id,creature.currentHealth
+        self.currentHealth += self.carnivorism * 5    
+        if self.currentHealth > self.maxHealth:
+          self.currentHealth = self.maxHealth    
       self.game.addAnimation(EatAnimation(self.id, creature.id))
     self.canEat = False
     return True
@@ -154,10 +154,10 @@ class Creature(Mappable):
     if self.owner != self.game.playerID:
       return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-    elif self.energyLeft <= self.game.energyPerBreed:
+    elif self.currentHealth <= self.game.energyPerBreed:
       return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-    elif mate.energyLeft <= self.game.energyPerBreed:
+    elif mate.currentHealth <= self.game.energyPerBreed:
       return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
     elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
@@ -169,7 +169,7 @@ class Creature(Mappable):
     elif self.canBreed != True or mate.canBreed !=True:
       return "You've already bred this turn! You can't do it again."
     # by default set all stats to average of parents
-    newEnergy = ((self.maxEnergy - 100)  / 10 + (mate.maxEnergy - 100) / 10) / 2
+    newEnergy = (self.energy + mate.energy) / 2
     newDefense = (self.defense + mate.defense) / 2
     newCarnivorism = (self.carnivorism + mate.carnivorism) / 2
     newHerbivorism = (self.herbivorism + mate.herbivorism) / 2
@@ -185,17 +185,17 @@ class Creature(Mappable):
     mate.canBreed = False
     self.canEat = False
     mate.canEat = False
-    self.decrementEnergy(self.game.energyPerBreed, self)
-    self.decrementEnergy(self.game.energyPerBreed, mate) 
-    print self.energyLeft, mate.energyLeft
+    self.decrementEnergy(self.game.healthPerBreed, self)
+    self.decrementEnergy(self.game.healthPerBreed, mate) 
+    print self.currentHealth, mate.currentHealth
           
     return True
    
    
   def newBreed(self,mate):
     #Create a dictionary of the parent's stats
-    fatherStats = {'energy':(self.maxEnergy-100)/10,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
-    motherStats = {'energy':(mate.maxEnergy-100)/10,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
+    fatherStats = {'energy':self.energy,'carnivorism':self.carnivorism,'herbivorism':self.herbivorism,'speed':self.speed,'defense':self.defense}
+    motherStats = {'energy':mate.energy,'carnivorism':mate.carnivorism,'herbivorism':mate.herbivorism,'speed':mate.speed,'defense':mate.defense}
     
     #Create a new baby based on the average of the parents stats
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}   
@@ -212,7 +212,7 @@ class Creature(Mappable):
     #Increment father's highest stat and lower the mother's lowest    
     babyStats[max(fatherStats,key=fatherStats.get)]+=1
     babyStats[min(motherStats,key=motherStats.get)]-=1
-    babyList = [int(babyStats['energy']*10+100),int(babyStats['energy']*10+100),babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    babyList = [self.game.baseHealth + int(babyStats['energy']*10),self.game.baseHealth + int(babyStats['energy']*10),int(babyStats['energy']),babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
 
 class Plant(Mappable):

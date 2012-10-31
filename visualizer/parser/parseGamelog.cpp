@@ -108,7 +108,7 @@ static bool parseCreature(Creature& object, sexp_t* expression)
     return false;
   }
 
-  object.maxEnergy = atoi(sub->val);
+  object.maxHelth = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -117,7 +117,16 @@ static bool parseCreature(Creature& object, sexp_t* expression)
     return false;
   }
 
-  object.energyLeft = atoi(sub->val);
+  object.currentHealth = atoi(sub->val);
+  sub = sub->next;
+
+  if ( !sub ) 
+  {
+    cerr << "Error in parseCreature.\n Parsing: " << *expression << endl;
+    return false;
+  }
+
+  object.energy = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 
@@ -469,13 +478,16 @@ static bool parseSexp(Game& game, sexp_t* expression)
           gs.mapHeight = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;
-          gs.energyPerBreed = atoi(sub->val);
+          gs.healthPerBreed = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;
-          gs.energyPerAction = atoi(sub->val);
+          gs.healthPerMove = atoi(sub->val);
           sub = sub->next;
           if ( !sub ) return false;
-          gs.energyPerTurn = atoi(sub->val);
+          gs.healthPerTurn = atoi(sub->val);
+          sub = sub->next;
+          if ( !sub ) return false;
+          gs.baseHealth = atoi(sub->val);
           sub = sub->next;
       }
       else if(string(sub->val) == "Mappable")

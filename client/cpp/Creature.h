@@ -23,10 +23,12 @@ class Creature : public Mappable {
   int y();
   ///The owner of the creature
   int owner();
-  ///The maximum amount of energy this creature can have
-  int maxEnergy();
-  ///The current amount of energy this creature has.
-  int energyLeft();
+  ///The maximum amount of health this creature can have
+  int maxHelth();
+  ///The current amount of health that this creature has.
+  int currentHealth();
+  ///The energy level of the creature. This helps your max health
+  int energy();
   ///The carnivore level of the creature
   int carnivorism();
   ///The herbivore level of the creature
