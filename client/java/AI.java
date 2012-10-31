@@ -20,7 +20,8 @@ public class AI extends BaseAI
 	{
   	  if (creatures[ii].getOwner() == playerID())
       {
-        if (getPlantAtLocation(creatures[ii].getX()+1,creatures[ii].getY()) == null && getCreatureAtLocation(creatures[ii].getX()+1,creatures[ii].getY()) == null)
+		Plant plant = getPlantAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
+        if ((plant == null || plant.getSize()==0) && getCreatureAtLocation(creatures[ii].getX()+1,creatures[ii].getY()) == null)
         {
           if(0<=creatures[ii].getX()+1 && creatures[ii].getX()+1<mapWidth() && 0<=creatures[ii].getY() && creatures[ii].getY()<mapHeight())
 		  {
@@ -30,17 +31,17 @@ public class AI extends BaseAI
 			}
 		  }
         }      
-		Plant plant = getPlantAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
+		plant = getPlantAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
 		Creature creat = getCreatureAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
-		if (plant != null && plant.getSize()>0/* && creatures[ii].getCanEat()==0*/)
+		if (plant != null && plant.getSize()>0 && creatures[ii].getCanEat()==1)
 		{
 			creatures[ii].eat(creatures[ii].getX()+1,creatures[ii].getY());
 		}
-		else if (creat!=null && creat.getOwner()!=playerID() /*&& creatures[ii].getCanEat()!=1*/)
+		else if (creat!=null && creat.getOwner()!=playerID() && creatures[ii].getCanEat()==1)
 		{
 			creatures[ii].eat(creatures[ii].getX()+1,creatures[ii].getY());
 		}
-		else if (creat!=null && creat.getOwner()==playerID() /*&& creatures[ii].getCanBreed()!=1 && creat.getCanBreed()!=1*/)
+		else if (creat!=null && creat.getOwner()==playerID() && creatures[ii].getCanBreed()==1 && creat.getCanBreed()==1)
 		{
 			if (creatures[ii].getEnergyLeft()>=energyPerBreed() && creat.getEnergyLeft()>=energyPerBreed())
 			{
