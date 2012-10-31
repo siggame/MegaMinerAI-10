@@ -21,16 +21,17 @@ void AI::init(){}
 bool AI::run()
 {
   for(int ii=0; ii<creatures.size();ii++)
-  {
-	if (creatures[ii].owner() == playerID())
+  {/*
+    if (creatures[ii].owner() == playerID())
+    {
+      if (getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y()) == NULL)// && getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y) == NULL)
+      {
+        if(0<creatures[ii].x()+1<mapWidth() && 0<creatures[ii].y<mapHeight())
 	{
-		if (getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y()) == NULL && getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y) == NULL)
-		{
-			if(0<creatures[ii].x()+1<mapWidth() && 0<creatures[ii].y<mapHeight())
-			{
-				creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
-			}
-		}/*
+          creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
+	}
+      }
+      /*
 		Plant plant = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
 		Creature creat = getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y());
 		if (plant != NULL && plant.size()>0)

@@ -40,26 +40,26 @@ int BaseAI::energyPerTurn()
 
 Plant BaseAI::getPlantAtLocation(int x, int y)
 {
-	for(int ii=0; ii<plants.size();ii++)
-	{
-		if (plants[ii].x() == x && plants[ii].y() == y)
-		{
-			return plants[ii];
-		}
-	}
-	return NULL;
+  for(int ii=0; ii<plants.size();ii++)
+  {
+    if (plants[ii].x() == x && plants[ii].y() == y)
+    {		
+    	return plants[ii];
+    }
+  }
+  return NULL;
 }
 
 Creature BaseAI::getCreatureAtLocation(int x, int y)
 {
-	for(int ii=0; ii<creatures.size();ii++)
-	{
-		if (creatures[ii].x() == x && creatures[ii].y() == y)
-		{
-			return creatures[ii];
-		}
-	}
-	return NULL;
+  for(int ii=0; ii<creatures.size();ii++)
+  {
+    if (creatures[ii].x() == x && creatures[ii].y() == y)
+    {
+      return creatures[ii];
+    }
+  }
+  return NULL;
 }
 
 bool BaseAI::startTurn()
