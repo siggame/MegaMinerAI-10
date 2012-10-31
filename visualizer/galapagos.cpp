@@ -360,10 +360,14 @@ namespace visualizer
               x = plant->second.x;
               y = plant->second.y;
             }
-            //SmartPointer<EatAnimation> eatAnimation = new EatAnimation( m_game->states[ state ].mappables[ eat.targetID ].x, m_game->states[ state ].mappables[ eat.targetID ].y );
-            SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
-            eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
-            turn.addAnimatable( eatAnimation );
+
+	    			if(creature != m_game->states[state].creatures.end() || plant != m_game->states[state].plants.end())
+						{
+		          //SmartPointer<EatAnimation> eatAnimation = new EatAnimation( m_game->states[ state ].mappables[ eat.targetID ].x, m_game->states[ state ].mappables[ eat.targetID ].y );
+		          SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
+		          eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
+		          turn.addAnimatable( eatAnimation );
+						}
           }
         }
       }
