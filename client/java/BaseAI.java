@@ -121,25 +121,26 @@ public abstract class BaseAI
 
   Creature getCreatureAtLocation(int x, int y)
   {
-	for(int ii=0;ii<creatures.length;ii++)
-	{
-		if (creatures[ii].getX()==x && creatures[ii].getY()==y)
-		{
-			return creatures[ii];
-		}
-	}
-	return null;
+    for(int ii=0;ii<creatures.length;ii++)
+    {
+      if (creatures[ii].getX()==x && creatures[ii].getY()==y)
+      {
+        return creatures[ii];
+      }
+    }
+    return null;
   }
+  
   Plant getPlantAtLocation(int x, int y)
   {
-	for(int ii=0;ii<plants.length;ii++)
-	{
-		if (plants[ii].getX()==x && plants[ii].getY()==y)
-		{
-			return plants[ii];
-		}
-	}
-	return null;
+    for(int ii=0;ii<plants.length;ii++)
+    {
+      if (plants[ii].getX()==x && plants[ii].getY()==y)
+      {
+        return plants[ii];
+      }
+    }
+    return null;
   }
   
 }
