@@ -136,13 +136,14 @@ class Creature(Mappable):
       damage = self.carnivorism - creature.defense
       if damage < 1:
         damage = 1
-      damage = damage * 5
+      damage = damage * self.game.damageMul
       #Damage the target creature
-      if self.decrementEnergy(damage, creature):
-        if creature.energyLeft <= 0:
-          self.energyLeft += self.carnivorism * 5    
-          if self.energyLeft > self.maxEnergy:
-            self.energyLeft = self.maxEnergy
+      if not self.decrementEnergy(damage, creature):
+        #if creature.energyLeft <= 0:
+        print "I'VE KILLED IT",self.id,creature.id,creature.energyLeft
+        self.energyLeft += self.carnivorism * 5    
+        if self.energyLeft > self.maxEnergy:
+          self.energyLeft = self.maxEnergy
       self.decrementEnergy(self.game.energyPerAction, self)     
       self.game.addAnimation(EatAnimation(self.id, creature.id))
     self.canEat = False
