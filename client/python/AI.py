@@ -27,17 +27,17 @@ class AI(BaseAI):
      if creature.owner == self.playerID:
       plantIn = self.getPlantAtLocation(creature.x+1,creature.y)
       if (plantIn == -1 or (plantIn!= -1 and self.plants[plantIn].size==0)) and self.getCreatureAtLocation(creature.x+1,creature.y)==-1:
-        if (0<=creature.x+1<self.mapWidth) and (0<=creature.y<self.mapHeight) and creature.energyLeft>=self.energyPerAction and creature.movementLeft>0:
+        if (0<=creature.x+1<self.mapWidth) and (0<=creature.y<self.mapHeight) and creature.currentHealth>=self.healthPerMove and creature.movementLeft>0:
           creature.move(creature.x+1,creature.y)
       plantIn = self.getPlantAtLocation(creature.x+1,creature.y)
       creatIn = self.getCreatureAtLocation(creature.x+1,creature.y)
       if creature.canEat:
-        if plantIn != -1 and self.plants[plantIn].size>0 and creature.energyLeft >= self.energyPerAction:
+        if plantIn != -1 and self.plants[plantIn].size>0 and creature.currentHealth >= self.healthPerMove:
           creature.eat(self.plants[plantIn].x,self.plants[plantIn].y)
-        elif creatIn != -1 and self.creatures[creatIn].owner != self.playerID and creature.energyLeft >= self.energyPerAction:
+        elif creatIn != -1 and self.creatures[creatIn].owner != self.playerID and creature.currentHealth>= self.healthPerMove:
           creature.eat(self.creatures[creatIn].x,self.creatures[creatIn].y)
       elif creatIn != -1 and self.creatures[creatIn].owner == self.playerID:
-        if  creature.energyLeft>=self.energyPerBreed and self.creatures[creatIn].energyLeft>=self.energyPerBreed:
+        if  creature.currentHealth>self.healthPerBreed and self.creatures[creatIn].currentHealth>self.healthPerBreed:
           if creature.canBreed and self.creatures[creatIn].canBread:
             creature.breed(self.creatures[creatIn])
     return 1
