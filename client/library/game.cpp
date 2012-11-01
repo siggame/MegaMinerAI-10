@@ -256,12 +256,15 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
      return 0;
    }
   }
-  //Do not move on top of a plant.
+  //Do not move on top of a plant with size >0.
   for(int ii=0;ii<c->PlantCount;ii++)
   {
    if(c->Plants[ii].x == x && c->Plants[ii].y == y)
     {
-      return 0;
+      if (c->Plants[ii].size>0)
+      {
+        return 0;
+      }  
     }
   }
   
@@ -287,23 +290,28 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
   Connection * c = object->_c;
+  //Can't control your opponents creatures
   if(object->owner != c->playerID)
   {
     return 0;
   }
+  //can't make a dead creature eat
   else if(object->currentHealth<=0)
   {
     return 0;
   }
+  //have to be adjacent to target
   else if(abs(object->x-x)+abs(object->y-y)!=1)
   {
     return 0;
   }
+  //can only eat once per turn
   else if (!(object->canEat))
   {
     return 0;
   }
   bool looking = true;
+  //see what it is you're trying to eat, if anything is there
   if(looking)
   {
     for(int ii=0;ii<c->CreatureCount;ii++)
@@ -311,11 +319,13 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
       if(c->Creatures[ii].x == x && c->Creatures[ii].y == y)
       {
         int damage = object->carnivorism-c->Creatures[ii].defense;
+        //damage has to be at least one because of reasons
         if (damage<1)
         {
           damage = 1;
         }
         c->Creatures[ii].currentHealth -=damage;
+        //check if you killed it
         if(c->Creatures[ii].currentHealth<=0)
         {
           object->currentHealth+=object->carnivorism*10;
@@ -336,6 +346,7 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
     {
       if(c->Plants[ii].x == x && c->Plants[ii].y == y)
       {
+        //plant has to have size>0 to be eaten
         if(c->Plants[ii].size == 0)
         {
           return 0;
@@ -368,26 +379,34 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   send_string(object->_c->socket, expr.str().c_str());
   UNLOCK( &object->_c->mutex);
   Connection * c = object->_c;
+  //game state update
+  
+  //can't make your opponents creatures breed
   if(object->owner!=c->playerID)
   {
     return 0;
   }
+  //you don't want to die breeding....probably worse ways to go
   else if(object->currentHealth<=c->healthPerBreed)
   {
    return 0;
   }
+  //you don't want to kill your mate with your love
   else if(mate->currentHealth<=c->healthPerBreed)
   {
    return 0;
   }
+  //they have to be adjacent 
   else if(abs(object->x-mate->x)+abs(object->y+mate->y)!=1)
   {
    return 0;
   }
+  //no fraternizing with the enemy 
   else if(mate->owner!=c->playerID)
   {
    return 0;
   }
+  //can only breed once per turn
   else if(!(object->canBreed && mate->canBreed))
   {
    return 0;

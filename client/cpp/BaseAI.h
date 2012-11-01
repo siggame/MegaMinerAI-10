@@ -51,10 +51,6 @@ public:
   int healthPerTurn();
   ///The base amount of health that each creature starts with
   int baseHealth();
-  ///Tells the user if there is a plant as target location
-  Plant getPlantAtLocation(int x,int y);
-  ///Tells the user if there is a creature at target location
-  Creature getCreatureAtLocation(int x,int y);  
   
   BaseAI(Connection* c);
   virtual ~BaseAI();

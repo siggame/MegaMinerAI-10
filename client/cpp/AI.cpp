@@ -29,7 +29,7 @@ bool AI::run()
       {
         if(0<=creatures[ii].x()+1 && creatures[ii].x()+1<mapWidth() && 0<=creatures[ii].y() && creatures[ii].y()<mapHeight())
         {
-          if (creatures[ii].energyLeft()>energyPerAction() && creatures[ii].movementLeft()>0)
+          if (creatures[ii].currentHealth()>healthPerMove() && creatures[ii].movementLeft()>0)
 	  {
 	    creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
           }
@@ -47,7 +47,7 @@ bool AI::run()
       }
       else if (creatIn!=-1 && creatures[creatIn].owner()==playerID() && creatures[ii].canBreed()==1 && creatures[creatIn].canBreed()==1)
       {
-        if (creatures[ii].energyLeft()>=energyPerBreed() && creatures[creatIn].energyLeft()>=energyPerBreed())
+        if (creatures[ii].currentHealth()>=healthPerBreed() && creatures[creatIn].currentHealth()>=healthPerBreed())
         {
           creatures[ii].breed(creatures[creatIn]);
         }

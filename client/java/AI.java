@@ -25,7 +25,7 @@ public class AI extends BaseAI
         {
           if(0<=creatures[ii].getX()+1 && creatures[ii].getX()+1<mapWidth() && 0<=creatures[ii].getY() && creatures[ii].getY()<mapHeight())
           {
-            if (creatures[ii].getEnergyLeft()>energyPerAction() && creatures[ii].getMovementLeft()>0)
+            if (creatures[ii].getCurrentHealth()>healthPerMove() && creatures[ii].getMovementLeft()>0)
             {
               creatures[ii].move(creatures[ii].getX()+1,creatures[ii].getY());
             }
@@ -43,7 +43,7 @@ public class AI extends BaseAI
         }
         else if (creatIn!=-1 && creatures[creatIn].getOwner()==playerID() && creatures[ii].getCanBreed()==1 && creatures[creatIn].getCanBreed()==1)
         {
-          if (creatures[ii].getEnergyLeft()>=energyPerBreed() && creatures[creatIn].getEnergyLeft()>=energyPerBreed())
+          if (creatures[ii].getCurrentHealth()>healthPerBreed() && creatures[creatIn].getCurrentHealth()>healthPerBreed())
           {
             creatures[ii].breed(creatures[creatIn]);
           }
