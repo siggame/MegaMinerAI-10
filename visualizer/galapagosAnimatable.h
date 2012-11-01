@@ -92,10 +92,11 @@ namespace visualizer
         glm::vec2 from;
       };
 
-    	int owner;
+      int owner;
 
-      int energyLeft;
-      int maxEnergy;
+      int energy;
+      int health;
+      int maxHealth;
       int carnivorism;
       int herbivorism;
       int speed;

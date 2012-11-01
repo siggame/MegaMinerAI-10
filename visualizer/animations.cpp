@@ -191,25 +191,24 @@ namespace visualizer
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
     // for some reason commenting out these other body parts works on windows...
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , ((float(m_Creature->maxEnergy)-100.0f)/10.0f)-1);  // TODO: change to ->energy when codegen is rerun
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , m_Creature->defense - 1);
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , m_Creature->carnivorism - 1);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
+
+    // todo: maybe change this
+
+    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , (float(m_Creature->energy)-100.0f)/10.0f-1);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , ( 10.0f * (float)m_Creature->health / ((float)m_Creature->maxHealth + 1)));
+    /*game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , m_Creature->defense - 1);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , m_Creature->carnivorism - 1);*/
 
     // draw the health bar
-    if( game->options->getNumber("Show Health Bars") == 1 )
+    if( game->options->getNumber("Show Health Bars") > 0.0f)
     {
       game->renderer->setColor( Color(1, 1, 1, 1) );
       game->renderer->drawTexturedQuad( posX, posY, 1, 0.125f, "healthbar" );
       game->renderer->setColor( PlayerColor(m_Creature->owner) );
-      game->renderer->drawTexturedQuad( posX, posY, m_Creature->maxEnergy != 0 ? float(m_Creature->energyLeft) / float(m_Creature->maxEnergy) : 0, 0.125f, "healthbar" );
-      //game->renderer->setColor( Color(0, 0, 0, 1) );
-      //game->renderer->drawLine(posX, posY, posX+1, posY);
-      //game->renderer->drawLine(posX, posY, posX, posY+0.125f);
-      //game->renderer->drawLine(posX, posY+0.125f, posX+1, posY+0.125f);
-      //game->renderer->drawLine(posX+1, posY, posX+1, posY+0.125f);
+      game->renderer->drawTexturedQuad( posX, posY, m_Creature->maxHealth != 0 ? float(m_Creature->health) / float(m_Creature->maxHealth) : 0, 0.125f, "healthbar" );
     }
   }
 
