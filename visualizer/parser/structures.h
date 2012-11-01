@@ -32,8 +32,9 @@ struct Mappable
 struct Creature: public Mappable 
 {
   int owner;
-  int maxEnergy;
-  int energyLeft;
+  int maxHelth;
+  int currentHealth;
+  int energy;
   int carnivorism;
   int herbivorism;
   int speed;
@@ -131,9 +132,10 @@ struct GameState
   int gameNumber;
   int mapWidth;
   int mapHeight;
-  int energyPerBreed;
-  int energyPerAction;
-  int energyPerTurn;
+  int healthPerBreed;
+  int healthPerMove;
+  int healthPerTurn;
+  int baseHealth;
 
   std::map< int, std::vector< SmartPointer< Animation > > > animations;
   friend std::ostream& operator<<(std::ostream& stream, GameState obj);
@@ -144,7 +146,7 @@ struct Game
   std::vector<GameState> states;
   std::string players[2];
   int winner;
-  std::string winReason;
+	std::string winReason;
 
   Game();
 };

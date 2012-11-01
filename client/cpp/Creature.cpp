@@ -30,14 +30,19 @@ int Creature::owner()
   return ((_Creature*)ptr)->owner;
 }
 
-int Creature::maxEnergy()
+int Creature::maxHelth()
 {
-  return ((_Creature*)ptr)->maxEnergy;
+  return ((_Creature*)ptr)->maxHelth;
 }
 
-int Creature::energyLeft()
+int Creature::currentHealth()
 {
-  return ((_Creature*)ptr)->energyLeft;
+  return ((_Creature*)ptr)->currentHealth;
+}
+
+int Creature::energy()
+{
+  return ((_Creature*)ptr)->energy;
 }
 
 int Creature::carnivorism()
@@ -104,8 +109,9 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "x: " << ((_Creature*)ob.ptr)->x  <<'\n';
   stream << "y: " << ((_Creature*)ob.ptr)->y  <<'\n';
   stream << "owner: " << ((_Creature*)ob.ptr)->owner  <<'\n';
-  stream << "maxEnergy: " << ((_Creature*)ob.ptr)->maxEnergy  <<'\n';
-  stream << "energyLeft: " << ((_Creature*)ob.ptr)->energyLeft  <<'\n';
+  stream << "maxHelth: " << ((_Creature*)ob.ptr)->maxHelth  <<'\n';
+  stream << "currentHealth: " << ((_Creature*)ob.ptr)->currentHealth  <<'\n';
+  stream << "energy: " << ((_Creature*)ob.ptr)->energy  <<'\n';
   stream << "carnivorism: " << ((_Creature*)ob.ptr)->carnivorism  <<'\n';
   stream << "herbivorism: " << ((_Creature*)ob.ptr)->herbivorism  <<'\n';
   stream << "speed: " << ((_Creature*)ob.ptr)->speed  <<'\n';

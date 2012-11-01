@@ -23,8 +23,9 @@ std::ostream& operator<<(std::ostream& stream, Creature ob)
   stream << "x: " << ob.x  <<'\n';
   stream << "y: " << ob.y  <<'\n';
   stream << "owner: " << ob.owner  <<'\n';
-  stream << "maxEnergy: " << ob.maxEnergy  <<'\n';
-  stream << "energyLeft: " << ob.energyLeft  <<'\n';
+  stream << "maxHelth: " << ob.maxHelth  <<'\n';
+  stream << "currentHealth: " << ob.currentHealth  <<'\n';
+  stream << "energy: " << ob.energy  <<'\n';
   stream << "carnivorism: " << ob.carnivorism  <<'\n';
   stream << "herbivorism: " << ob.herbivorism  <<'\n';
   stream << "speed: " << ob.speed  <<'\n';
@@ -114,9 +115,10 @@ std::ostream& operator<<(std::ostream& stream, GameState ob)
   stream << "gameNumber: " << ob.gameNumber  <<'\n';
   stream << "mapWidth: " << ob.mapWidth  <<'\n';
   stream << "mapHeight: " << ob.mapHeight  <<'\n';
-  stream << "energyPerBreed: " << ob.energyPerBreed  <<'\n';
-  stream << "energyPerAction: " << ob.energyPerAction  <<'\n';
-  stream << "energyPerTurn: " << ob.energyPerTurn  <<'\n';
+  stream << "healthPerBreed: " << ob.healthPerBreed  <<'\n';
+  stream << "healthPerMove: " << ob.healthPerMove  <<'\n';
+  stream << "healthPerTurn: " << ob.healthPerTurn  <<'\n';
+  stream << "baseHealth: " << ob.baseHealth  <<'\n';
 
   stream << "\n\nMappables:\n";
   for(std::map<int,Mappable>::iterator i = ob.mappables.begin(); i != ob.mappables.end(); i++)

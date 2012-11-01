@@ -70,17 +70,23 @@ class Creature extends Mappable
     validify();
     return Client.INSTANCE.creatureGetOwner(ptr);
   }
-  ///The maximum amount of energy this creature can have
-  public int getMaxEnergy()
+  ///The maximum amount of health this creature can have
+  public int getMaxHelth()
   {
     validify();
-    return Client.INSTANCE.creatureGetMaxEnergy(ptr);
+    return Client.INSTANCE.creatureGetMaxHelth(ptr);
   }
-  ///The current amount of energy this creature has.
-  public int getEnergyLeft()
+  ///The current amount of health that this creature has.
+  public int getCurrentHealth()
   {
     validify();
-    return Client.INSTANCE.creatureGetEnergyLeft(ptr);
+    return Client.INSTANCE.creatureGetCurrentHealth(ptr);
+  }
+  ///The energy level of the creature. This helps your max health
+  public int getEnergy()
+  {
+    validify();
+    return Client.INSTANCE.creatureGetEnergy(ptr);
   }
   ///The carnivore level of the creature
   public int getCarnivorism()

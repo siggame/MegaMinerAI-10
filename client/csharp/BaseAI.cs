@@ -110,21 +110,27 @@ public abstract class BaseAI
     return value;
   }
   ///The amount of energy required from each creature in order to breed.
-  public int energyPerBreed()
+  public int healthPerBreed()
   {
-    int value = Client.getEnergyPerBreed(connection);
+    int value = Client.getHealthPerBreed(connection);
     return value;
   }
-  ///The amount of energy required to try to eat or to move.
-  public int energyPerAction()
+  ///The amount of energy required to try to move.
+  public int healthPerMove()
   {
-    int value = Client.getEnergyPerAction(connection);
+    int value = Client.getHealthPerMove(connection);
     return value;
   }
   ///The amount of energy lost from the passage of time.
-  public int energyPerTurn()
+  public int healthPerTurn()
   {
-    int value = Client.getEnergyPerTurn(connection);
+    int value = Client.getHealthPerTurn(connection);
+    return value;
+  }
+  ///The base amount of health that each creature starts with
+  public int baseHealth()
+  {
+    int value = Client.getBaseHealth(connection);
     return value;
   }
 }

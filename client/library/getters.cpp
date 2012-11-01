@@ -28,13 +28,17 @@ DLLEXPORT int creatureGetOwner(_Creature* ptr)
 {
   return ptr->owner;
 }
-DLLEXPORT int creatureGetMaxEnergy(_Creature* ptr)
+DLLEXPORT int creatureGetMaxHelth(_Creature* ptr)
 {
-  return ptr->maxEnergy;
+  return ptr->maxHelth;
 }
-DLLEXPORT int creatureGetEnergyLeft(_Creature* ptr)
+DLLEXPORT int creatureGetCurrentHealth(_Creature* ptr)
 {
-  return ptr->energyLeft;
+  return ptr->currentHealth;
+}
+DLLEXPORT int creatureGetEnergy(_Creature* ptr)
+{
+  return ptr->energy;
 }
 DLLEXPORT int creatureGetCarnivorism(_Creature* ptr)
 {

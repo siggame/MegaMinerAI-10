@@ -37,9 +37,10 @@ class Match(DefaultGameWorld):
     self.gameNumber = id
     self.mapWidth = self.mapWidth
     self.mapHeight = self.mapHeight
-    self.energyPerBreed = self.energyPerBreed
-    self.energyPerAction = self.energyPerAction
-    self.energyPerTurn = self.energyPerTurn  
+    self.healthPerBreed = self.healthPerBreed
+    self.healthPerMove = self.healthPerMove
+    self.healthPerTurn = self.healthPerTurn  
+    self.baseHealth = self.baseHealth
     self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
 
   def getObject(self, x, y):
@@ -93,11 +94,29 @@ class Match(DefaultGameWorld):
       # Decrementing stats, reflecting how many available stats are left
       stats -= temp
       # Incrementing count so as to step through each position in the list
-      count += 1
-   
-   # First entry is energy, which is a multiple of 10 with a base energy
-   list[0] = self.baseEnergy + list[0] * 10
+      count += 1 
    return list
+   
+     #SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
+  #This function assumes the plants have been spawned symmetrically across the vertical axis
+  def spawnCreatures(self):
+    i = 0
+    while i < self.startingCreatures:
+      i+=1
+      randStats = self.initialStats()
+      # Change order of creature parameters to make this cleaner?
+      statList = [self.baseHealth + randStats[0]*10, self.baseHealth + randStats[0]*10, randStats[0], randStats[1], randStats[2], randStats[3], randStats[3], randStats[4]]
+    #Generate x,y for creature location
+      while True:
+        newX = int(random.uniform(0,self.mapWidth / 2))
+        newY = int(random.uniform(0, self.mapHeight))
+      #check map if the space is unoccupied, otherwise generate a new X,Y
+        if self.getObject(newX, newY) is None:
+          self.addObject(Creature,[newX, newY, 0]+statList+[0])  
+          self.addObject(Creature,[(self.mapWidth-newX-1), newY, 1]+statList+[0])
+          break          
+    #end while
+    return
       
   def makePlant(self,x,y): 
     x1 = self.mapWidth/2
@@ -140,7 +159,6 @@ class Match(DefaultGameWorld):
           turnsUntilGrowth = growthRate
           self.addObject(Plant,[plantsx,plantsy,checkMakePlant, growthRate, turnsUntilGrowth])
           self.addObject(Plant,[self.mapWidth - plantsx -1 ,plantsy, checkMakePlant, growthRate, turnsUntilGrowth])
-
         plantsy += 1
       plantsx += 1
     for plant in self.objects.plants:
@@ -153,7 +171,7 @@ class Match(DefaultGameWorld):
       if creature.owner == 0:
         print "Creature"
         print "--------"
-        print "Energy: ", (creature.maxEnergy - 100) / 10
+        print "Energy: ", creature.energy
         print "Carnivorism: ", creature.carnivorism
         print "Herbivorism: ", creature.herbivorism
         print "Defense: ", creature.defense
@@ -194,9 +212,10 @@ class Match(DefaultGameWorld):
         gameNumber = self.gameNumber,
         mapWidth = self.mapWidth,
         mapHeight = self.mapHeight,
-        energyPerBreed = self.energyPerBreed,
-        energyPerAction = self.energyPerAction,
-        energyPerTurn = self.energyPerTurn,
+        healthPerBreed = self.healthPerBreed,
+        healthPerMove = self.healthPerMove,
+        healthPerTurn = self.healthPerTurn,
+        baseHealth = self.baseHealth,
         Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
         Creatures = [i.toJson() for i in self.objects.values() if i.__class__ is Creature],
         Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
@@ -294,7 +313,7 @@ class Match(DefaultGameWorld):
   def status(self):
     msg = ["status"]
 
-    msg.append(["game", self.turnNumber, self.playerID, self.gameNumber, self.mapWidth, self.mapHeight, self.energyPerBreed, self.energyPerAction, self.energyPerTurn])
+    msg.append(["game", self.turnNumber, self.playerID, self.gameNumber, self.mapWidth, self.mapHeight, self.healthPerBreed, self.healthPerMove, self.healthPerTurn, self.baseHealth])
 
     typeLists = []
     typeLists.append(["Mappable"] + [i.toList() for i in self.objects.values() if i.__class__ is Mappable])
@@ -312,27 +331,6 @@ class Match(DefaultGameWorld):
     # generate the json
     self.jsonAnimations.append(anim.toJson())
   
-  
-  #SpawnCreatures randomly, put team1 on one half of the map and mirror these locations on the other half of the map for team2
-  #This function assumes the plants have been spawned symmetrically across the vertical axis
-  def spawnCreatures(self):
-    i = 0
-    while i < self.startingCreatures:
-      i+=1
-      randStats = self.initialStats()
-      # Change order of creature parameters to make this cleaner?
-      statList = [randStats[0], randStats[0], randStats[1], randStats[2], randStats[3], randStats[3], randStats[4]]
-    #Generate x,y for creature location
-      while True:
-        newX = int(random.uniform(0,self.mapWidth / 2))
-        newY = int(random.uniform(0, self.mapHeight))
-      #check map if the space is unoccupied, otherwise generate a new X,Y
-        if self.getObject(newX, newY) is None:
-          self.addObject(Creature,[newX, newY, 0]+statList+[0])  
-          self.addObject(Creature,[(self.mapWidth-newX-1), newY, 1]+statList+[0])
-          break          
-    #end while
-    return
 
 
 loadClassDefaults()

@@ -11,9 +11,10 @@ globals = [
   Variable('gameNumber', int, 'What number game this is for the server'),
   Variable('mapWidth', int, 'The width of the map'),
   Variable('mapHeight', int, 'The height of the map'),
-  Variable('energyPerBreed', int, 'The amount of energy required from each creature in order to breed.'),
-  Variable('energyPerAction', int, 'The amount of energy required to try to eat or to move.'),
-  Variable('energyPerTurn', int, 'The amount of energy lost from the passage of time.'),
+  Variable('healthPerBreed', int, 'The amount of energy required from each creature in order to breed.'),
+  Variable('healthPerMove', int, 'The amount of energy required to try to move.'),
+  Variable('healthPerTurn', int, 'The amount of energy lost from the passage of time.'),
+  Variable('baseHealth', int, 'The base amount of health that each creature starts with'),
 ]
 
 constants = [
@@ -48,8 +49,9 @@ Creature = Model('Creature',
   parent=Mappable,
   data=[
     Variable('owner', int, 'The owner of the creature'),
-    Variable('maxEnergy', int, 'The maximum amount of energy this creature can have'),
-    Variable('energyLeft', int, 'The current amount of energy this creature has.'),
+    Variable('maxHelth', int, 'The maximum amount of health this creature can have'),
+    Variable('currentHealth', int, 'The current amount of health that this creature has.'),
+    Variable('energy', int, 'The energy level of the creature. This helps your max health'),
     Variable('carnivorism', int, 'The carnivore level of the creature'),
     Variable('herbivorism', int, 'The herbivore level of the creature'),
     Variable('speed', int, 'The speed of the creature'),

@@ -104,19 +104,24 @@ public abstract class BaseAI
     return Client.INSTANCE.getMapHeight(connection);
   }
   ///The amount of energy required from each creature in order to breed.
-  int energyPerBreed()
+  int healthPerBreed()
   {
-    return Client.INSTANCE.getEnergyPerBreed(connection);
+    return Client.INSTANCE.getHealthPerBreed(connection);
   }
-  ///The amount of energy required to try to eat or to move.
-  int energyPerAction()
+  ///The amount of energy required to try to move.
+  int healthPerMove()
   {
-    return Client.INSTANCE.getEnergyPerAction(connection);
+    return Client.INSTANCE.getHealthPerMove(connection);
   }
   ///The amount of energy lost from the passage of time.
-  int energyPerTurn()
+  int healthPerTurn()
   {
-    return Client.INSTANCE.getEnergyPerTurn(connection);
+    return Client.INSTANCE.getHealthPerTurn(connection);
+  }
+  ///The base amount of health that each creature starts with
+  int baseHealth()
+  {
+    return Client.INSTANCE.getBaseHealth(connection);
   }
 
   int getCreatureAtLocation(int x, int y)
@@ -142,6 +147,4 @@ public abstract class BaseAI
     }
     return -1;
   }
-  
 }
-

@@ -101,24 +101,35 @@ public class Creature: Mappable
     }
   }
 
-  ///The maximum amount of energy this creature can have
-  public int MaxEnergy
+  ///The maximum amount of health this creature can have
+  public int MaxHelth
   {
     get
     {
       validify();
-      int value = Client.creatureGetMaxEnergy(ptr);
+      int value = Client.creatureGetMaxHelth(ptr);
       return value;
     }
   }
 
-  ///The current amount of energy this creature has.
-  public int EnergyLeft
+  ///The current amount of health that this creature has.
+  public int CurrentHealth
   {
     get
     {
       validify();
-      int value = Client.creatureGetEnergyLeft(ptr);
+      int value = Client.creatureGetCurrentHealth(ptr);
+      return value;
+    }
+  }
+
+  ///The energy level of the creature. This helps your max health
+  public int Energy
+  {
+    get
+    {
+      validify();
+      int value = Client.creatureGetEnergy(ptr);
       return value;
     }
   }

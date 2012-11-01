@@ -26,10 +26,10 @@ public class AI extends BaseAI
           if(0<=creatures[ii].getX()+1 && creatures[ii].getX()+1<mapWidth() && 0<=creatures[ii].getY() && creatures[ii].getY()<mapHeight())
           {
             if (creatures[ii].getEnergyLeft()>energyPerAction() && creatures[ii].getMovementLeft()>0)
-      {
-        creatures[ii].move(creatures[ii].getX()+1,creatures[ii].getY());
+            {
+              creatures[ii].move(creatures[ii].getX()+1,creatures[ii].getY());
             }
-    }
+          }
         }      
         plantIn = getPlantAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
         int creatIn = getCreatureAtLocation(creatures[ii].getX()+1,creatures[ii].getY());
