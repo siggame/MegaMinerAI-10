@@ -99,7 +99,6 @@ class BaseAI:
       if plant.x == x and plant.y == y:
         return self.plants.index(plant)
     return -1
-#    return library.getPlantAtLocation(x,y)
   
   def getCreatureAtLocation(self,x,y):
     for creature in self.creatures:
