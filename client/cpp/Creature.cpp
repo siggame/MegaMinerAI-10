@@ -30,9 +30,9 @@ int Creature::owner()
   return ((_Creature*)ptr)->owner;
 }
 
-int Creature::maxHelth()
+int Creature::maxHealth()
 {
-  return ((_Creature*)ptr)->maxHelth;
+  return ((_Creature*)ptr)->maxHealth;
 }
 
 int Creature::currentHealth()
@@ -109,7 +109,7 @@ std::ostream& operator<<(std::ostream& stream,Creature ob)
   stream << "x: " << ((_Creature*)ob.ptr)->x  <<'\n';
   stream << "y: " << ((_Creature*)ob.ptr)->y  <<'\n';
   stream << "owner: " << ((_Creature*)ob.ptr)->owner  <<'\n';
-  stream << "maxHelth: " << ((_Creature*)ob.ptr)->maxHelth  <<'\n';
+  stream << "maxHealth: " << ((_Creature*)ob.ptr)->maxHealth  <<'\n';
   stream << "currentHealth: " << ((_Creature*)ob.ptr)->currentHealth  <<'\n';
   stream << "energy: " << ((_Creature*)ob.ptr)->energy  <<'\n';
   stream << "carnivorism: " << ((_Creature*)ob.ptr)->carnivorism  <<'\n';

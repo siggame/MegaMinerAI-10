@@ -72,19 +72,36 @@ class BaseAI:
   #\endcond
   mapHeight = property(getMapHeight)
   #\cond
-  def getEnergyPerBreed(self):
-    return library.getEnergyPerBreed(self.connection)
+  def getHealthPerBreed(self):
+    return library.getHealthPerBreed(self.connection)
   #\endcond
-  energyPerBreed = property(getEnergyPerBreed)
+  healthPerBreed = property(getHealthPerBreed)
   #\cond
-  def getEnergyPerAction(self):
-    return library.getEnergyPerAction(self.connection)
+  def getHealthPerMove(self):
+    return library.getHealthPerMove(self.connection)
   #\endcond
-  energyPerAction = property(getEnergyPerAction)
+  healthPerMove = property(getHealthPerMove)
   #\cond
-  def getEnergyPerTurn(self):
-    return library.getEnergyPerTurn(self.connection)
+  def getHealthPerTurn(self):
+    return library.getHealthPerTurn(self.connection)
   #\endcond
-  energyPerTurn = property(getEnergyPerTurn)
+  healthPerTurn = property(getHealthPerTurn)
+  #\cond
+  def getBaseHealth(self):
+    return library.getBaseHealth(self.connection)
+  #\endcond
+  baseHealth = property(getBaseHealth)
   def __init__(self, connection):
     self.connection = connection
+    
+  def getPlantAtLocation(self,x,y):
+    for plant in self.plants:
+      if plant.x == x and plant.y == y:
+        return self.plants.index(plant)
+    return -1
+  
+  def getCreatureAtLocation(self,x,y):
+    for creature in self.creatures:
+      if creature.x == x and creature.y == y:
+        return self.creatures.index(creature)
+    return -1

@@ -23,7 +23,7 @@ std::ostream& operator<<(std::ostream& stream, Creature ob)
   stream << "x: " << ob.x  <<'\n';
   stream << "y: " << ob.y  <<'\n';
   stream << "owner: " << ob.owner  <<'\n';
-  stream << "maxHelth: " << ob.maxHelth  <<'\n';
+  stream << "maxHealth: " << ob.maxHealth  <<'\n';
   stream << "currentHealth: " << ob.currentHealth  <<'\n';
   stream << "energy: " << ob.energy  <<'\n';
   stream << "carnivorism: " << ob.carnivorism  <<'\n';

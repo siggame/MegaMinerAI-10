@@ -144,7 +144,7 @@ class Creature(Mappable):
     return library.creatureGetMaxHelth(self._ptr)
   #\endcond
   ##The maximum amount of health this creature can have
-  maxHelth = property(getMaxHelth)
+  maxHealth = property(getMaxHelth)
 
   #\cond
   def getCurrentHealth(self):
@@ -234,7 +234,7 @@ class Creature(Mappable):
     ret += "x: %s\n" % self.getX()
     ret += "y: %s\n" % self.getY()
     ret += "owner: %s\n" % self.getOwner()
-    ret += "maxHelth: %s\n" % self.getMaxHelth()
+    ret += "maxHealth: %s\n" % self.getMaxHelth()
     ret += "currentHealth: %s\n" % self.getCurrentHealth()
     ret += "energy: %s\n" % self.getEnergy()
     ret += "carnivorism: %s\n" % self.getCarnivorism()

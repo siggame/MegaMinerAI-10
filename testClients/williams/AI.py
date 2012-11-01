@@ -68,7 +68,7 @@ class AI(BaseAI):
     
   def findNearestFriendlyCreatureXY(self, creature):
     #Doesn't work if I only have one creature left
-    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.energyLeft > 0]
+    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.currentHealth > 0]
     if len(myCreatures) > 1:    
       #Creates a dictionary of the distances to each creature I control that isn't at the calling creature's position
       dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}    
@@ -83,8 +83,8 @@ class AI(BaseAI):
   #to see which has the best hueristic  
   def findNearestEnemyCreatureXY(self, creature):   
     #Creates a dictionary of the distances to each enemy creature
-    enemyCreatures = [creature for creature in self.creatures if creature.owner != self.playerID and creature.energyLeft > 0]
-    dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in enemyCreatures if target.energyLeft > 0}  
+    enemyCreatures = [creature for creature in self.creatures if creature.owner != self.playerID and creature.currentHealth > 0]
+    dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in enemyCreatures if target.currentHealth > 0}  
     #Returns the object that is the closest creature      
     if len(dict) > 0:
       bestID = min(dict, key=dict.get)
@@ -111,7 +111,7 @@ class AI(BaseAI):
     if plant is not None: 
       path = self.findPath(creature.x, creature.y, plant.x, plant.y)
       #Move until we are to the plant or can move no more
-      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1 and creature.energyLeft > self.energyPerAction:
+      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
       #We are next to a plant! Eat it!
@@ -122,23 +122,19 @@ class AI(BaseAI):
     nearestCreature = self.findNearestFriendlyCreatureXY(creature) 
     if nearestCreature is not None: 
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
-      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.energyLeft > self.energyPerAction:
+      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.currentHealth > self.healthPerMove:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
-      if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canBreed == True and creature.energyLeft > self.energyPerBreed:
+      if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canBreed == True and creature.currentHealth > self.healthPerBreed:
         if(len(self.grid[nearestCreature.x][nearestCreature.y])):
           creature.breed(self.grid[nearestCreature.x][nearestCreature.y][0])
-          if creature.energyLeft < creature.maxEnergy/3:
-            self.energyThreshold[creature.id] = (1, creature.maxEnergy*.75) 
-          if nearestCreature.energyLeft < nearestCreature.maxEnergy/3:   
-            self.energyThreshold[nearestCreature.id] = (1, nearestCreature.maxEnergy*.75) 
                       
   def findNearestEnemyAndEat(self, creature):
     nearestCreature = self.findNearestEnemyCreatureXY(creature) 
     if nearestCreature is not None:    
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
       #Move until we are to the plant or can move no more
-      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.energyLeft > self.energyPerAction:
+      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canEat == True:
@@ -148,27 +144,18 @@ class AI(BaseAI):
 
   #If health is low, eat a plant.
   #If health is very high, breed
-  def defaultActions(self,creature): 
-    #If creature is below the energy threshold, eat plants until the threshold is reached  
-    if self.energyThreshold[creature.id][0] == 1 and creature.energyLeft < self.energyThreshold[creature.id][1]:
+  def defaultActions(self,creature):   
+    if creature.currentHealth < creature.maxHealth/2:
       self.findAndEatPlant(creature)
-    elif self.energyThreshold[creature.id][0] == 1 and creature.energyLeft >= self.energyThreshold[creature.id][1]:
-      self.energyThreshold[creature.id] = (0, creature.maxEnergy*.75)
+    elif creature.currentHealth > creature.maxHealth/2 and creature.currentHealth > self.healthPerBreed + 15:
       self.findClosestAllyAndBreed(creature)
-    else:
-      self.findClosestAllyAndBreed(creature)   
-      
-    # if creature.energyLeft < creature.maxEnergy/2:
-      # self.findAndEatPlant(creature)
-    # elif creature.energyLeft > creature.maxEnergy/2 and creature.energyLeft > self.energyPerBreed + 15:
-      # self.findClosestAllyAndBreed(creature)
      
   #Kill    
   def carnivormActionSet(self,creature):
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
-    if creature.energyLeft > self.energyPerBreed + 25 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) > 10:
+    if creature.currentHealth > self.healthPerBreed + 25 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) > 10:
       self.findClosestAllyAndBreed(creature)
-    elif creature.energyLeft < creature.maxEnergy / 3:
+    elif creature.currentHealth < creature.maxHealth / 3:
       self.findAndEatPlant(creature)
     else:
       self.findNearestEnemyAndEat(creature) 
@@ -184,9 +171,9 @@ class AI(BaseAI):
   #Attack and breed 
   def defenseActionSet(self,creature):
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
-    if creature.energyLeft > self.energyPerBreed + 25 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) > 10:
+    if creature.currentHealth > self.healthPerBreed + 25 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) > 10:
       self.findClosestAllyAndBreed(creature)
-    elif creature.energyLeft < creature.maxEnergy / 3:
+    elif creature.currentHealth < creature.maxHealth / 3:
       self.findAndEatPlant(creature)
     else:
       self.findNearestEnemyAndEat(creature) 
@@ -198,7 +185,7 @@ class AI(BaseAI):
     if plant is not None: 
       path = self.findPath(creature.x, creature.y, plant.x, plant.y)
       #Move until we are to the plant or can move no more
-      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1 and creature.energyLeft > self.energyPerAction:
+      while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, plant.x, plant.y) > 1 and creature.currentHealth > self.healthPerMove:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
       #We are next to a plant! Eat it!
@@ -209,9 +196,8 @@ class AI(BaseAI):
     
     self.defaultActions(creature)
         
-  def init(self):
-    self.energyThreshold = {creature.id:(0, creature.maxEnergy*.66) for creature in self.creatures if creature.owner == self.playerID} 
-    
+  def init(self): 
+    pass
   ##This function is called once, after your last turn
   def end(self):
     pass
@@ -227,12 +213,9 @@ class AI(BaseAI):
       self.grid[plant.x][plant.y] = [plant]
     for creature in self.creatures:
       self.grid[creature.x][creature.y] = [creature] 
-      if creature.owner == self.playerID and creature.energyLeft > 0:
-        stats = {"energy": (creature.maxEnergy - 100)/10, "carnivorism": creature.carnivorism, "herbivorism": creature.herbivorism, "defense": creature.defense,"speed": creature.speed} 
-        self.statCreatureList[max(stats, key=stats.get)].append(creature)
-      if creature.id not in self.energyThreshold:
-        self.energyThreshold[creature.id] = (0,creature.maxEnergy*.75)
-          
+      if creature.owner == self.playerID and creature.currentHealth > 0:
+        stats = {"energy": creature.energy, "carnivorism": creature.carnivorism, "herbivorism": creature.herbivorism, "defense": creature.defense,"speed": creature.speed} 
+        self.statCreatureList[max(stats, key=stats.get)].append(creature)         
     
   
     print self.turnNumber

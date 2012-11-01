@@ -24,7 +24,7 @@ class Creature : public Mappable {
   ///The owner of the creature
   int owner();
   ///The maximum amount of health this creature can have
-  int maxHelth();
+  int maxHealth();
   ///The current amount of health that this creature has.
   int currentHealth();
   ///The energy level of the creature. This helps your max health

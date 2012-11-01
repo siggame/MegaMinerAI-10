@@ -49,7 +49,7 @@ Creature = Model('Creature',
   parent=Mappable,
   data=[
     Variable('owner', int, 'The owner of the creature'),
-    Variable('maxHelth', int, 'The maximum amount of health this creature can have'),
+    Variable('maxHealth', int, 'The maximum amount of health this creature can have'),
     Variable('currentHealth', int, 'The current amount of health that this creature has.'),
     Variable('energy', int, 'The energy level of the creature. This helps your max health'),
     Variable('carnivorism', int, 'The carnivore level of the creature'),

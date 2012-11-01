@@ -25,7 +25,7 @@ struct _Creature
   int x;
   int y;
   int owner;
-  int maxHelth;
+  int maxHealth;
   int currentHealth;
   int energy;
   int carnivorism;

@@ -266,7 +266,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   }
   
   //Decrement energy and movement
-  object->energyLeft = object->energyLeft-c->healthPerMove;
+  object->currentHealth = object->currentHealth-c->healthPerMove;
   object->movementLeft = object->movementLeft-1;
   
   //Apply new movement
@@ -315,13 +315,13 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
         {
           damage = 1;
         }
-        c->Creatures[ii].energyLeft -=damage;
-        if(c->Creatures[ii].energyLeft<=0)
+        c->Creatures[ii].currentHealth -=damage;
+        if(c->Creatures[ii].currentHealth<=0)
         {
-          object->energyLeft+=object->carnivorism*10;
-          if(object->energyLeft>object->maxHealth)
+          object->currentHealth+=object->carnivorism*10;
+          if(object->currentHealth>object->maxHealth)
           {
-            object->energyLeft = object->maxHealth;
+            object->currentHealth = object->maxHealth;
           }
         }
         object->canEat=false;
@@ -340,10 +340,10 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
         {
           return 0;
         }
-        object->energyLeft+=object->herbivorism*5;
-        if(object->energyLeft > object->maxHealth)
+        object->currentHealth+=object->herbivorism*5;
+        if(object->currentHealth > object->maxHealth)
         {
-          object->energyLeft=object->maxHealth;
+          object->currentHealth=object->maxHealth;
         }
         c->Plants[ii].size-=1;
         object->canEat=false;
@@ -372,11 +372,11 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   {
     return 0;
   }
-  else if(object->energyLeft<=c->healthPerBreed)
+  else if(object->currentHealth<=c->healthPerBreed)
   {
    return 0;
   }
-  else if(mate->energyLeft<=c->healthPerBreed)
+  else if(mate->currentHealth<=c->healthPerBreed)
   {
    return 0;
   }
@@ -398,8 +398,8 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   mate->canEat = false;
   object->movementLeft = 0;
   mate->movementLeft = 0;
-  object->currentLeft-=c->healthPerBreed;
-  mate->currentLeft-=c->healthPerBreed;
+  object->currentHealth-=c->healthPerBreed;
+  mate->currentHealth-=c->healthPerBreed;
   return 1;
 }
 
@@ -475,7 +475,7 @@ void parseCreature(Connection* c, _Creature* object, sexp_t* expression)
   sub = sub->next;
   object->owner = atoi(sub->val);
   sub = sub->next;
-  object->maxHelth = atoi(sub->val);
+  object->maxHealth = atoi(sub->val);
   sub = sub->next;
   object->currentHealth = atoi(sub->val);
   sub = sub->next;

@@ -154,10 +154,10 @@ class Creature(Mappable):
     if self.owner != self.game.playerID:
       return "You cannot breed using your oppenent's creature!"
     #You can't breed if you don't have enough energy
-    elif self.currentHealth <= self.game.energyPerBreed:
+    elif self.currentHealth <= self.game.healthPerBreed:
       return "That creature doesn't have enough energy to breed!"
     #You can't breed if your mate doesn't have enough energy
-    elif mate.currentHealth <= self.game.energyPerBreed:
+    elif mate.currentHealth <= self.game.healthPerBreed:
       return "Your mate doesn't have enough energy to breed!"
     #You can't breed more than one space away
     elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:

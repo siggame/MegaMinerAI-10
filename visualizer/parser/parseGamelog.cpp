@@ -108,7 +108,7 @@ static bool parseCreature(Creature& object, sexp_t* expression)
     return false;
   }
 
-  object.maxHelth = atoi(sub->val);
+  object.maxHealth = atoi(sub->val);
   sub = sub->next;
 
   if ( !sub ) 

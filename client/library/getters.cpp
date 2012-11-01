@@ -30,7 +30,7 @@ DLLEXPORT int creatureGetOwner(_Creature* ptr)
 }
 DLLEXPORT int creatureGetMaxHelth(_Creature* ptr)
 {
-  return ptr->maxHelth;
+  return ptr->maxHealth;
 }
 DLLEXPORT int creatureGetCurrentHealth(_Creature* ptr)
 {
