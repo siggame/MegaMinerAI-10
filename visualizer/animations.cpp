@@ -56,6 +56,11 @@ namespace visualizer
         //game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
 
         game->renderer->setColor(Color(1,1,0.5f,1.0f));
+		/*if(tile.turn <= game->timeManager->getTurn())
+		{
+			
+		}*/
+
         game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn > game->timeManager->getTurn()) ? tile.texture : "grass" );
 
         if((tile.turn - 1) == game->timeManager->getTurn())
@@ -179,7 +184,8 @@ namespace visualizer
     float posY = m_Creature->m_moves[index].from.y + (m_Creature->m_moves[index].to.y - m_Creature->m_moves[index].from.y) * subT;
 
     // todo: maybe the bigger the creature, the longer a path it leaves?
-    (*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
+	//(*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
+    (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile("sand",game->timeManager->getTurn() + 3);
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
