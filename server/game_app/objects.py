@@ -125,13 +125,8 @@ class Creature(Mappable):
     if isinstance(lifeform, Plant):
       plant = lifeform
       if plant.size == 0:
-<<<<<<< HEAD
-        return "That plant is too small to eat."
-      self.currentHealth += (self.herbivorism * 5)
-=======
         return "That plant %i is too small to eat."%(lifeform.id)
       self.currentHealth += self.herbivorism * 5
->>>>>>> 40627d2a98f2c5526f38dda23136d48a2541b84f
       if self.currentHealth > self.maxHealth:
         self.currentHealth = self.maxHealth
       plant.size -= 1
