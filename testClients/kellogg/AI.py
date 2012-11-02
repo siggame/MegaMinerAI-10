@@ -118,48 +118,11 @@ class AI(BaseAI):
 #    print "---------Creature,plant--------",[(creature.x,creature.y,creature.id),(end[0],end[1])]
     print"-----path----",[(cell.x,cell.y,cell.parent.x,cell.parent.y) for cell in path]
 	
-  def getObject(self,x,y):
-    target = None
-    lifeforms = self.creatures+self.plants
-    for lifeform in lifeforms:
-      if lifeform.x == x and lifeform.y == y:
-        target = lifeform
-    return target
-    
   def distance(self,sourceX,sourceY,destX,destY):
     return int(math.sqrt((sourceX-destX)**2+(sourceY-destY)**2))
     
-  def getNearestPlant(self,creature):
-    dist = 1000
-    target = None
-    for plant in self.plants:
-      tempDis = self.distance(creature.x,plant.x,creature.y,plant.y)
-      if tempDis < dist:
-        dist = tempDis
-        target = plant
-    return target
-  
-  def getNearestPlantSpot(self,creature,plant):
-    adjacent = [[1,0],[0,-1],[-1,0],[0,1]]
-    dist = 1000
-    spot = None
-    for adj in adjacent:
-      tempDis = self.distance(creature.x,plant.x+adj[0],creature.y,plant.y+adj[1])
-      if self.getObject(plant.x+adj[0],plant.y+adj[1]) == None and tempDis < dist:
-        dist = tempDis
-        spot = [plant.x+adj[0],plant.y+adj[1]]
-    return spot
-     
-  def eatPlant(self,creature):
-    plant = self.getNearestPlant(creature)
-    target = None
-    if plant is not None:
-      target = self.getNearestPlantSpot(creature,plant)
-    if target is not None:
-     self.moveTo(creature,target)
-    
   def maxStat(self,creature):
-    return max([creature.herbivorism,creature.carnivorism,creature.speed,(creature.maxEnergy-100)/10,creature.defense])
+    return max([creature.herbivorism,creature.carnivorism,creature.speed,creature.energy,creature.defense])
 #TODO FIX    
   def findMate(self,creature):
       mateList = [mate for mate in self.creatures if mate.owner == creature.owner and mate.id != creature.id]
@@ -168,38 +131,35 @@ class AI(BaseAI):
         mate = [min({self.distance(creature.x,mate.x,creature.y,mate.y):mate} for mate in mateList)]
         print "mate is ",mate
         
+  def getObject(self,x,y):
+    lifeforms = self.creatures+self.plants
+    return [lifeform for lifeform in lifeforms if lifeform.x == x and lifeform.y == y]
+    
      ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
     adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism == self.maxStat(creature)]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism == self.maxStat(creature)] 
-#    print "length of herbivores,carnivores",len(herbivores),len(carnivores)
-   # for herb in herbivores:
-   #   self.eatPlant(herb)
-   # for carn in carnivores:
-   #   self.eatPlant(carn)
-    
+
     for creature in self.creatures:
-     if creature.owner == self.playerID:       
-      
-       randx=random.randrange(-1,2); 
-       randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
-       x=0;y=0
-       if self.getObject(creature.x+randx,creature.y+randy) is None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
-         creature.move(creature.x+randx,creature.y+randy)
-         print "moving"
-       #x=creature.x+randx;
-       #y=creature.y+randy
-       for location in adjacent:
-         thing=self.getObject(creature.x+location[0],creature.y+location[1])
-         if isinstance(thing,Plant):
-          creature.eat(thing.x,thing.y)
-         if isinstance(thing,Creature):
-           if thing.owner==self.playerID:
-             creature.breed(thing)
-           else:
-             creature.eat(thing.x,thing.y)
+     if creature.owner == self.playerID:             
+      randx=random.randrange(-1,2); 
+      randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
+      x=0;y=0
+      if self.getObject(creature.x+randx,creature.y+randy) is None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
+        creature.move(creature.x+randx,creature.y+randy)
+      for location in adjacent:
+        thingList=self.getObject(creature.x+location[0],creature.y+location[1]); thing = None
+        if len(thingList)>0:
+          thing = thingList[0]
+        if isinstance(thing,Plant) and thing.size>0 and creature.canEat:
+         creature.eat(thing.x,thing.y)
+        if isinstance(thing,Creature):
+          if thing.owner==self.playerID and thing.currentHealth > self.healthPerBreed and creature.currentHealth > self.healthPerBreed:
+            creature.breed(thing)
+          elif creature.canEat:
+            creature.eat(thing.x,thing.y)
     return 1
 
   def __init__(self, conn):
