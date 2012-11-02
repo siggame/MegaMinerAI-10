@@ -114,6 +114,8 @@ class Match(DefaultGameWorld):
         if self.getObject(newX, newY) is None:
           self.addObject(Creature,[newX, newY, 0]+statList+[0])  
           self.addObject(Creature,[(self.mapWidth-newX-1), newY, 1]+statList+[0])
+          self.grid[newX][newY] = [self.objects.creatures[len(self.objects.creatures)-2]]
+          self.grid[(self.mapWidth-newX-1)][newY] = [self.objects.creatures[len(self.objects.creatures)-1]]
           break          
     #end while
     return
@@ -176,10 +178,8 @@ class Match(DefaultGameWorld):
         print "Herbivorism: ", creature.herbivorism
         print "Defense: ", creature.defense
         print "Speed: ", creature.speed 
-        print ""        
-    
-    for creature in self.objects.creatures:
-      self.grid[creature.x][creature.y] = [creature]
+        print ""           
+      
     self.nextTurn()
     return True
 
