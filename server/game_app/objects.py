@@ -73,22 +73,22 @@ class Creature(Mappable):
 
   def move(self,x,y):
     if self.owner != self.game.playerID:
-      return "You cannot move your oppenent's creature."
+      return "You cannot move your oppenent's creature %i."%(self.id)
     #You can't move if you have no moves left
     elif self.movementLeft <= 0:
-      return "That creature has no more movement available"
+      return "The creature  %i has no more movement available"%(self.id)
     #You can't move off the edge, the world is flat
     elif not (0 <= x < self.game.mapWidth) or not (0 <= y < self.game.mapHeight):
-      return "Don't move off of the map"
+      return "Don't move creature %i off of the map to (%i,%i)"%(self.id,x,y)
     #You can't move more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
-      return "Units can only move to adjacent locations", self.x, self.y, x, y
+      return "Units can only move to adjacent locations not from (%i,%i) to (%i,%i)"%(self.x, self.y, x, y)
     #You can't move into the space of another object
     #Make all objects into a map to reduce check times if isinstance(lifeform, Plant):
     elif isinstance(self.game.getObject(x,y), Plant) and self.game.getObject(x,y).size > 0:
-      return "There is a plant there!."
+      return "You can't move %i to (%i,%i) there is a plant %i there!"%(self.id,x,y,self.game.getObject(x,y).id)
     elif isinstance(self.game.getObject(x,y), Creature):
-      return "There is a creature there!."
+      return "You can't move %i to (%i,%i), there is a creature %i there!"%(self.id,x,y,self.game.getObject(x,y).id)
     #If the creature moved and didn't die in the process      
     if(self.decrementEnergy(self.game.healthPerMove, self)):
       if isinstance(self.game.getObject(x,y), Plant):
@@ -102,21 +102,21 @@ class Creature(Mappable):
       self.x = x
       self.y = y       
       return True
-    return "Your creature died of starvation as it tried to move"
+    return "Your creature %i died of starvation as it tried to move"%(self.id)
 
   def eat(self, x, y): 
     #You can only move your creature
     if self.owner != self.game.playerID:
-      return "You cannot eat with your oppenent's creature"
+      return "You cannot eat with your oppenent's creature %i"%(self.id)
     #You can't move if you have no moves left
     elif self.currentHealth <= 0:
-      return "That creature has no energy left"
+      return "That creature %i has no energy left"%(self.id)
     #You can't eat more than one space away
     elif abs(self.x-x) + abs(self.y-y) != 1:
-      return "Units can only eat objects at adjacent locations"
+      return "Creature %i can only eat objects at adjacent locations, not (%i,%i)"%(self.id,x,y)
     #You can't eat if you've already eaten this turn.
     elif self.canEat != True:
-      return "You can't eat more than once per turn!"
+      return "Creature %i can't eat more than once per turn!"%(self.id)
     #Get whether a lifeform exists in the tile you want to eat.
     lifeform = self.game.getObject(x,y)
     #You can't use the eat command on a tile with nothing in it.
@@ -125,7 +125,7 @@ class Creature(Mappable):
     if isinstance(lifeform, Plant):
       plant = lifeform
       if plant.size == 0:
-        return "That plant is too small to eat."
+        return "That plant %i is too small to eat."%(lifeform.id)
       self.currentHealth += self.herbivorism * 5
       if self.currentHealth > self.maxHealth:
         self.currentHealth = self.maxHealth
@@ -141,7 +141,7 @@ class Creature(Mappable):
       #Damage the target creature
       if not self.decrementEnergy(damage, creature):
         #if creature.currentHealth <= 0:
-        print "I'VE KILLED IT",self.id,creature.id,creature.currentHealth
+#        print "I'VE KILLED IT",self.id,creature.id,creature.currentHealth
         self.currentHealth += self.carnivorism * 5    
         if self.currentHealth > self.maxHealth:
           self.currentHealth = self.maxHealth    
@@ -152,23 +152,28 @@ class Creature(Mappable):
   def breed(self, mate):
     #You can only breed your creature
     if self.owner != self.game.playerID:
-      return "You cannot breed using your oppenent's creature!"
+      return "You cannot breed using your oppenent's creature %i!"%(self.id)
     #You can't breed if you don't have enough energy
     elif self.currentHealth <= self.game.healthPerBreed:
-      return "That creature doesn't have enough energy to breed!"
+      return "Creature %i doesn't have enough energy to breed!"%(self.id)
     #You can't breed if your mate doesn't have enough energy
     elif mate.currentHealth <= self.game.healthPerBreed:
-      return "Your mate doesn't have enough energy to breed!"
+      return "Your mate %i doesn't have enough energy to breed with creature %i!"%(mate.id,self.id)
     #You can't breed more than one space away
     elif abs(self.x-mate.x) + abs(self.y-mate.y) != 1:
-      return "You can only breed with adjacent creatures"
+      return "Mate %i is too far away from Creature %i to breed"%(mate.id,self.id)
     #Check to make sure you're not breeding with an opponent's creature
     elif mate.owner != self.owner:
-      return "No fraternizing with the enemy" 
+      return "No fraternizing with the enemy, creature %i cannot breed with enemy creature %i"%(self.id,mate.id)
     #You can't breed if either partner has already bred.
     elif self.canBreed != True or mate.canBreed !=True:
-      return "You've already bred this turn! You can't do it again."
+      return "You already bred creature %i or mate %i this turn! You can't do it again."%(self.id,mate.id)
     # by default set all stats to average of parents
+    elif len(self.game.grid[self.x][self.y])>2:
+    #may not need any of this at all, bonus points to whomever triggers this case
+      baby = [baby.id for baby in self.creatures if baby.parentID == self.id and baby.x == self.x and baby.y == self.y]
+      return "The creature %i is already taking care of a baby %i"%(self.id,baby[0])
+      
     newEnergy = (self.energy + mate.energy) / 2
     newDefense = (self.defense + mate.defense) / 2
     newCarnivorism = (self.carnivorism + mate.carnivorism) / 2
@@ -200,9 +205,9 @@ class Creature(Mappable):
     #Create a new baby based on the average of the parents stats
     babyStats = {ii:math.ceil(float((float(fatherStats[ii])+motherStats[ii])/2)) for ii in fatherStats}   
 
-    print "Sum of the father's stats:", sum(fatherStats.values())
-    print "Sum of the mothers's stats:", sum(motherStats.values())
-    print "Sum of the baby's stats:", sum(babyStats.values())
+#    print "Sum of the father's stats:", sum(fatherStats.values())
+#    print "Sum of the mothers's stats:", sum(motherStats.values())
+#    print "Sum of the baby's stats:", sum(babyStats.values())
     #Remove fringe cases from possibilities
     for ii in babyStats:
       if babyStats[ii]==self.game.minStat:
