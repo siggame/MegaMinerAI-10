@@ -121,7 +121,7 @@ class Creature(Mappable):
     lifeform = self.game.getObject(x,y)
     #You can't use the eat command on a tile with nothing in it.
     if lifeform is None:
-      return "No lifeforms at that location."  
+      return "No lifeforms at the location (%i,%i)."%(x,y)  
     if isinstance(lifeform, Plant):
       plant = lifeform
       if plant.size == 0:
