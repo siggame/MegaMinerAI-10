@@ -76,9 +76,12 @@ namespace visualizer
       GetSelectedRect(selectedRect);
       
       m_selectedUnitIDs.clear();
-      
-      AddSelectedObjsToList(m_game->states[ turn ].creatures,selectedRect);
-      AddSelectedObjsToList(m_game->states[ turn ].plants,selectedRect);
+
+			if(timeManager->getTurn() != (m_game->states.size() - 1))
+			{
+		    AddSelectedObjsToList(m_game->states[ turn ].creatures,selectedRect);
+		    AddSelectedObjsToList(m_game->states[ turn ].plants,selectedRect);
+			}
 
     }
 
@@ -183,7 +186,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "X" << "Y" << "Energy" << "Max Energy" << "Carn" << "Herb" << "Speed" << "Defence";
+    header << "ID" << "Owner" << "X" << "Y" << "Health" << "Max Health" << "Energy" << "Carn" << "Herb" << "Speed" << "Defence";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -310,9 +313,9 @@ namespace visualizer
         turn[p.second.id]["Owner"] = p.second.owner;
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
-        // todo: fix this
-        //turn[p.second.id]["Energy"] = p.second.energyLeft;
-        //turn[p.second.id]["Max Energy"] = p.second.maxEnergy;
+        turn[p.second.id]["Energy"] = p.second.energy;
+				turn[p.second.id]["Health"] = p.second.currentHealth;
+				turn[p.second.id]["Max Health"] = p.second.maxHealth;
         turn[p.second.id]["Carn"] = p.second.carnivorism;
         turn[p.second.id]["Herb"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
