@@ -295,9 +295,9 @@ namespace visualizer
 										}
 
 										break;
-								}
-            }
-        }
+									}
+				        }
+        		}
 
         if(creature->m_moves.empty())
         {
