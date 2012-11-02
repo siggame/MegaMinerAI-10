@@ -19,7 +19,7 @@ namespace visualizer
         void animate( const float& t, AnimData *d, IGame* game );
 
     };
-  
+
     class DrawMap: public Anim
     {
         public:

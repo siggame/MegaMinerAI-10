@@ -20,7 +20,7 @@ namespace visualizer
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
   {
 
-    int middleY = m_Map->GetHeight() / 2;
+    /*int middleY = m_Map->GetHeight() / 2;
     
     bool bLighting = game->options->getNumber("Enable Lighting") > 0.0f;
     bool bSunEffect = bLighting && (game->options->getNumber("Enable Sun") > 0.0f);
@@ -29,15 +29,15 @@ namespace visualizer
     if(bLighting)
     {
       color = linearTween(t,m_Map->GetPrevMapColor(),m_Map->GetMapColor() - m_Map->GetPrevMapColor(),1.0);
-    }
-    
-  
+    }*/
+
+    //game->renderer->setColor(Color(1,1,0.5f,1));
     for (int x = 0; x < m_Map->GetWidth(); x++)
     {
       for (int y = 0; y < m_Map->GetHeight(); y++)
       {
         const Map::Tile& tile = (*m_Map)(y,x);
-        float r = 0.8f;
+        /*float r = 0.8f;
         float g = 0.8f;
         
         if(bLighting)
@@ -51,27 +51,17 @@ namespace visualizer
           
           r = color*d;
           g = color;
-        } 
+        }*/
         
-        game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
+        //game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
 
-        if( !bLighting && !bSunEffect )
-        {
-          game->renderer->setColor(Color(1,1,1,1));
-        }
+        game->renderer->setColor(Color(1,1,0.5f,1.0f));
+        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn > game->timeManager->getTurn()) ? tile.texture : "grass" );
 
-        // todo: this could be cleaned up a bit, but it seems to work right now
-        if(tile.turn == game->timeManager->getTurn())
+        if((tile.turn - 1) == game->timeManager->getTurn())
         {
-            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.startTime < t) ? tile.texture : "grass" );
-        }
-        else if((tile.turn + 2) == game->timeManager->getTurn())
-        {
-            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.startTime > t) ? tile.texture : "grass" );
-        }
-        else
-        {
-            game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn + 2 > game->timeManager->getTurn()) ? tile.texture : "grass" );
+            game->renderer->setColor(Color(1,1,0.5f,t));
+            game->renderer->drawTexturedQuad( x, y, 1, 1, "grass" );
         }
 
       }
@@ -187,6 +177,9 @@ namespace visualizer
 
     float posX = m_Creature->m_moves[index].from.x + (m_Creature->m_moves[index].to.x - m_Creature->m_moves[index].from.x) * subT;
     float posY = m_Creature->m_moves[index].from.y + (m_Creature->m_moves[index].to.y - m_Creature->m_moves[index].from.y) * subT;
+
+    // todo: maybe the bigger the creature, the longer a path it leaves?
+    (*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
