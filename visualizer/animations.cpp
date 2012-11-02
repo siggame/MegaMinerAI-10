@@ -184,16 +184,17 @@ namespace visualizer
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
     // for some reason commenting out these other body parts works on windows...
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
+    
 
     // todo: maybe change this
 
     //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , (float(m_Creature->energy)-100.0f)/10.0f-1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , ( 10.0f * (float)m_Creature->health / ((float)m_Creature->maxHealth + 1)));
-    /*game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , m_Creature->defense - 1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , m_Creature->carnivorism - 1);*/
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , m_Creature->carnivorism - 1);
 
     // draw the health bar
     if( game->options->getNumber("Show Health Bars") > 0.0f)
