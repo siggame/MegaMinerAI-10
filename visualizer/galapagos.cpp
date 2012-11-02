@@ -308,9 +308,10 @@ namespace visualizer
 
         }
 
-        creature->energyLeft = p.second.energyLeft;
-        creature->maxEnergy = p.second.maxEnergy;
+        creature->energy = p.second.energy;
         creature->owner = p.second.owner;
+        creature->health = p.second.currentHealth;
+        creature->maxHealth = p.second.maxHealth;
 
         //more stats, not sure how many are needed purely for animation
         creature->carnivorism = p.second.carnivorism;
@@ -330,8 +331,9 @@ namespace visualizer
         turn[p.second.id]["Owner"] = p.second.owner;
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
-        turn[p.second.id]["Energy"] = p.second.energyLeft;
-        turn[p.second.id]["Max Energy"] = p.second.maxEnergy;
+        // todo: fix this
+        //turn[p.second.id]["Energy"] = p.second.energyLeft;
+        //turn[p.second.id]["Max Energy"] = p.second.maxEnergy;
         turn[p.second.id]["Carn"] = p.second.carnivorism;
         turn[p.second.id]["Herb"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
