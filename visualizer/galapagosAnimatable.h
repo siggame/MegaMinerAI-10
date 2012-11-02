@@ -17,23 +17,15 @@ namespace visualizer
 
         struct Tile
         {
-          explicit Tile(const std::string& tex = "grass",int t = 1000,float st = 0.0f) :
-            texture(tex), startTime(st), turn(t)  {}
+          explicit Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t)  {}
 
           std::string texture;
-          float startTime;
           int turn;           
           // todo: add more
         };
         
         Map(int w, int h, int hud, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), hudHeight(hud), prevMapColor(pc), mapColor(mc), xPos(xp) 
         {
-        }
-        
-        Map(const Map& other, float mapColor, float xPos) : m_tiles(other.m_tiles), width(other.width),
-        height(other.height), hudHeight(other.hudHeight), prevMapColor(other.mapColor), mapColor(mapColor), xPos(xPos)
-        {
-          
         }
      
         
@@ -107,6 +99,8 @@ namespace visualizer
       int canEat;
       int canBreed;
       int parentID;
+
+      SmartPointer<Map> map;
 
       std::vector<Moves> m_moves;
     	// todo: add more

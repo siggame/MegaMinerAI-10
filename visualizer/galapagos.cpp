@@ -188,34 +188,33 @@ namespace visualizer
     timeManager->setNumTurns( 0 );
 
     animationEngine->registerGame(0, 0);
-    
-    Map* pPrevMap = nullptr;
+
 
     std::stack<SmartPointer<Animatable>> turnAni;
+    SmartPointer<Map> map = new Map(m_game->states[1].mapWidth,m_game->states[1].mapHeight,m_GUIHeight,0.6f,0,0);
+    map->addKeyFrame( new DrawMap( map ) );
 
     // Look through each turn in the gamelog
     for(int state = 0; state < (int)m_game->states.size() && !m_suicide; state++)
     {
       Frame turn;  // The frame that will be drawn
-      SmartPointer<Map> map;
+      //SmartPointer<Map> map;
 
-      float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
-      float halfWidth = m_game->states[state].mapWidth / 2.0f;
-      float xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
+      //float mapColor = 0.3f*sin((float)state*0.1f) + 0.5f;
+      ///float halfWidth = m_game->states[state].mapWidth / 2.0f;
+      //float xPos = halfWidth*sin((float)state*0.1f)+halfWidth;
       
-      if(pPrevMap == nullptr)
+      /*if(pPrevMap == nullptr)
       {
         map = new Map(m_game->states[state].mapWidth,m_game->states[state].mapHeight,m_GUIHeight,0.6f,mapColor,xPos);
       }
       else
       {
         map = new Map(*pPrevMap,mapColor,xPos);
-      }
+      }*/
      
-      pPrevMap = map;
+      //pPrevMap = map;
  
-
-      map->addKeyFrame( new DrawMap( map ) );
       turn.addAnimatable( map );
 
       while(!turnAni.empty())
@@ -268,32 +267,10 @@ namespace visualizer
             }
         }
 
-
         if(creature->m_moves.empty())
         {
             creature->m_moves.push_back(Creature::Moves(glm::vec2(p.second.x, p.second.y),glm::vec2(p.second.x, p.second.y)));
-            (*map)(p.second.y,p.second.x) = Map::Tile("sand",state);
-        }
-        else
-        {
-            float invSize = 1.0f / (creature->m_moves.size());
 
-            for(unsigned int i = 0; i < creature->m_moves.size(); ++i)
-            {
-                Map::Tile& tile = (*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x);
-                //if(tile.turn + 2 != state || tile.startTime < invSize*i)
-                {
-                    tile = Map::Tile("sand",state,invSize*i);
-                }
-                //else if(tile.turn + 2 == state)
-                {
-
-                }
-
-                //(*map)(creature->m_moves[i].to.y,creature->m_moves[i].to.x) = Map::Tile("sand",state,invSize*i);
-            }
-
-            (*map)(p.second.y,p.second.x) = Map::Tile("sand",state,invSize * (creature->m_moves.size() - 1));
         }
 
         if( (state + 1) < m_game->states.size() )
@@ -322,6 +299,8 @@ namespace visualizer
         creature->canEat = p.second.canEat;
         creature->canBreed = p.second.canBreed;
         creature->parentID = p.second.parentID;
+
+        creature->map = map;
 
         creature->addKeyFrame( new DrawCreature( creature ) );
 
