@@ -275,7 +275,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   //Apply new movement
   object->x = x;
   object->y = y;
-  
+  //here is a thing for reasons  
   return 1;
 }
 
