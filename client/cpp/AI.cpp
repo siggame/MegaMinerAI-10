@@ -56,7 +56,7 @@ bool AI::run()
       //else if there is a creature to my left, and it is my creature, and neither has bred this turn
       else if (creatIn!=-1 && creatures[creatIn].owner()==playerID() && creatures[ii].canBreed()==1 && creatures[creatIn].canBreed()==1)
       { //if both creatures have enough health to breed
-        if (creatures[ii].currentHealth()>=healthPerBreed() && creatures[creatIn].currentHealth()>=healthPerBreed())
+        if (creatures[ii].currentHealth()>healthPerBreed() && creatures[creatIn].currentHealth()>healthPerBreed())
         { //breed with this creature
           creatures[ii].breed(creatures[creatIn]);
         }

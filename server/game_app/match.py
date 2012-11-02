@@ -101,6 +101,7 @@ class Match(DefaultGameWorld):
   #This function assumes the plants have been spawned symmetrically across the vertical axis
   def spawnCreatures(self):
     i = 0
+    coorSet = set()
     while i < self.startingCreatures:
       i+=1
       randStats = self.initialStats()
@@ -111,7 +112,8 @@ class Match(DefaultGameWorld):
         newX = int(random.uniform(0,self.mapWidth / 2))
         newY = int(random.uniform(0, self.mapHeight))
       #check map if the space is unoccupied, otherwise generate a new X,Y
-        if self.getObject(newX, newY) is None:
+        if (newX,newY) not in coorSet:
+          coorSet.add((newX,newY))
           self.addObject(Creature,[newX, newY, 0]+statList+[0])  
           self.addObject(Creature,[(self.mapWidth-newX-1), newY, 1]+statList+[0])
           self.grid[newX][newY] = [self.objects.creatures[len(self.objects.creatures)-2]]
