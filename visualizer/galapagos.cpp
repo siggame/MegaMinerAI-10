@@ -268,36 +268,36 @@ namespace visualizer
                     break;
                 }
 
-								case parser::EAT:
-								{
-										parser::eat& eat = (parser::eat&)*j;
-										// the mappables map in the glog isn't currently working :(
-										int x = 0, y = 0;
-										auto creatureIter = m_game->states[state].creatures.find( eat.targetID );
-										if( creatureIter != m_game->states[state].creatures.end() )
-										{
-											x = creatureIter->second.x;
-											y = creatureIter->second.y;
-										}
-										auto plantIter = m_game->states[state].plants.find( eat.targetID );
-										if( plantIter != m_game->states[state].plants.end() )
-										{
-											x = plantIter->second.x;
-											y = plantIter->second.y;
-										}
+                case parser::EAT:
+                {
+                    parser::eat& eat = (parser::eat&)*j;
+                    // the mappables map in the glog isn't currently working :(
+                    int x = 0, y = 0;
+                    auto creatureIter = m_game->states[state].creatures.find( eat.targetID );
+                    if( creatureIter != m_game->states[state].creatures.end() )
+                    {
+                        x = creatureIter->second.x;
+                        y = creatureIter->second.y;
+                    }
+                    auto plantIter = m_game->states[state].plants.find( eat.targetID );
+                    if( plantIter != m_game->states[state].plants.end() )
+                    {
+                        x = plantIter->second.x;
+                        y = plantIter->second.y;
+                    }
 
-										if(creatureIter != m_game->states[state].creatures.end() || plantIter != m_game->states[state].plants.end())
-										{
-											//SmartPointer<EatAnimation> eatAnimation = new EatAnimation( m_game->states[ state ].mappables[ eat.targetID ].x, m_game->states[ state ].mappables[ eat.targetID ].y );
-											SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
-											eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
-											turn.addAnimatable( eatAnimation );
-										}
+                    if(creatureIter != m_game->states[state].creatures.end() || plantIter != m_game->states[state].plants.end())
+                    {
+                        //SmartPointer<EatAnimation> eatAnimation = new EatAnimation( m_game->states[ state ].mappables[ eat.targetID ].x, m_game->states[ state ].mappables[ eat.targetID ].y );
+                        SmartPointer<EatAnimation> eatAnimation = new EatAnimation( x, y );
+                        eatAnimation->addKeyFrame( new DrawEatAnimation( eatAnimation ) );
+                        turn.addAnimatable( eatAnimation );
+                    }
 
-										break;
-									}
-				        }
-        		}
+                    break;
+                 }
+              }
+        }
 
         if(creature->m_moves.empty())
         {
@@ -305,11 +305,12 @@ namespace visualizer
 
         }
 
+        // the creature is dead next turn
         if( (state + 1) < m_game->states.size() )
         {
           if(m_game->states[ state + 1 ].creatures.find( p.second.id ) == m_game->states[ state + 1 ].creatures.end())
           {
-              SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation(p.second.x,p.second.y,7);
+              SmartPointer<SpriteAnimation> deathAni = new SpriteAnimation(p.second.x,p.second.y,7,1,1,"death");
               deathAni->addKeyFrame(new DrawAnimation(deathAni));
 
               turnAni.push(deathAni);
@@ -343,19 +344,38 @@ namespace visualizer
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
         turn[p.second.id]["Energy"] = p.second.energy;
-				turn[p.second.id]["Health"] = p.second.currentHealth;
-				turn[p.second.id]["Max Health"] = p.second.maxHealth;
+        turn[p.second.id]["Health"] = p.second.currentHealth;
+        turn[p.second.id]["Max Health"] = p.second.maxHealth;
         turn[p.second.id]["Carn"] = p.second.carnivorism;
         turn[p.second.id]["Herb"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
         turn[p.second.id]["Defence"] = p.second.defense;
+
+      } // end of creating creatures for this turn
+
+      if(((float)state / (float)m_game->states.size()) > 0.95f)
+      {
+          int metNum = rand() % 5;
+          for(int i = 0; i < metNum; ++i)
+          {
+              SmartPointer<SpriteAnimation> meteorAni = new SpriteAnimation(GetRandFloat(0.0f,m_game->states[0].mapWidth),
+                                                                            GetRandFloat(0.0f, m_game->states[0].mapHeight),
+                                                                            9,5.0f,5.0f,"meteor","Enable Meteors");
+              meteorAni->addKeyFrame(new DrawAnimation(meteorAni));
+
+              turn.addAnimatable(meteorAni);
+          }
       }
-      
+
+      // If the game is over
       if( m_game->states.size() == state + 1 )
       {
-        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, m_game->states[0].mapWidth, m_game->states[0].mapHeight);
+        int mapWidth = m_game->states[0].mapWidth;
+        int mapHeight = m_game->states[0].mapHeight;
+        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
         turn.addAnimatable( ss );
+
       }
 
       // end of parsing this state in the glog, build the turn

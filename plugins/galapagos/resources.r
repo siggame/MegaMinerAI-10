@@ -11,6 +11,7 @@ animation creature_etc textures/set_etc.png
 animation death textures/death.png
 animation plants textures/plants.png
 animation island_sides textures/island_sides.png
+animation meteor textures/meteor.png
 texture tile_water textures/tile_water.png
 texture teeth textures/teeth.png
 texture heart textures/heart.png

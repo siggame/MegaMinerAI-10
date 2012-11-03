@@ -56,10 +56,11 @@ namespace visualizer
         //game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
 
         game->renderer->setColor(Color(1,1,0.5f,1.0f));
-		/*if(tile.turn <= game->timeManager->getTurn())
-		{
-			
-		}*/
+
+        /*if((tile.turn - game->timeManager->getTurn()) > 3)
+        {
+            tile.texture = "grass";
+        }*/
 
         game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn > game->timeManager->getTurn()) ? tile.texture : "grass" );
 
@@ -216,30 +217,31 @@ namespace visualizer
   void DrawAnimation::animate(const float& t, AnimData*, IGame* game )
   {
 
-    game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
-    game->renderer->drawAnimQuad( m_animation->x, m_animation->y, 1, 1, "death" , (int)(m_animation->frame * t));
+    if(m_animation->enable.empty() || game->options->getNumber(m_animation->enable) > 0.0f)
+    {
+        game->renderer->setColor( Color(1.0f,1.0f,1.0f,1.0f) );
+        game->renderer->drawAnimQuad( m_animation->x, m_animation->y, m_animation->dx, m_animation->dy, m_animation->animation , (int)(m_animation->frames * t));
+    }
 
   }
   
   
   void DrawEatAnimation::animate(const float& t, AnimData*, IGame* game)
   {
-
     float trans = t < 0.1f ? t * 10.0f : t > 0.9f ? 1-(t-0.9f)*10.0f : 1;  
     game->renderer->setColor( Color(1.0f,1.0f,1.0f,trans) );
     game->renderer->drawTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - (1-t)*0.25f - 0.125f, 1, 1, "teeth");
     game->renderer->drawRotatedTexturedQuad( m_EatAnimation->x, m_EatAnimation->y - t*0.25f + 0.375f, 1, 1, 180, "teeth");
-
   } // DrawEatAnimation
   
   
   void DrawSplashScreen::animate(const float& t, AnimData*, IGame* game )
   {
-
-    float trans = t < 0.2f ? t * 5.0f : 1;
+    // clamp t to 0.8
+    float trans = t > 0.8f ? 0.8f : t;
 
     // Draw the backgroudn fading to white
-    game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, trans) );
+    game->renderer->setColor( Color(1.0f, .2f, .2f, trans) );
     game->renderer->drawQuad(0, 0, m_SplashScreen->width, m_SplashScreen->height);
     
     // Draw the "Winner: " text in black and why they won
@@ -250,12 +252,10 @@ namespace visualizer
     // Draw the actual winner's name in their color
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
     game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
-
   }
 
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
   {
-
     game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
     int x = m_HUD->playerID * m_HUD->mapWidth;
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;

@@ -108,11 +108,17 @@ namespace visualizer
 
     struct SpriteAnimation : public Animatable
     {
-      SpriteAnimation(int posX, int posY, int f) : x(posX), y(posY), frame(f) {}
+        // todo: maybe reorder these
+        SpriteAnimation(float posX, float posY, int f, float dx, float dy,const string& a, const string& e = "") :
+            x(posX), y(posY), frames(f), dx(dx), dy(dy), animation(a), enable(e) {}
 
-      int x;
-      int y;
-      int frame;
+        float x;
+        float y;
+        int frames;
+        float dx;
+        float dy;
+        string animation;
+        string enable;
     };
 
     struct SplashScreen : public Animatable
