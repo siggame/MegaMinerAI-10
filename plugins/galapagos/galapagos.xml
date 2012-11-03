@@ -2,7 +2,7 @@
   <option>
     <key>Draw Plant Sizes</key>
     <type>Integer</type>
-    <value>1</value>
+    <value>0</value>
     <minvalue>0</minvalue>
     <maxvalue>1</maxvalue>
   </option>
@@ -10,6 +10,13 @@
     <key>Enable Lighting</key>
     <type>Integer</type>
     <value>0</value>
+    <minvalue>0</minvalue>
+    <maxvalue>1</maxvalue>
+  </option>
+  <option>
+    <key>Enable Meteors</key>
+    <type>Integer</type>
+    <value>1</value>
     <minvalue>0</minvalue>
     <maxvalue>1</maxvalue>
   </option>
@@ -37,7 +44,7 @@
   <option>
     <key>Slider Bar</key>
     <type>Float</type>
-    <value>100</value>
+    <value>97</value>
     <minvalue>0</minvalue>
     <maxvalue>100</maxvalue>
   </option>
