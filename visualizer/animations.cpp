@@ -195,8 +195,7 @@ namespace visualizer
 
     // todo: maybe change this
 
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , (float(m_Creature->energy)-100.0f)/10.0f-1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , ( 10.0f * (float)m_Creature->health / ((float)m_Creature->maxHealth + 1)));
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , m_Creature->energy-1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
@@ -210,6 +209,19 @@ namespace visualizer
       game->renderer->drawTexturedQuad( posX, posY, 1, 0.125f, "healthbar" );
       game->renderer->setColor( PlayerColor(m_Creature->owner) );
       game->renderer->drawTexturedQuad( posX, posY, m_Creature->maxHealth != 0 ? float(m_Creature->health) / float(m_Creature->maxHealth) : 0, 0.125f, "healthbar" );
+    }
+
+    // if they has sex
+    if( !m_Creature->canBreed )
+    {
+      game->renderer->setColor( Color(1, 1, 1, 1) );
+      // heart size
+      float h = 0.25f;
+
+      game->renderer->drawTexturedQuad( posX-h/2.0f, posY-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX+1-h/2.0f, posY-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX-h/2.0f, posY+1-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX+1-h/2.0f, posY+1-h/2.0f, h, h, "heart" );
     }
   }
 
@@ -265,5 +277,12 @@ namespace visualizer
     game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
     game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
 
+  }
+
+
+  void DrawNest::animate(const float& t, AnimData*, IGame* game )
+  {
+    game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
+    game->renderer->drawTexturedQuad(m_Nest->x, m_Nest->y, 1, 1, "nest");
   }
 }

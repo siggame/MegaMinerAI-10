@@ -186,7 +186,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "X" << "Y" << "Health" << "Max Health" << "Energy" << "Carn" << "Herb" << "Speed" << "Defence";
+    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defence" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -235,6 +235,19 @@ namespace visualizer
         turn.addAnimatable( hud );
       }
 
+      // for each stacked unit (mother and child), draw a nest (below them)
+      for( auto& a : m_game->states[ state ].creatures )
+      {
+        for( auto& b : m_game->states[ state ].creatures )
+        {
+          if(a.second.id != b.second.id && a.second.x == b.second.x && a.second.y == b.second.y)
+          {
+            SmartPointer<Nest> nest = new Nest(a.second.x, a.second.y);
+            nest->addKeyFrame( new DrawNest( nest ) );
+            turn.addAnimatable( nest );
+          }
+        }
+      }
       // for each plant in the current turn
       for( auto& p : m_game->states[ state ].plants )
       {
@@ -247,6 +260,8 @@ namespace visualizer
         turn.addAnimatable( plant );
         
         turn[p.second.id]["ID"] = p.second.id;
+        turn[p.second.id]["Type"] = "Plant";
+        turn[p.second.id]["Health/Size"] = p.second.size;
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
       }
@@ -341,15 +356,20 @@ namespace visualizer
         
         turn[p.second.id]["ID"] = p.second.id;
         turn[p.second.id]["Owner"] = p.second.owner;
+        turn[p.second.id]["Type"] = "Creature";
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
-        turn[p.second.id]["Energy"] = p.second.energy;
+        turn[p.second.id]["Energy/Size"] = p.second.energy;
         turn[p.second.id]["Health"] = p.second.currentHealth;
         turn[p.second.id]["Max Health"] = p.second.maxHealth;
-        turn[p.second.id]["Carn"] = p.second.carnivorism;
-        turn[p.second.id]["Herb"] = p.second.herbivorism;
+        turn[p.second.id]["Carnivorism"] = p.second.carnivorism;
+        turn[p.second.id]["Herbivorism"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
         turn[p.second.id]["Defence"] = p.second.defense;
+        turn[p.second.id]["Moves Left"] = p.second.movementLeft;
+        turn[p.second.id]["Can Breed"] = p.second.canBreed ? "Yes" : "No";
+        turn[p.second.id]["Can Eat"] = p.second.canEat ? "Yes" : "No";
+        turn[p.second.id]["Parent ID"] = p.second.parentID;
 
       } // end of creating creatures for this turn
 

@@ -137,6 +137,22 @@ namespace visualizer
         private:
             HUD *m_HUD;
      };
+
+     class DrawNest : public Anim
+     {
+        public:
+            DrawNest( Nest* nest ) : m_Nest(nest) {}
+            void animate( const float& t, AnimData* d, IGame* game );
+
+            float controlDuration() const
+            { return 0; }
+
+            float totalDuration() const
+            { return 0; }
+        
+        private:
+            Nest *m_Nest;
+     };
     
 }
 

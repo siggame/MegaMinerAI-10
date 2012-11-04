@@ -153,22 +153,22 @@ namespace visualizer
       int height;
     };
 
-    struct Nest
+    struct Nest : public Animatable
     {
-      Nest(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
+      Nest(int X, int Y) : x(X), y(Y) {}
+
+      int x;
+      int y;
+    };
+
+    struct Lovin : public Animatable
+    {
+      Lovin(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
 
       int momX;
       int momY;
       int dadX;
       int dadY;
-    };
-
-    struct Lovin
-    {
-      Lovin(int X, int Y) : x(X), y(Y) {}
-
-      int x;
-      int y;
     };
 
 } // visualizer
