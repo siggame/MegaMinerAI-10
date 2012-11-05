@@ -28,9 +28,11 @@ class AI(BaseAI):
   def run(self):
     world = generate_map(self)
     blue = [x for x in self.creatures if x.owner == self.playerID]
-
+    
     for c in blue:
       c.done = False
+      c.chosen = False
+    blue[0].chosen = True
     
     for c in blue:
       clear_nearby(c, world)
@@ -57,9 +59,12 @@ def clear_nearby(c, world):
   
 
 def pick_move(c, world):
-  result = nearest_plant(c, world)
-  if result is None:
-    result = nearest_prey(c, world)
+  if c.chosen:
+    result = nearest_plant(c, world)
+    if result is None:
+      result = nearest_prey(c, world)
+  else:
+      result = nearest_prey(c, world)    
   return result
 
 
