@@ -62,9 +62,9 @@ namespace visualizer
             tile.texture = "grass";
         }*/
 
-        if( tile.turn > game->timeManager->getTurn() && strcmp(tile.texture.c_str(),"grass")!=0)
+        if( tile.turn > game->timeManager->getTurn() /*&& strcmp(tile.texture.c_str(),"grass")!=0*/)
         {
-          game->renderer->drawTexturedQuad( x, y, 1, 1, tile.texture);
+            game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
         }
         else
         {
@@ -197,7 +197,7 @@ namespace visualizer
 
     // todo: maybe the bigger the creature, the longer a path it leaves?
 	//(*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
-    (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile("sand",game->timeManager->getTurn() + 3);
+    (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile(game->timeManager->getTurn() + 3);
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
