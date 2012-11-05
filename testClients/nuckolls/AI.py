@@ -14,6 +14,10 @@ class AI(BaseAI):
   @staticmethod
   def password():
     return "derpaderpaderp"
+  
+  
+  def __init__(self, conn):
+    BaseAI.__init__(self, conn)
 
   def init(self):
     pass
@@ -26,60 +30,68 @@ class AI(BaseAI):
     blue = [x for x in self.creatures if x.owner == self.playerID]
     
     for c in blue:
-      neighbors = get_neighbors(c, world)
-      # eat nearby things
-      for n in neighbors:
-        if n['edible']:
-          smart_eat(c, n, world)
+      c.done = False
+      c.chosen = False
+    blue[0].chosen = True
+    
+    for c in blue:
+      clear_nearby(c, world)
+      
+      while not c.done:
+        dest = pick_move(c, world)
+        smart_move(c, dest, world)
+        if c.movementLeft == 0:
+          c.done = True
           break
-      
-      dest = pick_move(c, world)
-      smart_move(c, dest, world)
-      
-    view_world(world, self.getMapWidth(), self.getMapHeight())
+        clear_nearby(c, world)
 
+    view_world(world, self.getMapWidth(), self.getMapHeight())
     return 1
 
-  def __init__(self, conn):
-    BaseAI.__init__(self, conn)
-
-
-def pick_move(c, world):
-  return nearest_plant(c, world)
-  #neighbors = get_neighbors(c, world)
-  #movable = [x for x in neighbors if x['pathable']]
-  #return choice(movable)
     
-
-class Loc(object):
-  def __init__(self, x, y):
-    self.x = x
-    self.y = y
-    self.coords = (x, y)
+def clear_nearby(c, world):
+  neighbors = get_neighbors(c, world)
+  for n in neighbors:
+    if n['edible']:
+      smart_eat(c, n, world)
+      c.done = True
+      break
   
 
-def nearest_plant(c, world):
-  result = world[(c.x, c.y)]
-  for x in world:
-    world[x]['ancestor'] = None
+def pick_move(c, world):
+  if c.chosen:
+    result = nearest_plant(c, world)
+    if result is None:
+      result = nearest_prey(c, world)
+  else:
+      result = nearest_prey(c, world)    
+  return result
 
-  frontier = get_neighbors(c, world)
-  frontier = [x for x in frontier if x['ancestor'] is None]
-  frontier = [x for x in frontier if x['creature'] is None]
-  for f in frontier:
-    f['ancestor'] = f
+
+def nearest(c, world, start, is_goal):
+  [world[x].update({'start':None}) for x in world]  
+  frontier = [x for x in get_neighbors(c, world) if start(x)]
+  [f.update({'start': f}) for f in frontier]
   while frontier:
     current = frontier.pop(0)
-    if current['plant'] is None:
-      neighbors = get_neighbors(current, world)
-      neighbors = [x for x in neighbors if x['ancestor'] is None]
-      neighbors = [x for x in neighbors if x['creature'] is None]
-      for n in neighbors:
-        n['ancestor'] = current['ancestor']
-      frontier.extend(neighbors)
+    if is_goal(current):
+      return current['start']
     else:
-      return current['ancestor']
-  return result
+      neighbors = [x for x in get_neighbors(current, world) 
+                   if x['start'] is None]
+      [n.update({'start': current['start']}) for n in neighbors]
+      frontier.extend(neighbors)
+  return None
+
+def nearest_plant(c, world):
+  return nearest(c, world,
+                 lambda x: x['creature'] is None,
+                 lambda x: x['plant'] is not None)
+
+def nearest_prey(c, world):
+  return nearest(c, world,
+                 lambda x: x['plant'] is None,
+                 lambda x: x['creature'] is not None and x['edible'])
 
 
 def get_neighbors(thing, world):
@@ -96,6 +108,8 @@ def smart_eat(c, dest, world):
   if dest['plant'] is not None:
     if dest['plant'].size == 0:
       return
+  if not c.canEat:
+    return
   c.eat(dest['coords'][0], dest['coords'][1])
   if dest['plant'] is None:
     target = 'creature'
@@ -110,11 +124,16 @@ def smart_eat(c, dest, world):
 
 
 def smart_move(c, dest, world):
+  if c.movementLeft == 0:
+    c.done = True
+    return
   dest = dest['coords']
   source = (c.x, c.y)
   if source == dest:
+    c.done = True
     return
   if not world[dest]['pathable']:
+    c.done = True
     return
   world[dest].update({'creature': c,
                       'edible': False,
