@@ -17,3 +17,4 @@ texture teeth textures/teeth.png
 texture heart textures/heart.png
 texture nest textures/nest.png
 texture healthbar textures/healthbar.png
+animation tile_ground textures/tile_ground.png
