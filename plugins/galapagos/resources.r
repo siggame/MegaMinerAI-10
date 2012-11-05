@@ -13,6 +13,9 @@ animation plants textures/plants.png
 animation island_sides textures/island_sides.png
 animation meteor textures/meteor.png
 texture tile_water textures/tile_water.png
+texture tile_lava textures/tile_lava.png
+texture tile_toxic textures/tile_toxic.png
+texture tile_space textures/tile_space.png
 texture teeth textures/teeth.png
 texture heart textures/heart.png
 texture nest textures/nest.png

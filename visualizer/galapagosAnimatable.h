@@ -46,6 +46,9 @@ namespace visualizer
         float GetMapColor() const { return mapColor; }
         int GetHUDHeight() const { return hudHeight; }
 
+        int waterTile;
+        int groundTile;
+
     private:
     
       std::vector<Tile> m_tiles;
