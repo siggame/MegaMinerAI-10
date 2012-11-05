@@ -102,6 +102,11 @@ class Match(DefaultGameWorld):
   def spawnCreatures(self):
     i = 0
     coorSet = set()
+    # Account for plants
+    for x in xrange(self.mapWidth):
+      for y in xrange(self.mapHeight):
+        if self.grid[x][y] != []:
+           coorSet.add((x,y))
     while i < self.startingCreatures:
       i+=1
       randStats = self.initialStats()
