@@ -36,7 +36,7 @@ namespace visualizer
     {
       for (int y = 0; y < m_Map->GetHeight(); y++)
       {
-        const Map::Tile& tile = (*m_Map)(y,x);
+        Map::Tile& tile = (*m_Map)(y,x);
         /*float r = 0.8f;
         float g = 0.8f;
         
@@ -62,7 +62,12 @@ namespace visualizer
             tile.texture = "grass";
         }*/
 
-        if( tile.turn > game->timeManager->getTurn() /*&& strcmp(tile.texture.c_str(),"grass")!=0*/)
+				if(tile.turn - game->timeManager->getTurn() > 3)
+				{
+					tile.turn = -1;
+				}
+
+        if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
         {
             game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
         }
