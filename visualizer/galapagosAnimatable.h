@@ -17,11 +17,10 @@ namespace visualizer
 
         struct Tile
         {
-          explicit Tile(const std::string& tex = "grass",int t = 1000) : texture(tex), turn(t)  {}
+          explicit Tile(int t = -1) : turn(t)  {}
 
-          std::string texture;
-          int turn;           
-          // todo: add more
+          int turn;
+          // todo: add more?
         };
         
         Map(int w, int h, int hud, float pc, float mc, float xp) : m_tiles(w*h), width(w), height(h), hudHeight(hud), prevMapColor(pc), mapColor(mc), xPos(xp) 
@@ -45,6 +44,9 @@ namespace visualizer
         float GetxPos() const { return xPos; }
         float GetMapColor() const { return mapColor; }
         int GetHUDHeight() const { return hudHeight; }
+
+        int waterTile;
+        int groundTile;
 
     private:
     
@@ -153,22 +155,22 @@ namespace visualizer
       int height;
     };
 
-    struct Nest
+    struct Nest : public Animatable
     {
-      Nest(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
+      Nest(int X, int Y) : x(X), y(Y) {}
+
+      int x;
+      int y;
+    };
+
+    struct Lovin : public Animatable
+    {
+      Lovin(int mX, int mY, int dX, int dY) : momX(mX), momY(mY), dadX(dX), dadY(dY) {}
 
       int momX;
       int momY;
       int dadX;
       int dadY;
-    };
-
-    struct Lovin
-    {
-      Lovin(int X, int Y) : x(X), y(Y) {}
-
-      int x;
-      int y;
     };
 
 } // visualizer

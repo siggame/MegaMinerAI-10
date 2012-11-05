@@ -66,9 +66,9 @@ class AI(BaseAI):
       openSet = sorted(openSet)        
     return []
     
-  def findNearestFriendlyCreatureXY(self, creature):
+  def findNearestFriendlyBreedableCreatureXY(self, creature):
     #Doesn't work if I only have one creature left
-    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.currentHealth > 0]
+    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.currentHealth > self.healthPerBreed + 15]
     if len(myCreatures) > 1:    
       #Creates a dictionary of the distances to each creature I control that isn't at the calling creature's position
       dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}    
@@ -119,7 +119,7 @@ class AI(BaseAI):
         creature.eat(plant.x, plant.y)  
 
   def findClosestAllyAndBreed(self,creature):
-    nearestCreature = self.findNearestFriendlyCreatureXY(creature) 
+    nearestCreature = self.findNearestFriendlyBreedableCreatureXY(creature) 
     if nearestCreature is not None: 
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.currentHealth > self.healthPerMove:
@@ -128,6 +128,8 @@ class AI(BaseAI):
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canBreed == True and creature.currentHealth > self.healthPerBreed:
         if(len(self.grid[nearestCreature.x][nearestCreature.y])):
           creature.breed(self.grid[nearestCreature.x][nearestCreature.y][0])
+    else:
+      self.findAndEatPlant(creature) 
                       
   def findNearestEnemyAndEat(self, creature):
     nearestCreature = self.findNearestEnemyCreatureXY(creature) 
@@ -140,8 +142,9 @@ class AI(BaseAI):
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canEat == True:
         print "Attacking enemy"
         creature.eat(nearestCreature.x, nearestCreature.y) 
+    else:
+      self.findAndEatPlant(creature)      
                 
-
   #If health is low, eat a plant.
   #If health is very high, breed
   def defaultActions(self,creature):   
@@ -149,6 +152,7 @@ class AI(BaseAI):
       self.findAndEatPlant(creature)
     elif creature.currentHealth > creature.maxHealth/2 and creature.currentHealth > self.healthPerBreed + 15:
       self.findClosestAllyAndBreed(creature)
+    
      
   #Kill    
   def carnivormActionSet(self,creature):
