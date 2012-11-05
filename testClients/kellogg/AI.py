@@ -91,7 +91,7 @@ class AI(BaseAI):
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
     adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
-    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism >=1]  
+    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism >=3] 
     
     for creature in herbivores:
@@ -105,7 +105,7 @@ class AI(BaseAI):
          self.moveTo(creature,randPlant)
        if self.distance(randPlant.x,randPlant.y,creature.x,creature.y)==1 and randPlant.size>0:
           creature.eat(randPlant.x,randPlant.y)
-       if randPlant.size==0 and creature.movementLeft>0:
+       if randPlant.size==0 and creature.movementLeft>0 and self.distance(randPlant.x,randPlant.y,creature.x,creature.y):
           creature.move(randPlant.x,randPlant.y)
     return 1
 
