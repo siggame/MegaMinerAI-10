@@ -37,10 +37,6 @@ class AI(BaseAI):
   def maxStat(self,creature):
     return max([creature.herbivorism,creature.carnivorism,creature.speed,creature.energy,creature.defense])
 
-#TODO FIX    
-  def findMate(self,creature):
-      pass
-        
   def getObject(self,x,y):
     return [lifeform for lifeform in self.creatures+self.plants if lifeform.x == x and lifeform.y == y]
     
@@ -67,28 +63,28 @@ class AI(BaseAI):
     open = [(self.distance(startX,startY,goalX,goalY),(startX,startY),(startX,startY),0)];openTup=[(startX,startY)]
     path = []
     while len(open)>0:
-        open.sort()
-        current = open[0]
-        if current[1] == (goalX,goalY):
-            node = current
-            path = []
-            while node[2]!=(startX,startY):
-              for closed in closedSet:
-                if node[2] == closed[1]:
-                  path.append(node[2])
-                  node = closed
-            return path
-        closedSet.add(current);closedTup.add(current[1])
-        open.remove(current); openTup.remove(current[1])
-        for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
-          if neighbor in closedTup:
-          #if neighbor in [b[1] for b in closedSet]:
-           continue
-          g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
-          if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
-#          if self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in [b[1] for b in open]:
-            neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
-            open.append(neighborTup);openTup.append(neighbor)
+      open.sort()
+      current = open[0]
+      if current[1] == (goalX,goalY):
+        node = current
+        path = []
+        while node[2]!=(startX,startY):
+          for closed in closedSet:
+            if self.distance(node[1][0],node[1][1],closed[1][0],closed[1][1])==1 and node[2] == closed[1]:
+              path.append(node[2])
+              node = closed
+        return path
+      closedSet.add(current);closedTup.add(current[1])
+      open.remove(current); openTup.remove(current[1])
+      for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
+        if neighbor in closedTup:
+        #if neighbor in [b[1] for b in closedSet]:
+         continue
+        g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
+        if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
+#        if self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in [b[1] for b in open]:
+          neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
+          open.append(neighborTup);openTup.append(neighbor)
     return None
     
   ##This function is called each time it is your turn
