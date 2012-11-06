@@ -133,4 +133,28 @@ public abstract class BaseAI
     int value = Client.getBaseHealth(connection);
     return value;
   }
+  
+  public int getCreatureAtLocation(int x, int y)
+  {
+    for(int ii=0;ii<creatures.Length;ii++)
+    {
+      if (creatures[ii].X==x && creatures[ii].Y==y)
+      {
+        return ii;
+      }
+    }
+    return -1;
+  }
+  
+  public int getPlantAtLocation(int x, int y)
+  {
+    for(int ii=0;ii<plants.Length;ii++)
+    {
+      if (plants[ii].X==x && plants[ii].Y==y)
+      {
+        return ii;
+      }
+    }
+    return -1;
+  }
 }
