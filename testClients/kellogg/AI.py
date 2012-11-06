@@ -32,15 +32,11 @@ class AI(BaseAI):
            creature.move(next[0],next[1])
       
   def distance(self,sourceX,sourceY,destX,destY):
-    return int(math.sqrt((sourceX-destX)**2+(sourceY-destY)**2))
+    return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
     
   def maxStat(self,creature):
     return max([creature.herbivorism,creature.carnivorism,creature.speed,creature.energy,creature.defense])
 
-#TODO FIX    
-  def findMate(self,creature):
-      pass
-        
   def getObject(self,x,y):
     return [lifeform for lifeform in self.creatures+self.plants if lifeform.x == x and lifeform.y == y]
     
@@ -65,67 +61,52 @@ class AI(BaseAI):
   def pathFind(self,startX,startY,goalX,goalY):
     closedSet = set();closedTup=set()
     open = [(self.distance(startX,startY,goalX,goalY),(startX,startY),(startX,startY),0)];openTup=[(startX,startY)]
-    path = []#;ii=0
+    path = []
     while len(open)>0:
-        open.sort()
-        current = open[0]
-        if current[1] == (goalX,goalY):
-            node = current
-            path = []
-            while node[2]!=(startX,startY):
-#              print "ii",ii
-#              ii+=1
-              for closed in closedSet:
-#                print len(closedSet)
-                if node[2] == closed[1]:
-                  path.append(node[2])
-                  node = closed
-            return path
-        closedSet.add(current);closedTup.add(current[1])
-        open.remove(current); openTup.remove(current[1])
-        for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
-          if neighbor in closedTup:
-          #if neighbor in [b[1] for b in closedSet]:
-           continue
-#          print current[3],neighbor[0],neighbor[1],current[1][0],current[1][1]
-          g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
-          if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
-#          if self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in [b[1] for b in open]:
-            neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
-            open.append(neighborTup);openTup.append(neighbor)
+      open.sort()
+      current = open[0]
+      if current[1] == (goalX,goalY):
+        node = current
+        path = []
+        while node[2]!=(startX,startY):
+          for closed in closedSet:
+            if self.distance(node[1][0],node[1][1],closed[1][0],closed[1][1])==1 and node[2] == closed[1]:
+              path.append(node[2])
+              node = closed
+        return path
+      closedSet.add(current);closedTup.add(current[1])
+      open.remove(current); openTup.remove(current[1])
+      for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
+        if neighbor in closedTup:
+        #if neighbor in [b[1] for b in closedSet]:
+         continue
+        g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
+        if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
+#        if self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in [b[1] for b in open]:
+          neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
+          open.append(neighborTup);openTup.append(neighbor)
     return None
     
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
     adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
-    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism == self.maxStat(creature)]  
-    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism == self.maxStat(creature)] 
+    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
+    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism >=3] 
     
-    for creature in self.creatures:
-     if creature.owner == self.playerID:             
-       randPlant = self.plants[random.randrange(-1,len(self.plants))];room = True
+    for creature in herbivores:
+     #randPlant = self.plants[random.randrange(-1,len(self.plants))];room = False
+     if len(self.plants)>0:
+       randPlant = self.findNearest(creature,self.plants)
        for adj in adjacent:
-         if len(self.getObject(randPlant.x+adj[0],randPlant.y+adj[1]))>0:
-           room = False
+         if len(self.getObject(randPlant.x+adj[0],randPlant.y+adj[1]))==0:
+          room = True
        if room:
-         self.moveTo(creature,self.plants[self.playerID])
-      # randx=random.randrange(-1,2); 
-      # randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
-      # x=0;y=0
-      # if self.getObject(creature.x+randx,creature.y+randy) is None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
-        # creature.move(creature.x+randx,creature.y+randy)
-      # for location in adjacent:
-        # thingList=self.getObject(creature.x+location[0],creature.y+location[1]); thing = None
-        # if len(thingList)>0:
-          # thing = thingList[0]
-        # if isinstance(thing,Plant) and thing.size>0 and creature.canEat:
-         # creature.eat(thing.x,thing.y)
-        # if isinstance(thing,Creature):
-          # if thing.owner==self.playerID and thing.currentHealth > self.healthPerBreed and creature.currentHealth > self.healthPerBreed:
-            # creature.breed(thing)
-          # elif creature.canEat:
-            # creature.eat(thing.x,thing.y)
+         self.moveTo(creature,randPlant)
+       if self.distance(randPlant.x,randPlant.y,creature.x,creature.y)==1 and randPlant.size>0:
+          creature.eat(randPlant.x,randPlant.y)
+       if randPlant.size==0 and creature.movementLeft>0 and self.distance(randPlant.x,randPlant.y,creature.x,creature.y):
+          creature.move(randPlant.x,randPlant.y)
     return 1
 
   def __init__(self, conn):
