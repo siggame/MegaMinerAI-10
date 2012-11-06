@@ -4,94 +4,6 @@ from GameObject import *
 import random
 import math
 import heapq
-
-class Cell:
-  def __init__(self,x,y,reachable):
-   self.x = x
-   self.y = y
-   self.parent = None
-   self.reachable = reachable
-   self.g = 0
-   self.h = 0
-   self.f = 0
-
-class Astar:
-  def __init__(self,creatureX,creatureY,dest,lifeforms,gridHeight,gridWidth):
-    self.open = []
-    self.closed = set()
-    self.cells = []
-    heapq.heapify(self.open)
-    self.dest=dest
-    self.creatureX = creatureX
-    self.creatureY = creatureY
-    self.lifeforms = lifeforms
-    self.gridHeight = gridHeight
-    self.gridWidth= gridWidth
-    	
-  def init_grid(self):
-    walls = [(lifeform.x,lifeform.y) for lifeform in self.lifeforms]
-    for x in range(self.gridWidth):
-      for y in range(self.gridHeight):
-  	if (x,y) in walls:
-          reachable = False
-        else:
-          reachable = True
-        self.cells.append(Cell(x,y,reachable))
-    self.start = self.get_cell(self.creatureX,self.creatureY)
-    self.end = self.get_cell(self.dest[0],self.dest[1])
-	
-  def get_h(self,cell):
-    return 10*(abs(cell.x-self.end.x)+abs(cell.y-self.end.y))		
-  
-  def get_cell(self,x,y):
-    return self.cells[(x-1)*self.gridHeight+(y-1)]
-
-  def get_adjacent(self,cell):
-    cells = []
-    if cell.x < self.gridWidth-1:
-	cells.append(self.get_cell(cell.x+1,cell.y))
-    if cell.y > 0:
-    	cells.append(self.get_cell(cell.x,cell.y-1))
-    if cell.x>0:
-	cells.append(self.get_cell(cell.x-1,cell.y))
-    if cell.y<self.gridHeight-1:
-	cells.append(self.get_cell(cell.x,cell.y+1))
-    return cells
-
-  def get_path(self):
-    cell = self.end
-    path = []
-    while cell is not self.start:
-      path.append(cell)
-      cell=cell.parent
-    return path
-
-  def update_cell(self,adj,cell):
-    adj.g = cell.g+10
-    adj.h = self.get_h(adj)
-    adj.parent = cell
-    adj.f = adj.h + adj.g
-		
-  def makePath(self):
-    heapq.heappush(self.open,(self.start.f,self.start))
-    path = []
-    while len(self.open):
-      f,cell = heapq.heappop(self.open)
-      self.closed.add(cell)
-      if cell is self.end:
-	print "GO TO THE END OF THE PATH"
-	return self.get_path()
-	#break
-      adj_cells = self.get_adjacent(cell)
-      for adCell in adj_cells:
-        if adCell.reachable and adCell not in self.closed:
-	  if (adCell.f,adCell) in self.open:
-	    if adCell.g > cell.g+10:
-	      self.update_cell(adCell,cell)
-          else:
-	    self.update_cell(adCell,cell)
-	    heapq.heappush(self.open,(adCell.f,adCell))
-  #  return path	
 		
 class AI(BaseAI):
   """The class implementing gameplay logic."""
@@ -111,55 +23,99 @@ class AI(BaseAI):
   def end(self):
     pass
 
-  def moveTo(self,creature,end):
-    Apath = Astar(creature.x,creature.y,end,self.plants+self.creatures,self.mapHeight,self.mapWidth)
-    Apath.init_grid()
-    path = Apath.makePath()
-#    print "---------Creature,plant--------",[(creature.x,creature.y,creature.id),(end[0],end[1])]
-    print"-----path----",[(cell.x,cell.y,cell.parent.x,cell.parent.y) for cell in path]
-	
+  def moveTo(self,creature,target):
+     path = self.pathFind(creature.x,creature.y,target.x,target.y)
+     if path != None:
+       while creature.movementLeft>0 and len(path)>0:
+         next = path.pop()
+         if next!=(creature.x,creature.y) and creature.movementLeft>0:
+           creature.move(next[0],next[1])
+      
   def distance(self,sourceX,sourceY,destX,destY):
-    return int(math.sqrt((sourceX-destX)**2+(sourceY-destY)**2))
+    return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
     
   def maxStat(self,creature):
     return max([creature.herbivorism,creature.carnivorism,creature.speed,creature.energy,creature.defense])
-#TODO FIX    
-  def findMate(self,creature):
-      mateList = [mate for mate in self.creatures if mate.owner == creature.owner and mate.id != creature.id]
-      if len(mateList)>0:
-        mate = min(mateList,key = lambda x:self.distance(x.x,x.y,creature.x,creature.y))
-        mate = [min({self.distance(creature.x,mate.x,creature.y,mate.y):mate} for mate in mateList)]
-        print "mate is ",mate
-        
+
   def getObject(self,x,y):
-    lifeforms = self.creatures+self.plants
-    return [lifeform for lifeform in lifeforms if lifeform.x == x and lifeform.y == y]
+    return [lifeform for lifeform in self.creatures+self.plants if lifeform.x == x and lifeform.y == y]
     
-     ##This function is called each time it is your turn
+  def findNearest(self,source,list):
+    d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform.id != source.id}
+    return d[min(d)]      
+  
+  def adjacent(self,x,y,points):
+    walls = [(lifeform.x,lifeform.y) for lifeform in self.plants+self.creatures if (lifeform.x,lifeform.y) not in points or isinstance(lifeform,Plant) and lifeform.size==0]
+    adj = []
+    if x+1<self.mapWidth and (x+1,y) not in walls:
+        adj.append((x+1,y))
+    if y-1>=0 and (x,y-1) not in walls:
+        adj.append((x,y-1))
+    if x-1>=0 and (x-1,y) not in walls:
+        adj.append((x-1,y))
+    if y+1<self.mapHeight and (x,y+1) not in walls:
+        adj.append((x,y+1))
+    return adj
+  
+  def pathFind(self,startX,startY,goalX,goalY):
+    closedSet = set();closedTup=set()
+    open = [(self.distance(startX,startY,goalX,goalY),(startX,startY),(startX,startY),0)];openTup=[(startX,startY)]
+    path = []
+    while len(open)>0:
+      open.sort()
+      current = open[0]
+      if current[1] == (goalX,goalY):
+        node = current
+        path = []
+        while node[2]!=(startX,startY):
+          for closed in closedSet:
+            if self.distance(node[1][0],node[1][1],closed[1][0],closed[1][1])==1 and node[2] == closed[1]:
+              path.append(node[2])
+              node = closed
+        return path
+      closedSet.add(current);closedTup.add(current[1])
+      open.remove(current); openTup.remove(current[1])
+      for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
+        if neighbor in closedTup:
+         continue
+        g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
+        if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
+          neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
+          open.append(neighborTup);openTup.append(neighbor)
+    return None
+    
+  def avail(self,source):
+    adjacent = [[1,0],[-1,0],[0,1],[0,-1]]
+    room = False
+    for adj in adjacent:
+      if len(self.getObject(source.x+adj[0],source.y+adj[1]))==0:
+        room = True
+    return room
+    
+  ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
-    adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
-    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.herbivorism == self.maxStat(creature)]  
-    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism == self.maxStat(creature)] 
-
-    for creature in self.creatures:
-     if creature.owner == self.playerID:             
-      randx=random.randrange(-1,2); 
-      randy = abs(randx)^1*((-1)**random.randrange(1,100)%2)
-      x=0;y=0
-      if self.getObject(creature.x+randx,creature.y+randy) is None and (0<creature.x+randx<self.mapWidth) and (0<creature.y+randy<self.mapHeight):
-        creature.move(creature.x+randx,creature.y+randy)
-      for location in adjacent:
-        thingList=self.getObject(creature.x+location[0],creature.y+location[1]); thing = None
-        if len(thingList)>0:
-          thing = thingList[0]
-        if isinstance(thing,Plant) and thing.size>0 and creature.canEat:
-         creature.eat(thing.x,thing.y)
-        if isinstance(thing,Creature):
-          if thing.owner==self.playerID and thing.currentHealth > self.healthPerBreed and creature.currentHealth > self.healthPerBreed:
-            creature.breed(thing)
-          elif creature.canEat:
-            creature.eat(thing.x,thing.y)
+    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
+    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.carnivorism >=5 or creature.energy>=5)] 
+    enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
+    
+    for creature in herbivores:
+     if len(self.plants)>0:
+       plant = self.findNearest(creature,self.plants)
+       if self.avail(plant):
+         self.moveTo(creature,plant)
+       if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0:
+          creature.eat(plant.x,plant.y)
+       if plant.size==0 and creature.movementLeft>0 and self.distance(plant.x,plant.y,creature.x,creature.y)==1:
+          creature.move(plant.x,plant.y)
+    
+    for creature in carnivores:
+      if creature.movementLeft>0:
+        enemy = self.findNearest(creature,enemies)
+        if self.avail(enemy):
+          self.moveTo(creature,enemy)
+        if self.distance(creature.x,creature.y,enemy.x,enemy.y)==1 and creature.canEat:
+          creature.eat(enemy.x,enemy.y)    
     return 1
 
   def __init__(self, conn):

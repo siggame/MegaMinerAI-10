@@ -36,7 +36,7 @@ namespace visualizer
     {
       for (int y = 0; y < m_Map->GetHeight(); y++)
       {
-        const Map::Tile& tile = (*m_Map)(y,x);
+        Map::Tile& tile = (*m_Map)(y,x);
         /*float r = 0.8f;
         float g = 0.8f;
         
@@ -62,26 +62,42 @@ namespace visualizer
             tile.texture = "grass";
         }*/
 
-        game->renderer->drawTexturedQuad( x, y, 1, 1, (tile.turn > game->timeManager->getTurn()) ? tile.texture : "grass" );
+				if(tile.turn - game->timeManager->getTurn() > 3)
+				{
+					tile.turn = -1;
+				}
+
+        if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
+        {
+            game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
+        }
+        else
+        {
+          game->renderer->setColor(Color(1,1,1,1));
+          game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
+        }
+        
 
         if((tile.turn - 1) == game->timeManager->getTurn())
         {
-            game->renderer->setColor(Color(1,1,0.5f,t));
-            game->renderer->drawTexturedQuad( x, y, 1, 1, "grass" );
+            game->renderer->setColor(Color(1,1,1,t));
+            game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
         }
 
       }
     }
 
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
+    // ugly
+    string water_tiles[] = { "tile_water", "tile_lava", "tile_toxic", "tile_space" };
     // Draw the water!
     for(int x = -Galapagos::IslandOffset(); x < m_Map->GetWidth()+Galapagos::IslandOffset(); x++)
     {
       // top and bottom
       for(int y = 0; y < Galapagos::IslandOffset(); y++)
       {
-        game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
-        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+        game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
       // draw the island sides
       if( x >= 0 && x < m_Map->GetWidth() )
@@ -93,7 +109,7 @@ namespace visualizer
       // behind the HUD
       for(int y = 0; y < m_Map->GetHUDHeight(); y++)
       {
-        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight() + Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight() + Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
     }
 
@@ -102,8 +118,8 @@ namespace visualizer
       // left and right
       for(int x = 0; x < Galapagos::IslandOffset(); x++)
       {
-        game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
-        game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, "tile_water" );
+        game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
+        game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
       // draw the island sides
       if( y >= 0 && y < m_Map->GetHeight() )
@@ -186,7 +202,7 @@ namespace visualizer
 
     // todo: maybe the bigger the creature, the longer a path it leaves?
 	//(*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
-    (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile("sand",game->timeManager->getTurn() + 3);
+    (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile(game->timeManager->getTurn() + 3);
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
 
@@ -195,8 +211,7 @@ namespace visualizer
 
     // todo: maybe change this
 
-    //game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , (float(m_Creature->energy)-100.0f)/10.0f-1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , ( 10.0f * (float)m_Creature->health / ((float)m_Creature->maxHealth + 1)));
+    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , m_Creature->energy-1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
     game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
@@ -210,6 +225,19 @@ namespace visualizer
       game->renderer->drawTexturedQuad( posX, posY, 1, 0.125f, "healthbar" );
       game->renderer->setColor( PlayerColor(m_Creature->owner) );
       game->renderer->drawTexturedQuad( posX, posY, m_Creature->maxHealth != 0 ? float(m_Creature->health) / float(m_Creature->maxHealth) : 0, 0.125f, "healthbar" );
+    }
+
+    // if they has sex
+    if( !m_Creature->canBreed )
+    {
+      game->renderer->setColor( Color(1, 1, 1, 1) );
+      // heart size
+      float h = 0.25f;
+
+      game->renderer->drawTexturedQuad( posX-h/2.0f, posY-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX+1-h/2.0f, posY-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX-h/2.0f, posY+1-h/2.0f, h, h, "heart" );
+      game->renderer->drawTexturedQuad( posX+1-h/2.0f, posY+1-h/2.0f, h, h, "heart" );
     }
   }
 
@@ -265,5 +293,12 @@ namespace visualizer
     game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
     game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
 
+  }
+
+
+  void DrawNest::animate(const float& t, AnimData*, IGame* game )
+  {
+    game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
+    game->renderer->drawTexturedQuad(m_Nest->x, m_Nest->y, 1, 1, "nest");
   }
 }

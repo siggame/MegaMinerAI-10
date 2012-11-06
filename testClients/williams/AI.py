@@ -63,12 +63,12 @@ class AI(BaseAI):
           openSet.append([node, self.distance(node[0], node[1], goalX, goalY), current[0]])
       closedSet[tuple(current[0])] = current[2]
       openSet.remove(current)
-      openSet = sorted(openSet)        
+      openSet.sort(key=lambda x: float(x[1]))             
     return []
     
-  def findNearestFriendlyCreatureXY(self, creature):
+  def findNearestFriendlyBreedableCreatureXY(self, creature):
     #Doesn't work if I only have one creature left
-    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.currentHealth > 0]
+    myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID and creature.currentHealth > self.healthPerBreed + 15]
     if len(myCreatures) > 1:    
       #Creates a dictionary of the distances to each creature I control that isn't at the calling creature's position
       dict = {target.id:math.floor(self.distance(creature.x, creature.y, target.x, target.y)) for target in myCreatures if target.x != creature.x and creature.y != target.y}    
@@ -119,7 +119,7 @@ class AI(BaseAI):
         creature.eat(plant.x, plant.y)  
 
   def findClosestAllyAndBreed(self,creature):
-    nearestCreature = self.findNearestFriendlyCreatureXY(creature) 
+    nearestCreature = self.findNearestFriendlyBreedableCreatureXY(creature) 
     if nearestCreature is not None: 
       path = self.findPath(creature.x, creature.y, nearestCreature.x, nearestCreature.y)
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1 and creature.currentHealth > self.healthPerMove:
@@ -128,6 +128,8 @@ class AI(BaseAI):
       if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canBreed == True and creature.currentHealth > self.healthPerBreed:
         if(len(self.grid[nearestCreature.x][nearestCreature.y])):
           creature.breed(self.grid[nearestCreature.x][nearestCreature.y][0])
+    else:
+      self.findAndEatPlant(creature) 
                       
   def findNearestEnemyAndEat(self, creature):
     nearestCreature = self.findNearestEnemyCreatureXY(creature) 
@@ -137,25 +139,40 @@ class AI(BaseAI):
       while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) > 1:
         creature.move(path[0][0], path[0][1])         
         path.remove(path[0])
-      if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canEat == True:
-        print "Attacking enemy"
+      if self.distance(creature.x, creature.y, nearestCreature.x, nearestCreature.y) == 1 and creature.canEat:
         creature.eat(nearestCreature.x, nearestCreature.y) 
+      if creature.canEat:
+        locs = self.neighborNodes(creature.x, creature.y)
+        for loc in locs:
+          index = self.getCreatureAtLocation(loc[0],loc[1])
+          if index != -1 and self.creatures[index].owner != self.playerID and creature.canEat and self.creatures[index].currentHealth < creature.carnivorism * 5:
+            creature.eat(loc[0], loc[1])
+    else:
+      self.findAndEatPlant(creature)      
                 
-
   #If health is low, eat a plant.
   #If health is very high, breed
   def defaultActions(self,creature):   
-    if creature.currentHealth < creature.maxHealth/2:
+    if creature.currentHealth < creature.maxHealth*.65:
       self.findAndEatPlant(creature)
-    elif creature.currentHealth > creature.maxHealth/2 and creature.currentHealth > self.healthPerBreed + 15:
+    elif creature.currentHealth > creature.maxHealth*.65 and creature.currentHealth > self.healthPerBreed + 15:
       self.findClosestAllyAndBreed(creature)
+    if creature.canEat:
+      locs = self.neighborNodes(creature.x, creature.y)
+      for loc in locs:
+        index = self.getCreatureAtLocation(loc[0],loc[1])
+        if index != -1 and self.creatures[index].owner != self.playerID and creature.canEat:
+          creature.eat(loc[0], loc[1])
+        elif index != -1 and self.creatures[index].owner != self.playerID and creature.canEat and self.creatures[index].currentHealth < creature.carnivorism * 5:
+          creature.eat(loc[0], loc[1])
+    
      
   #Kill    
-  def carnivormActionSet(self,creature):
+  def carnivorismActionSet(self,creature):
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
     if creature.currentHealth > self.healthPerBreed + 25 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) > 10:
       self.findClosestAllyAndBreed(creature)
-    elif creature.currentHealth < creature.maxHealth / 3:
+    elif creature.currentHealth < creature.maxHealth*.4:
       self.findAndEatPlant(creature)
     else:
       self.findNearestEnemyAndEat(creature) 
@@ -193,6 +210,14 @@ class AI(BaseAI):
         creature.eat(plant.x, plant.y)  
         if plant.size == 0 and creature.movementLeft > 0:
           creature.move(plant.x, plant.y) 
+      if creature.canEat:
+        locs = self.neighborNodes(creature.x, creature.y)
+        for loc in locs:
+          index = self.getCreatureAtLocation(loc[0],loc[1])
+          if index != -1 and self.creatures[index].owner != self.playerID and creature.canEat:
+            creature.eat(loc[0], loc[1])
+          elif index != -1 and self.creatures[index].owner != self.playerID and creature.canEat and self.creatures[index].currentHealth < creature.carnivorism * 5:
+            creature.eat(loc[0], loc[1])
     
     self.defaultActions(creature)
         
@@ -221,14 +246,13 @@ class AI(BaseAI):
     print self.turnNumber
     myCreatures = [creature for creature in self.creatures if creature.owner == self.playerID]
     for creature in self.statCreatureList["carnivorism"]:
-      self.carnivormActionSet(creature)
+      self.carnivorismActionSet(creature)
     for creature in self.statCreatureList["herbivorism"]:
       self.herbivorismActionSet(creature)
     for creature in self.statCreatureList["energy"]:
       self.energyActionSet(creature)
     for creature in self.statCreatureList["defense"]:
-      #self.defenseActionSet(creature)
-      self.speedActionSet(creature)
+      self.defenseActionSet(creature)
     for creature in self.statCreatureList["speed"]:
       self.speedActionSet(creature)
     return 1

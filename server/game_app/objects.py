@@ -140,8 +140,6 @@ class Creature(Mappable):
       damage = damage * self.game.damageMul
       #Damage the target creature
       if not self.decrementEnergy(damage, creature):
-        #if creature.currentHealth <= 0:
-#        print "I'VE KILLED IT",self.id,creature.id,creature.currentHealth
         self.currentHealth += self.carnivorism * 5    
         if self.currentHealth > self.maxHealth:
           self.currentHealth = self.maxHealth    
@@ -166,7 +164,7 @@ class Creature(Mappable):
     elif mate.owner != self.owner:
       return "No fraternizing with the enemy, creature %i cannot breed with enemy creature %i"%(self.id,mate.id)
     #You can't breed if either partner has already bred.
-    elif self.canBreed != True or mate.canBreed !=True:
+    elif not self.canBreed or not mate.canBreed:
       return "You already bred creature %i or mate %i this turn! You can't do it again."%(self.id,mate.id)
     # by default set all stats to average of parents
     elif len(self.game.grid[self.x][self.y])>2:
@@ -190,10 +188,11 @@ class Creature(Mappable):
     mate.canBreed = False
     self.canEat = False
     mate.canEat = False
+    self.movementLeft = 0
+    mate.movementLeft = 0
     self.decrementEnergy(self.game.healthPerBreed, self)
-    self.decrementEnergy(self.game.healthPerBreed, mate) 
-    print self.currentHealth, mate.currentHealth
-          
+    self.decrementEnergy(self.game.healthPerBreed, mate)   
+    self.game.addAnimation(BreedAnimation(self.id, mate.id, 0))    
     return True
    
    
@@ -265,7 +264,6 @@ class Player:
       for eggStats,mateID in self.breeding:
         newBaby = self.game.addObject(Creature,eggStats)
         self.game.grid[newBaby.x][newBaby.y].append(newBaby)
-        self.game.addAnimation(BreedAnimation(self.id, mateID, newBaby.id))
       self.breeding = []
 
   def talk(self, message):
