@@ -35,13 +35,14 @@ class AI(BaseAI):
     return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
     
   def maxStat(self,creature):
-    return max([creature.herbivorism,creature.carnivorism,creature.speed,creature.energy,creature.defense])
+    dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}
+    return dict[max(dict)]
 
   def getObject(self,x,y):
     return [lifeform for lifeform in self.creatures+self.plants if lifeform.x == x and lifeform.y == y]
     
-  def findNearest(self,source,list):
-    d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform.id != source.id}
+  def findNearest(self,source,list,ignore):
+    d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform not in ignore}
     return d[min(d)]      
   
   def adjacent(self,x,y,points):
@@ -92,18 +93,27 @@ class AI(BaseAI):
         room = True
     return room
     
+  def pickPlant(self,creature):
+       ignore = [creature]; loop = True;numP =0
+       while numP<len(self.plants):
+         numP+=1
+         plant = self.findNearest(creature,self.plants,ignore)
+         if self.avail(plant):
+           return plant
+         else:
+          ignore.append(plant)
+        
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
-    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.carnivorism >=5 or creature.energy>=5)] 
+    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.carnivorism >=5 or creature.energy>=5) and creature not in herbivores] 
     enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
     
     for creature in herbivores:
      if len(self.plants)>0:
-       plant = self.findNearest(creature,self.plants)
-       if self.avail(plant):
-         self.moveTo(creature,plant)
+       plant = self.pickPlant(creature)
+       self.moveTo(creature,plant)
        if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0:
           creature.eat(plant.x,plant.y)
        if plant.size==0 and creature.movementLeft>0 and self.distance(plant.x,plant.y,creature.x,creature.y)==1:
@@ -111,7 +121,7 @@ class AI(BaseAI):
     
     for creature in carnivores:
       if creature.movementLeft>0:
-        enemy = self.findNearest(creature,enemies)
+        enemy = self.findNearest(creature,enemies,[creature])
         if self.avail(enemy):
           self.moveTo(creature,enemy)
         if self.distance(creature.x,creature.y,enemy.x,enemy.y)==1 and creature.canEat:
