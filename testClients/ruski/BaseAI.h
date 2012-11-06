@@ -38,11 +38,19 @@ public:
   ///The height of the map
   int mapHeight();
   ///The amount of energy required from each creature in order to breed.
-  int energyPerBreed();
-  ///The amount of energy required to try to eat or to move.
-  int energyPerAction();
+  int healthPerBreed();
+  ///The amount of energy required to try to move.
+  int healthPerMove();
   ///The amount of energy lost from the passage of time.
   int energyPerTurn();
+  ////Comment
+  int getPlantAtLocation(int x,int y);
+  ///Comment
+  int getCreatureAtLocation(int x,int y);  
+  /// the health a creature loses each turn
+  int healthPerTurn();
+  ///The base amount of health that each creature starts with
+  int baseHealth();
   
   BaseAI(Connection* c);
   virtual ~BaseAI();
