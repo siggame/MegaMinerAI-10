@@ -63,7 +63,7 @@ class AI(BaseAI):
           openSet.append([node, self.distance(node[0], node[1], goalX, goalY), current[0]])
       closedSet[tuple(current[0])] = current[2]
       openSet.remove(current)
-      openSet = sorted(openSet)        
+      openSet.sort(key=lambda x: float(x[1]))             
     return []
     
   def findNearestFriendlyBreedableCreatureXY(self, creature):
@@ -152,6 +152,12 @@ class AI(BaseAI):
       self.findAndEatPlant(creature)
     elif creature.currentHealth > creature.maxHealth/2 and creature.currentHealth > self.healthPerBreed + 15:
       self.findClosestAllyAndBreed(creature)
+    if creature.canEat:
+      locs = self.neighborNodes(creature.x, creature.y)
+      for loc in locs:
+        index = self.getCreatureAtLocation(loc[0],loc[1])
+        if index != -1 and self.creatures[index].owner != self.playerID and creature.canEat:
+          creature.eat(loc[0], loc[1])
     
      
   #Kill    
