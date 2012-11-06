@@ -28,7 +28,7 @@ class AI(BaseAI):
      if path != None:
        while creature.movementLeft>0 and len(path)>0:
          next = path.pop()
-         if next!=(creature.x,creature.y):
+         if next!=(creature.x,creature.y) and creature.movementLeft>0:
            creature.move(next[0],next[1])
       
   def distance(self,sourceX,sourceY,destX,destY):
@@ -42,8 +42,7 @@ class AI(BaseAI):
     
   def findNearest(self,source,list):
     d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform.id != source.id}
-    return d[min(d)]    
-  
+    return d[min(d)]      
   
   def adjacent(self,x,y,points):
     walls = [(lifeform.x,lifeform.y) for lifeform in self.plants+self.creatures if (lifeform.x,lifeform.y) not in points or isinstance(lifeform,Plant) and lifeform.size==0]
@@ -78,35 +77,45 @@ class AI(BaseAI):
       open.remove(current); openTup.remove(current[1])
       for neighbor in self.adjacent(current[1][0],current[1][1],[(startX,startY),(goalX,goalY)]):
         if neighbor in closedTup:
-        #if neighbor in [b[1] for b in closedSet]:
          continue
         g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
         if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
-#        if self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in [b[1] for b in open]:
           neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
           open.append(neighborTup);openTup.append(neighbor)
     return None
     
+  def avail(self,source):
+    adjacent = [[1,0],[-1,0],[0,1],[0,-1]]
+    room = False
+    for adj in adjacent:
+      if len(self.getObject(source.x+adj[0],source.y+adj[1]))==0:
+        room = True
+    return room
+    
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):   
-    adjacent = [[1,0],[-1,0],[0,1],[0,-1]]    
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
-    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and creature.carnivorism >=3] 
+    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.carnivorism >=5 or creature.energy>=5)] 
+    enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
     
     for creature in herbivores:
-     #randPlant = self.plants[random.randrange(-1,len(self.plants))];room = False
      if len(self.plants)>0:
-       randPlant = self.findNearest(creature,self.plants)
-       for adj in adjacent:
-         if len(self.getObject(randPlant.x+adj[0],randPlant.y+adj[1]))==0:
-          room = True
-       if room:
-         self.moveTo(creature,randPlant)
-       if self.distance(randPlant.x,randPlant.y,creature.x,creature.y)==1 and randPlant.size>0:
-          creature.eat(randPlant.x,randPlant.y)
-       if randPlant.size==0 and creature.movementLeft>0 and self.distance(randPlant.x,randPlant.y,creature.x,creature.y):
-          creature.move(randPlant.x,randPlant.y)
+       plant = self.findNearest(creature,self.plants)
+       if self.avail(plant):
+         self.moveTo(creature,plant)
+       if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0:
+          creature.eat(plant.x,plant.y)
+       if plant.size==0 and creature.movementLeft>0 and self.distance(plant.x,plant.y,creature.x,creature.y)==1:
+          creature.move(plant.x,plant.y)
+    
+    for creature in carnivores:
+      if creature.movementLeft>0:
+        enemy = self.findNearest(creature,enemies)
+        if self.avail(enemy):
+          self.moveTo(creature,enemy)
+        if self.distance(creature.x,creature.y,enemy.x,enemy.y)==1 and creature.canEat:
+          creature.eat(enemy.x,enemy.y)    
     return 1
 
   def __init__(self, conn):

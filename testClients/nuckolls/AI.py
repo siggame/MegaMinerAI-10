@@ -28,11 +28,14 @@ class AI(BaseAI):
   def run(self):
     world = generate_map(self)
     blue = [x for x in self.creatures if x.owner == self.playerID]
+    blue.sort(key=lambda x: x.herbivorism, reverse=True)
     
     for c in blue:
       c.done = False
       c.chosen = False
     blue[0].chosen = True
+    if len(blue) > 1:
+      blue[1].chosen = True
     
     for c in blue:
       clear_nearby(c, world)
@@ -56,11 +59,23 @@ def clear_nearby(c, world):
       smart_eat(c, n, world)
       c.done = True
       break
-  
+  if c.chosen:
+    for n in neighbors:
+      if n['creature'] is not None:
+        if not n['edible']:
+          if n['creature'].chosen:
+            if c.canBreed:
+              c.breed(n['creature'])
+              break
+
 
 def pick_move(c, world):
   if c.chosen:
-    result = nearest_plant(c, world)
+    result = None
+    if c.currentHealth > c.maxHealth * 0.75:
+      result = nearest_mate(c, world)
+    if result is None:
+      result = nearest_plant(c, world)
     if result is None:
       result = nearest_prey(c, world)
   else:
@@ -90,8 +105,16 @@ def nearest_plant(c, world):
 
 def nearest_prey(c, world):
   return nearest(c, world,
-                 lambda x: x['plant'] is None,
+                 lambda x: x['pathable'],
                  lambda x: x['creature'] is not None and x['edible'])
+
+def nearest_mate(c, world):
+  return nearest(c, world,
+                 lambda x: not x['edible'],
+                 lambda x: (x['creature'] is not None and 
+                            not x['edible'] and
+                            x['creature'].chosen))
+                 
 
 
 def get_neighbors(thing, world):
