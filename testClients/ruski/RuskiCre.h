@@ -5,11 +5,16 @@
 #include "Creature.h"
 #include <string>
 
+struct Point2D
+{
+  int x;
+  int y;
+};
+
 class RuskiCre
 {
 public:
-  int targetX;
-  int targetY;
+  Point2D tgt;
 
   std::string type; //herbivore, omnivore, carnivore
 

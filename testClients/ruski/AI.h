@@ -4,12 +4,12 @@
 
 #include "BaseAI.h"
 #include "RuskiCre.h"
+#include <cmath>
+#include <iostream>
 
-struct Point2D
-{
-  int x;
-  int y;
-};
+using namespace std;
+
+
 
 ///The class implementing gameplay logic.
 class AI: public BaseAI
