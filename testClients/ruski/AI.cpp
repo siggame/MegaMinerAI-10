@@ -21,6 +21,21 @@ void AI::init(){}
 //Return true to end your turn, return false to ask the server for updated information.
 bool AI::run()
 {
+  cout << turnNumber() << ": START TURN"
+  update();
+  for(int i = 0; i < myCreatures.size(); i++)
+  {
+    //HERBIVORE
+    if( myCreatures[i].type.compare("herbivore") == 0 )
+      herbact(i);
+    //CARNIVORE
+    else if( myCreatures[i].type.compare("carnivore") == 0 )
+      carnact(i);
+    //OMNIVORE
+    else
+      omniact(i);
+  }
+  cout << turnNumber() << ": END TURN"
   return true;
 }
 
@@ -30,21 +45,17 @@ void AI::end(){}
 //RUSKI FUNCTIONS
 void AI::update()
 {
-  enemyCreatures.clear();
+  cout << "CLEARING CREATURE ARRAYS" << endl;
+  myCreatures.erase(myCreatures.begin(), myCreatures.end());
+  enemyCreatures.erase(enemyCreatures.begin(), enemyCreatures.end());
 
+  cout << "BUILDING CREATURE ARRAYS" << endl;
   for(int i = 0; i < creatures.size(); i++)
   {
     //MY CREATURES
     if( creatures[i].owner() == playerID() )
     {
-      bool newCre = true;
-      for(int ii = 0; ii < myCreatures.size(); ii++)
-      {
-        if( creatures[i].id() == myCreatures[i].cre->id() )
-          newCre = false;
-      }
-      if(newCre == false )
-        myCreatures.push_back( RuskiCre(&creatures[i]) );
+      myCreatures.push_back( RuskiCre(&creatures[i]) );
     }
     //ENEMY CREATURES
     else
@@ -52,24 +63,11 @@ void AI::update()
       enemyCreatures.push_back( &creatures[i] );
     }
   }
-
-  //REMOVE DEAD CREATURES
-  for(int i = 0; i < myCreatures.size(); i++)
-  {
-    bool deadCre = true;
-    for(int ii = 0; ii < creatures.size(); ii++)
-    {
-      if( myCreatures[i].cre->id() == creatures[ii].id() )
-        deadCre = false;
-    }
-    if( deadCre == true )
-      myCreatures.erase(myCreatures.begin()+i);
-  }
-  return;
 }
 
 void AI::detType()
 {
+  cout << "DETERMINING TYPE" << endl;
   for(int i = 0; i < myCreatures.size(); i++)
   {
     //DETERMINE IF HERBIVORE OR CARNIVORE OR OMNIVORE
@@ -81,4 +79,66 @@ void AI::detType()
       myCreatures[i].type = "omnivore";
   }
   return;
+}
+
+void AI::herbact(int i)
+{
+  for(int j = 0; j < myCreatures[i].movementLeft(); j++)
+  {
+
+  }
+  return;
+}
+void AI::carnact(int i)
+{
+  return;
+}
+void AI::omniact(int i)
+{
+  return;
+}
+
+float AI::dist(int x1, int y1, int x2, int y2)
+{
+  return sqrt( pow((x1-x2),2)+pow((y1-y2),2) );
+}
+
+Point2D AI::closestPlant(int x, int y);
+{
+  Point2D pt;
+  double closest = 10000;
+  double current = 0;
+
+  for(int i = 0; i < plants.size(); i++)
+  {
+    //If the distance between xy and the current closest is larger than the next plant
+    current = dist(x,y,plants[i].x(),plants[i].y());
+    if( current < closest )
+    {
+      closest = current;
+      pt.x = plants[i].x();
+      pt.y = plants[i].y();
+    }
+  }
+  return pt;
+}
+
+Point2D AI::closestEnemy(int x, int y);
+{
+  Point2D pt;
+  double closest = 10000;
+  double current = 0;
+
+  for(int i = 0; i < enemyCreatures.size(); i++)
+  {
+    //If the distance between xy and the current closest is larger than the next plant
+    current = dist(x,y,enemyCreatures[i].x(),enemyCreatures[i].y());
+    if( current < closest )
+    {
+      closest = current;
+      pt.x = enemyCreatures[i].x();
+      pt.y = enemyCreatures[i].y();
+    }
+  }
+  return pt;
 }
