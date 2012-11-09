@@ -1,16 +1,15 @@
+//Russley Shaw 11/4/2012
 #ifndef AI_H
 #define AI_H
 
 #include "BaseAI.h"
-#include "Creature.h"
-#include <vector>
+#include "RuskiCre.h"
 #include <cmath>
+#include <iostream>
 
-struct Point2D
-{
-  int x;
-  int y;
-};
+using namespace std;
+
+
 
 ///The class implementing gameplay logic.
 class AI: public BaseAI
@@ -22,15 +21,19 @@ public:
   virtual void init();
   virtual bool run();
   virtual void end();
-  
-  Point2D findValid(Point2D loc, Point2D death);
-  
-  float distCC(Creature& c1, Creature& c2);
-  float distCP(Creature& c1, Plant& p1);
-  float distPP(Point2D& p1, Point2D& p2);
-  
-  
-  std::vector<Creature *> myCreatures;
+
+  void update();
+  void detType();
+  void herbact(int i);
+  void carnact(int i);
+  void omniact(int i);
+
+  float dist(int x1, int y1, int x2, int y2);
+
+  Point2D closestPlant(int x, int y);
+  Point2D closestEnemy(int x, int y);
+
+  std::vector<RuskiCre> myCreatures;
   std::vector<Creature *> enemyCreatures;
 
 };

@@ -14,6 +14,8 @@ class Creature : public Mappable {
   public:
   Creature(_Creature* ptr = NULL);
 
+	virtual Mappable::MappableType GetType() const { return Mappable::Creature; } 
+
   // Accessors
   ///Unique Identifier
   int id();

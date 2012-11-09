@@ -140,7 +140,7 @@ class Creature(Mappable):
       damage = damage * self.game.damageMul
       #Damage the target creature
       if not self.decrementEnergy(damage, creature):
-        self.currentHealth += self.carnivorism * 5    
+        self.currentHealth += self.carnivorism * 10    
         if self.currentHealth > self.maxHealth:
           self.currentHealth = self.maxHealth    
       self.game.addAnimation(EatAnimation(self.id, creature.id))
@@ -206,7 +206,7 @@ class Creature(Mappable):
 
 #    print "Sum of the father's stats:", sum(fatherStats.values())
 #    print "Sum of the mothers's stats:", sum(motherStats.values())
-#    print "Sum of the baby's stats:", sum(babyStats.values())
+    print "Sum of the baby's stats:", sum(babyStats.values())
     #Remove fringe cases from possibilities
     for ii in babyStats:
       if babyStats[ii]==self.game.minStat:
@@ -216,7 +216,7 @@ class Creature(Mappable):
     #Increment father's highest stat and lower the mother's lowest    
     babyStats[max(fatherStats,key=fatherStats.get)]+=1
     babyStats[min(motherStats,key=motherStats.get)]-=1
-    babyList = [self.game.baseHealth + int(babyStats['energy']*10),self.game.baseHealth + int(babyStats['energy']*10),int(babyStats['energy']),babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
+    babyList = [self.game.baseHealth + int(babyStats['energy']*10),self.game.baseHealth,int(babyStats['energy']),babyStats['carnivorism'],babyStats['herbivorism'],babyStats['speed'],0,babyStats['defense']]
     return babyList
 
 class Plant(Mappable):

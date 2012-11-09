@@ -1,3 +1,4 @@
+//Russley Shaw 11/4/2012
 #include "AI.h"
 #include "util.h"
 
@@ -5,7 +6,7 @@ AI::AI(Connection* conn) : BaseAI(conn) {}
 
 const char* AI::username()
 {
-  return "Shell AI";
+  return "Ruski";
 }
 
 const char* AI::password()
@@ -16,102 +17,250 @@ const char* AI::password()
 //This function is run once, before your first turn.
 void AI::init(){}
 
-//DISTANCE FORMULAS
-float AI::distCC(Creature& c1, Creature& c2)
-{
-  return sqrt( pow(c1.x()-c2.x(),2)+pow(c1.y()-c2.y() ,2) );
-}
-float AI::distCP(Creature& c1,Plant& p1)
-{
-  return sqrt( pow(c1.x()-p1.x(),2)+pow(c1.y()-p1.y(),2) );
-}
-float AI::distPP(Point2D& p1, Point2D& p2)
-{
-  return sqrt( pow(p1.x-p2.x,2)+pow(p1.y-p2.y,2) );
-}
-
-Point2D AI::findValid(Point2D loc, Point2D death)
-{
- Point2D far = loc;
- Point2D pt[4];
- pt[0].x = loc.x-1;    pt[0].y = loc.y; //LEFT
- pt[1].x = loc.x+1;    pt[1].y = loc.y; //RIGHT
- pt[2].x = loc.x;    pt[2].y = loc.y+1; //UP
- pt[3].x = loc.x;    pt[3].y = loc.y-1; //DOWN
-
- bool isValid;
-
- //CHECK
- for(int i = 0; i < 4; i++)
- {
-  isValid = true;
-  for(int ii = 0; ii < mappables.size(); ii++)
-  {
-   if(mappables[ii].x() == pt[i].x && mappables[ii].y() == pt[i].y)
-   {
-    isValid = false;
-    break;
-   }
-  }
-  //CHECK IF OFF SCREEN
-  if( pt[i].x < 0 || pt[i].x > mapWidth() || pt[i].y < 0 || pt[i].y > mapHeight() )
-  {
-   isValid = false;
-  }
-  //THE POINT IS VALID
-  if(isValid == true)
-  { 
-   //SWAP IF CURRENT IS FARTHER THAN FARTHEST
-   if( distPP(far, death) < distPP(pt[i], death) )
-    far = pt[i];
-  }
- }
- return far;
-}
-
 //This function is called each time it is your turn.
 //Return true to end your turn, return false to ask the server for updated information.
 bool AI::run()
 {
-  //Gather creatures
-  for(int i = 0; i < creatures.size(); i++)
-  {
-    if( creatures[i].owner() == playerID() )
-      myCreatures.push_back( &creatures[i] );
-    else
-      enemyCreatures.push_back( &creatures[i] );
-  }
-  
+  cout << turnNumber() << ": START TURN" << endl;
+  update();
   for(int i = 0; i < myCreatures.size(); i++)
   {
-    //MOVE IF ENEMY IS NEARBY
-    int enemyThresh = 2;
-    for(int ii = 0; ii < enemyCreatures.size(); ii++)
-    {
-      //NEARBY ENEMY FOUND
-      if( distCC(*myCreatures[i], *enemyCreatures[ii]) < enemyThresh )
-      {
-        Point2D loc;
-        loc.x = myCreatures[i]->x();
-        loc.y = myCreatures[i]->y();
-        Point2D death;
-        death.x = enemyCreatures[ii]->x();
-        death.y = enemyCreatures[ii]->y();
-        
-        Point2D moveTo = findValid(loc, death);
-        myCreatures[i]->move(moveTo.x, moveTo.y);
-      }
-    }
-    
-    //Move toward food.
-    
-    //Mate if close and near food.
+    //HERBIVORE
+    if( myCreatures[i].type.compare("herbivore") == 0 )
+      herbact(i);
+    //CARNIVORE
+    else if( myCreatures[i].type.compare("carnivore") == 0 )
+      carnact(i);
+    //OMNIVORE
+    else
+      omniact(i);
   }
-  
-  
-
+  cout << turnNumber() << ": END TURN" << endl;
   return true;
 }
 
 //This function is run once, after your last turn.
 void AI::end(){}
+
+//RUSKI FUNCTIONS
+void AI::update()
+{
+  cout << "CLEARING CREATURE ARRAYS" << endl;
+  myCreatures.erase(myCreatures.begin(), myCreatures.end());
+  enemyCreatures.erase(enemyCreatures.begin(), enemyCreatures.end());
+
+  cout << "BUILDING CREATURE ARRAYS" << endl;
+  for(int i = 0; i < creatures.size(); i++)
+  {
+    //MY CREATURES
+    if( creatures[i].owner() == playerID() )
+    {
+      myCreatures.push_back( RuskiCre(&creatures[i]) );
+    }
+    //ENEMY CREATURES
+    else
+    {
+      enemyCreatures.push_back( &creatures[i] );
+    }
+  }
+}
+
+void AI::detType()
+{
+  cout << "DETERMINING TYPE" << endl;
+  for(int i = 0; i < myCreatures.size(); i++)
+  {
+    //DETERMINE IF HERBIVORE OR CARNIVORE OR OMNIVORE
+    if( myCreatures[i].cre->herbivorism() > myCreatures[i].cre->carnivorism() + 1 )
+      myCreatures[i].type = "herbivore";
+    else if( myCreatures[i].cre->herbivorism() + 1 < myCreatures[i].cre->carnivorism() )
+      myCreatures[i].type = "carnivore";
+    else
+      myCreatures[i].type = "omnivore";
+  }
+  return;
+}
+
+void AI::herbact(int i)
+{
+  //Determine target
+  Point2D next;
+  Point2D cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->x() );
+  myCreatures[i].tgt = cp;
+
+  int attempts = 0;
+  while(myCreatures[i].cre->movementLeft() > 0 && attempts < 10)
+  {
+    //Recalculate closest
+    cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
+    myCreatures[i].tgt = cp;
+
+    //UP/DOWN
+    if(myCreatures[i].cre->x() == cp.x)
+    {
+      //UP
+      if(myCreatures[i].cre->y() < cp.y)
+      {
+        next.x = myCreatures[i].cre->x();
+        next.y = myCreatures[i].cre->y() + 1;
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+      //DOWN
+      else
+      {
+        next.x = myCreatures[i].cre->x();
+        next.y = myCreatures[i].cre->y() - 1;
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+    }
+    //LEFT/RIGHT
+    else
+    {
+      //RIGHT
+      if(myCreatures[i].cre->x() < cp.x)
+      {
+        next.x = myCreatures[i].cre->x() + 1;
+        next.y = myCreatures[i].cre->y();
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+      //LEFT
+      else
+      {
+        next.x = myCreatures[i].cre->x() - 1;
+        next.y = myCreatures[i].cre->y();
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+    }
+  }
+  //If near target, eat
+  cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
+  if( dist(myCreatures[i].cre->x(), myCreatures[i].cre->y(), cp.x, cp.y) )
+  {
+    cout << "ATTEMPTING TO EAT PLANT";
+    myCreatures[i].cre->eat(cp.x, cp.y);
+  }
+  return;
+}
+void AI::carnact(int i)
+{
+  //Determine target
+  Point2D next;
+  Point2D cp = closestEnemy( myCreatures[i].cre->x(), myCreatures[i].cre->x() );
+  myCreatures[i].tgt = cp;
+
+  int attempts = 0;
+  while(myCreatures[i].cre->movementLeft() > 0 && attempts < 10)
+  {
+    //Recalculate closest
+    cp = closestEnemy( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
+    myCreatures[i].tgt = cp;
+
+    //UP/DOWN
+    if(myCreatures[i].cre->x() == cp.x)
+    {
+      //UP
+      if(myCreatures[i].cre->y() < cp.y)
+      {
+        next.x = myCreatures[i].cre->x();
+        next.y = myCreatures[i].cre->y() + 1;
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+      //DOWN
+      else
+      {
+        next.x = myCreatures[i].cre->x();
+        next.y = myCreatures[i].cre->y() - 1;
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+    }
+    //LEFT/RIGHT
+    else
+    {
+      //RIGHT
+      if(myCreatures[i].cre->x() < cp.x)
+      {
+        next.x = myCreatures[i].cre->x() + 1;
+        next.y = myCreatures[i].cre->y();
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+      //LEFT
+      else
+      {
+        next.x = myCreatures[i].cre->x() - 1;
+        next.y = myCreatures[i].cre->y();
+        if(! myCreatures[i].cre->move(next.x, next.y) )
+          attempts++;
+      }
+    }
+  }
+  //If near target, eat
+  cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
+  if( dist(myCreatures[i].cre->x(), myCreatures[i].cre->y(), cp.x, cp.y) )
+  {
+    cout << "ATTEMPTING TO EAT PLANT";
+    myCreatures[i].cre->eat(cp.x, cp.y);
+  }
+  return;
+}
+void AI::omniact(int i)
+{
+  carnact(i);
+  return;
+}
+
+float AI::dist(int x1, int y1, int x2, int y2)
+{
+  return sqrt( pow((x1-x2),2)+pow((y1-y2),2) );
+}
+
+Point2D AI::closestPlant(int x, int y)
+{
+  Point2D pt;
+  double closest = 10000;
+  double current = 0;
+
+  for(int i = 0; i < plants.size(); i++)
+  {
+    //TODO: Check if the plant has already been targetted
+    if(plants[i].size() < 1)
+      continue;
+    //If the distance between xy and the current closest is larger than the next plant
+    current = dist(x,y,plants[i].x(),plants[i].y());
+    if( current < closest )
+    {
+      closest = current;
+      pt.x = plants[i].x();
+      pt.y = plants[i].y();
+    }
+  }
+  return pt;
+}
+
+Point2D AI::closestEnemy(int x, int y)
+{
+  Point2D pt;
+  double closest = 10000;
+  double current = 0;
+
+  for(int i = 0; i < enemyCreatures.size(); i++)
+  {
+    //TODO: Check if the plant has already been targetted
+
+    //If the distance between xy and the current closest is larger than the next plant
+    current = dist(x,y,enemyCreatures[i]->x(),enemyCreatures[i]->y());
+    if( current < closest )
+    {
+      closest = current;
+      pt.x = enemyCreatures[i]->x();
+      pt.y = enemyCreatures[i]->y();
+    }
+  }
+  return pt;
+}
