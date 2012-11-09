@@ -15,7 +15,10 @@ const char* AI::password()
 }
 
 //This function is run once, before your first turn.
-void AI::init(){}
+void AI::init()
+{
+  srand(time(NULL));
+}
 
 //This function is called each time it is your turn.
 //Return true to end your turn, return false to ask the server for updated information.
@@ -71,9 +74,9 @@ void AI::detType()
   for(int i = 0; i < myCreatures.size(); i++)
   {
     //DETERMINE IF HERBIVORE OR CARNIVORE OR OMNIVORE
-    if( myCreatures[i].cre->herbivorism() > myCreatures[i].cre->carnivorism() + 1 )
+    if( myCreatures[i].cre->herbivorism() > myCreatures[i].cre->carnivorism() + 2 )
       myCreatures[i].type = "herbivore";
-    else if( myCreatures[i].cre->herbivorism() + 1 < myCreatures[i].cre->carnivorism() )
+    else if( myCreatures[i].cre->herbivorism() + 2 < myCreatures[i].cre->carnivorism() )
       myCreatures[i].type = "carnivore";
     else
       myCreatures[i].type = "omnivore";
@@ -85,133 +88,97 @@ void AI::herbact(int i)
 {
   //Determine target
   Point2D next;
-  Point2D cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->x() );
-  myCreatures[i].tgt = cp;
+
+  //CURRENT LOCATION
+  Point2D cur;
+  cur.x = myCreatures[i].cre->x();
+  cur.y = myCreatures[i].cre->y();
+
+  //CLOSEST PLANT
+  Point2D cp;
+  float cpDist;
 
   int attempts = 0;
-  while(myCreatures[i].cre->movementLeft() > 0 && attempts < 10)
+  while(myCreatures[i].cre->movementLeft() > 0 && attempts < 100)
   {
-    //Recalculate closest
-    cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
-    myCreatures[i].tgt = cp;
+    cp = closestPlant( cur.x, cur.y );
+    cpDist = dist( cur.x, cur.y, cp.x, cp.y);
 
-    //UP/DOWN
-    if(myCreatures[i].cre->x() == cp.x)
+    //Attempt to eat
+    if(cpDist == 1)
     {
-      //UP
-      if(myCreatures[i].cre->y() < cp.y)
+      myCreatures[i].cre->eat(cp.x, cp.y);
+    }
+
+    //----MOVE LEFT AND RIGHT----
+    if(cur.x != cp.x)
+    {
+      //MOVE RIGHT IF CURRENT LOCATION IS LESS THAN THE TARGET LOCATION
+      if( cur.x < cp.x )
       {
-        next.x = myCreatures[i].cre->x();
-        next.y = myCreatures[i].cre->y() + 1;
-        if(! myCreatures[i].cre->move(next.x, next.y) )
+        //MOVE RANDOMLY UP OR DOWN IF CANNOT MOVE
+        if(! myCreatures[i].cre->move(cur.x + 1, cur.y) )
+        {
+          if(rand()%2 == 0)
+            myCreatures[i].cre->move(cur.x, cur.y + 1);
+          else
+            myCreatures[i].cre->move(cur.x, cur.y - 1);
           attempts++;
+        }
       }
-      //DOWN
-      else
+      else if( cur.x > cp.x )
       {
-        next.x = myCreatures[i].cre->x();
-        next.y = myCreatures[i].cre->y() - 1;
-        if(! myCreatures[i].cre->move(next.x, next.y) )
+        //MOVE RANDOMLY UP OR DOWN IF CANNOT MOVE
+        if(! myCreatures[i].cre->move(cur.x - 1, cur.y) )
+        {
+          if(rand()%2 == 0)
+            myCreatures[i].cre->move(cur.x, cur.y + 1);
+          else
+            myCreatures[i].cre->move(cur.x, cur.y - 1);
           attempts++;
+        }
       }
     }
-    //LEFT/RIGHT
+    //----MOVE UP AND DOWN----
     else
     {
-      //RIGHT
-      if(myCreatures[i].cre->x() < cp.x)
+      //MOVE UP IF CURRENT LOCATION IS LESS THAN THE TARGET LOCATION
+      if( cur.y < cp.y )
       {
-        next.x = myCreatures[i].cre->x() + 1;
-        next.y = myCreatures[i].cre->y();
-        if(! myCreatures[i].cre->move(next.x, next.y) )
+        //MOVE RANDOMLY UP OR DOWN IF CANNOT MOVE
+        if(! myCreatures[i].cre->move(cur.x, cur.y - 1) )
+        {
+          if(rand()%2 == 0)
+            myCreatures[i].cre->move(cur.x + 1, cur.y);
+          else
+            myCreatures[i].cre->move(cur.x - 1, cur.y);
           attempts++;
+        }
       }
-      //LEFT
-      else
+      else if( cur.x > cp.x )
       {
-        next.x = myCreatures[i].cre->x() - 1;
-        next.y = myCreatures[i].cre->y();
-        if(! myCreatures[i].cre->move(next.x, next.y) )
+        //MOVE RANDOMLY UP OR DOWN IF CANNOT MOVE
+        if(! myCreatures[i].cre->move(cur.x, cur.y + 1) )
+        {
+          if(rand()%2 == 0)
+            myCreatures[i].cre->move(cur.x + 1, cur.y);
+          else
+            myCreatures[i].cre->move(cur.x - 1, cur.y);
           attempts++;
+        }
       }
     }
   }
-  //If near target, eat
-  cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
-  if( dist(myCreatures[i].cre->x(), myCreatures[i].cre->y(), cp.x, cp.y) )
-  {
-    cout << "ATTEMPTING TO EAT PLANT";
-    myCreatures[i].cre->eat(cp.x, cp.y);
-  }
-  return;
+
 }
 void AI::carnact(int i)
 {
-  //Determine target
-  Point2D next;
-  Point2D cp = closestEnemy( myCreatures[i].cre->x(), myCreatures[i].cre->x() );
-  myCreatures[i].tgt = cp;
-
-  int attempts = 0;
-  while(myCreatures[i].cre->movementLeft() > 0 && attempts < 10)
-  {
-    //Recalculate closest
-    cp = closestEnemy( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
-    myCreatures[i].tgt = cp;
-
-    //UP/DOWN
-    if(myCreatures[i].cre->x() == cp.x)
-    {
-      //UP
-      if(myCreatures[i].cre->y() < cp.y)
-      {
-        next.x = myCreatures[i].cre->x();
-        next.y = myCreatures[i].cre->y() + 1;
-        if(! myCreatures[i].cre->move(next.x, next.y) )
-          attempts++;
-      }
-      //DOWN
-      else
-      {
-        next.x = myCreatures[i].cre->x();
-        next.y = myCreatures[i].cre->y() - 1;
-        if(! myCreatures[i].cre->move(next.x, next.y) )
-          attempts++;
-      }
-    }
-    //LEFT/RIGHT
-    else
-    {
-      //RIGHT
-      if(myCreatures[i].cre->x() < cp.x)
-      {
-        next.x = myCreatures[i].cre->x() + 1;
-        next.y = myCreatures[i].cre->y();
-        if(! myCreatures[i].cre->move(next.x, next.y) )
-          attempts++;
-      }
-      //LEFT
-      else
-      {
-        next.x = myCreatures[i].cre->x() - 1;
-        next.y = myCreatures[i].cre->y();
-        if(! myCreatures[i].cre->move(next.x, next.y) )
-          attempts++;
-      }
-    }
-  }
-  //If near target, eat
-  cp = closestPlant( myCreatures[i].cre->x(), myCreatures[i].cre->y() );
-  if( dist(myCreatures[i].cre->x(), myCreatures[i].cre->y(), cp.x, cp.y) )
-  {
-    cout << "ATTEMPTING TO EAT PLANT";
-    myCreatures[i].cre->eat(cp.x, cp.y);
-  }
+  herbact(i);
   return;
 }
 void AI::omniact(int i)
 {
-  carnact(i);
+  herbact(i);
   return;
 }
 
