@@ -127,7 +127,7 @@ class AI(BaseAI):
        while numP<len(self.plants):
          numP+=1
          plant = self.findNearest(creature,self.plants,ignore)
-         if self.avail(plant) and plant.size>1:
+         if self.avail(plant) and plant.size>1 and plant != None:
            return plant
          else:
           ignore.append(plant)
