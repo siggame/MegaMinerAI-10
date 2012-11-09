@@ -34,16 +34,16 @@ Tile& AI::TileAt(const VECTOR2D& pos)
 
 void AI::BuildMapArray()
 {
-  m_array.clear();
+	m_array.clear();
 	m_array.resize(mapWidth() * mapHeight());
-	
+
 	for(int i=0;i<creatures.size();i++)
-  {
-		TileAt(VECTOR2D(creatures[i].x(),creatures[i].y())) = Tile(&creatures[i]); 
+	{
+		TileAt(VECTOR2D(creatures[i].x(),creatures[i].y())) = Tile(&creatures[i]);
 	}
 
 	for(int i=0;i<plants.size();i++)
-  {
+	{
 		TileAt(VECTOR2D(plants[i].x(),plants[i].y())) = Tile(&plants[i]);
 	}
 }
@@ -55,60 +55,56 @@ void AI::UpdateAI()
 
   //Iterate through every creature
   for(int j=0;j<creatures.size();j++)
-  { //if I own the creature
-    if (creatures[j].owner() == playerID())
-    {
-			VECTOR2D pos(creatures[j].x(),creatures[j].y());
-			
-			// find near plant to creature, this could be optimized, by searching around the creature pos in the 2d array
-			VECTOR2D plantPos(-1,-1);
-	    NearObject(plants,VECTOR2D(creatures[j].x(),creatures[j].y()),plantPos);
-	    
-	    // If A plant has been found
-	    if(plantPos.x != -1)
-	    {
-	      // find a path
-			  std::vector<VECTOR2D> path;
-			  unsigned int uiSearchedNodes = FindPath(plantPos,pos,HeuristicManhattanDistance(),path);
-			  
-			  cout<<"Nodes proccessed: "<<uiSearchedNodes<<endl;
-		
-		    // todo: maybe cache the path, but if we do that, next turn this path may no longer be the best
-		    // todo: fix moving more than the creature can
-		    
-		    // Move
-			  for(int i = 0; i < path.size(); ++i)
-			  {
-			    Tile& tile = TileAt(path[i]);
-			    
-			    // Eat enemy creatures in the way, or plants
-			    if(tile.pObj != nullptr)
-			    {
-			      Mappable::MappableType type = tile.pObj->GetType();
-			      if(type == Mappable::Plant || (type == Mappable::Creature && ((Creature*)tile.pObj)->owner() != playerID()))
-			      {
-			        creatures[j].eat(path[i].x,path[i].y);
-			      }
-			    }
-			    
-			    creatures[j].move(path[i].x,path[i].y);
-			    
-			  }
-			}
-		}
-	}
-}
+  {
+	  if (creatures[j].owner() == playerID())
+	  {
+	      VECTOR2D pos(creatures[j].x(),creatures[j].y());
 
+	      // find near plant to creature, this could be optimized, by searching around the creature pos in the 2d array
+	      VECTOR2D plantPos(-1,-1);
+	      NearObject(plants,VECTOR2D(creatures[j].x(),creatures[j].y()),plantPos);
+
+		  // If A plant has been found
+		  if(plantPos.x != -1)
+		  {
+			  // find a path
+			  std::vector<VECTOR2D> path;
+			  unsigned int uiSearchedNodes = FindPath(pos,plantPos,HeuristicManhattanDistance(),creatures[j].movementLeft(),path);
+
+			  cout<<"Nodes proccessed: "<<uiSearchedNodes<<endl;
+
+			  // todo: maybe cache the path, but if we do that, next turn this path may no longer be the best
+			  // todo: fix moving more than the creature can
+
+			  // Move
+			  for(auto iter = path.rbegin(); iter != path.rend(); ++iter)
+			  {
+				  Tile& tile = TileAt(*iter);
+
+				  // Eat enemy creatures in the way, or plants
+				  if(tile.pObj != nullptr)
+				  {
+					  Mappable::MappableType type = tile.pObj->GetType();
+					  if(type == Mappable::Plant || (type == Mappable::Creature && ((Creature*)tile.pObj)->owner() != playerID()))
+					  {
+						  creatures[j].eat(iter->x,iter->y);
+					  }
+				  }
+
+				  creatures[j].move(iter->x,iter->y);
+			  }
+		  }
+	  }
+  }
+}
 
 //This function is called each time it is your turn.
 //Return true to end your turn, return false to ask the server for updated information.
 bool AI::run()
 {
-
-	BuildMapArray();
-  UpdateAI();
- 
-  return true;
+    BuildMapArray();
+    UpdateAI();
+    return true;
 }
 
 //This function is run once, after your last turn.
@@ -126,7 +122,7 @@ void AI::end(){}
 	    creatures[j].move(creatures[j].x()+1,creatures[j].y());
           }
 			    }
-      }      
+      }
 
       //check if there is a plant to my left
       plantIn = getPlantAtLocation(creatures[j].x()+1,creatures[j].y());

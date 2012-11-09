@@ -140,14 +140,14 @@ private:
 
     // A* pathfinding
     template< class T >
-	unsigned int FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heuristic, std::vector<VECTOR2D>& pathOut);
+	unsigned int FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heuristic, int iMaxPathLength, std::vector<VECTOR2D>& pathOut);
 
 };
 
 template< class T >
-unsigned int AI::FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heuristic, std::vector<VECTOR2D>& pathOut)
+unsigned int AI::FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heuristic, int iMaxPathLength, std::vector<VECTOR2D>& pathOut)
 {
-    unsigned int total = 0;
+	unsigned int total = 0;
   
 	Tile* pCurrentTile = &TileAt(from);
 	pCurrentTile->pos = from;
@@ -167,7 +167,7 @@ unsigned int AI::FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heu
 	  VECTOR2D(1,0)
 	};
 	
-	while(pCurrentTile->pos != to && !fringe.empty())
+	while((pCurrentTile->pos != to) && !fringe.empty() && (pCurrentTile->G < iMaxPathLength))
 	{
 	    for(unsigned int i = 0; i < 4; ++i)
 		{
@@ -205,7 +205,7 @@ unsigned int AI::FindPath(const VECTOR2D& from, const VECTOR2D& to, const T& heu
 	}
 	
 	
-	if(pCurrentTile->pos == to)
+	//if(pCurrentTile->pos == to)
 	{
 	  do
 	  {
