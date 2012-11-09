@@ -127,7 +127,7 @@ class AI(BaseAI):
        while numP<len(self.plants):
          numP+=1
          plant = self.findNearest(creature,self.plants,ignore)
-         if self.avail(plant) and plant.size>1 and plant != None:
+         if self.avail(plant) and plant.size>=1 and plant != None:
            return plant
          else:
           ignore.append(plant)
@@ -146,9 +146,10 @@ class AI(BaseAI):
     for creature in herbivores:
      if len(self.plants)>0:
        plant = self.pickPlant(creature)
-       self.moveTo(creature,plant)
-       if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants:
-          creature.eat(plant.x,plant.y)
+       if plant!=None:
+         self.moveTo(creature,plant)
+         if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants:
+            creature.eat(plant.x,plant.y)
        # if plant.size==0 and creature.movementLeft>0 and self.distance(plant.x,plant.y,creature.x,creature.y)==1 and not isinstance(self.getObject(plant.x,plant.y),Creature):
           # creature.move(plant.x,plant.y)
           # self.removeGrid(plant)
