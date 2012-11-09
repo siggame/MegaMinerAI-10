@@ -40,7 +40,7 @@ class AI(BaseAI):
      if path != None:
        while creature.movementLeft>0 and len(path)>0:
          next = path.pop()
-         if next!=(creature.x,creature.y) and creature.movementLeft>0:
+         if next!=(creature.x,creature.y) and creature.movementLeft>0 and creature.currentHealth>self.healthPerMove:
            self.removeGrid(creature)
            creature.move(next[0],next[1])
            self.addGrid(creature)
