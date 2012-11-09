@@ -90,8 +90,8 @@ class AI(BaseAI):
     open = [(self.distance(startX,startY,goalX,goalY),(startX,startY),(startX,startY),0)];openTup=[(startX,startY)]
     path = []
     while len(open)>0:
-      open.sort()
-      current = open[0]
+      #open.sort()
+      current = heapq.heappop(open)
       if current[1] == (goalX,goalY):
         node = current
         path = []
@@ -102,7 +102,8 @@ class AI(BaseAI):
               node = closed
         return path
       closedSet.add(current);closedTup.add(current[1])
-      open.remove(current); openTup.remove(current[1])
+      #open.remove(current);
+      openTup.remove(current[1])
       for neighbor in self.adjacent(current[1][0],current[1][1]):#,[(startX,startY),(goalX,goalY)]):
        if self.getObject(neighbor[0],neighbor[1])==[] or (neighbor[0],neighbor[1])==(goalX,goalY) or (neighbor[0],neighbor[1])==(startX,startY):
         if neighbor in closedTup:
@@ -110,7 +111,7 @@ class AI(BaseAI):
         g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
         if neighbor == (goalX,goalY) or self.distance(neighbor[0],neighbor[1],startX,startY)<=g+1 and neighbor not in openTup:
           neighborTup = (g+self.distance(neighbor[0],neighbor[1],goalX,goalY),(neighbor[0],neighbor[1]),(current[1]),g)
-          open.append(neighborTup);openTup.append(neighbor)
+          heapq.heappush(open,neighborTup);openTup.append(neighbor)
     return None
     
   def avail(self,source):
