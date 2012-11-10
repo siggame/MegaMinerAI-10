@@ -303,14 +303,12 @@ namespace visualizer
     const int lines = 3;
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
 
-    string timeString = "Time: ";
-    timeString += toString(99999999);
-    string idString = "ID: ";
-    idString += toString(m_HUD->playerID);
+    string timeString = "Time: " + toString(99999999);
+    string idString = "ID: " + toString(m_HUD->playerID);
+
     int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f)) + 1 + lines;
     int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width);
-    timeString = "Time: ";
-    timeString += toString(m_HUD->time);
+    timeString = "Time: " + toString(m_HUD->time);
 
     // draw the island behind the player's HUD
     DrawIsland(islandPos, m_HUD->mapHeight + 1, width, lines, m_HUD->tile, game);
