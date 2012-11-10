@@ -48,14 +48,22 @@ class AI(BaseAI):
   def distance(self,sourceX,sourceY,destX,destY):
     return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
     
-  def maxStat(self,creature):
+  def statDict(self,creature):
+   return {"herbivorism":creature.herbivorism,"carnivorism":creature.carnivorism,"speed":creature.speed,"defense":creature.defense,"energy":creature.energy}
+  
+  def maxStat(self,creature,breeding=False):
     dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}
+    if breeding and 10 in dict:
+      del dict[10]
     return dict[max(dict)]
-
+   
+  def minStat(self,creature,breeding=False):
+    dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}  
+    return dict[min(dict)]
+    
   def findNearest(self,source,list,ignore=[]):
     d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform not in ignore}
     return d[min(d)]      
-  
   
   def adjacent(self,x,y):
     adj = []
@@ -116,6 +124,24 @@ class AI(BaseAI):
          else:
           ignore.append(plant)
   
+  def checkCanBreed(self,creature):
+    if not creature.canBreed:
+      return False
+    if creature.currentHealth<self.healthPerBreed+self.healthPerTurn:
+      return False
+     
+  def compareStats(self,mate,creature):
+    if self.minStat(mate)==self.maxStat(creature) or self.maxStat(mate)==self.minStat(creature):
+      return False 
+    return True
+      
+  def findMate(self,creature,mine):
+    mates = [mate for mate in mine if self.checkCanBreed(mate)]
+    for mate in mates:
+      if self.maxStat(mate,True)==self.maxStat(creature,True) or (self.compareStat(mate,creature) and len([i for i in statDict(creature).values() if i%2==1])>3):
+        return mate
+    return None
+    
   def herbControl(self,creature,enemies):
    plant = self.pickPlant(creature)
    if plant!=None:
@@ -135,8 +161,14 @@ class AI(BaseAI):
             self.creatures.remove(enemy)
   
   def breedControl(self,creature,mine):
-    pass
-  
+    if self.checkCanBreed(creature) and creature.currentHealth>creature.maxHealth*.7:
+      self.findMate(creature,mine)
+      self.moveTo(creature,mate)
+      if self.distance(creature.x,creature.y,mate.x,mate.y)==1:
+        creature.breed(mate)
+    else:
+      dict = self.statDict(creature)
+      
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):  
@@ -158,7 +190,9 @@ class AI(BaseAI):
       
     for creature in carnivores:
       self.carnControl(creature,enemies)
-      
+    
+    for creature in breeders:
+      self.breedControl(creature,mine)
     return 1
 
   def __init__(self, conn):
