@@ -319,8 +319,13 @@ namespace visualizer
 
     game->renderer->setColor(PlayerColor(m_HUD->playerID));
 
-    // todo: move the bar somewhere else
-    game->renderer->drawQuad( textPos, m_HUD->mapHeight, fBarLength , 0.5f);
+    if( game->options->getNumber("Show Biomass Bar") > 0 )
+    {
+      game->renderer->drawTexturedQuad( textPos, -Galapagos::IslandOffset(), fBarLength , 0.5f, "healthbar");
+      game->renderer->setColor( Color(0,0,0,1) );
+      game->renderer->drawQuad( float(m_HUD->mapWidth)/2.0f - 0.05f, -Galapagos::IslandOffset(), 0.1f, 0.75f );
+      game->renderer->setColor(PlayerColor(m_HUD->playerID));
+    }
 
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);
