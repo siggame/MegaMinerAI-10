@@ -1,0 +1,93 @@
+\hypertarget{classCreature}{\section{\-Creature \-Class \-Reference}
+\label{classCreature}\index{\-Creature@{\-Creature}}
+}
+
+
+\-A basic creature!  
+
+
+
+
+{\ttfamily \#include $<$\-Creature.\-h$>$}
+
+\-Inheritance diagram for \-Creature\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classCreature}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCreature_ace232a360d8998eaf997a77525f3144e}{{\bfseries \-Creature} (\-\_\-\-Creature $\ast$ptr=\-N\-U\-L\-L)}\label{classCreature_ace232a360d8998eaf997a77525f3144e}
+
+\item 
+\hypertarget{classCreature_aeed0dd3ce4e773fa8b829d1febda40ba}{int \hyperlink{classCreature_aeed0dd3ce4e773fa8b829d1febda40ba}{id} ()}\label{classCreature_aeed0dd3ce4e773fa8b829d1febda40ba}
+
+\begin{DoxyCompactList}\small\item\em \-Unique \-Identifier. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a356a4d67f5e39929cbd83303fd9a1a32}{int \hyperlink{classCreature_a356a4d67f5e39929cbd83303fd9a1a32}{x} ()}\label{classCreature_a356a4d67f5e39929cbd83303fd9a1a32}
+
+\begin{DoxyCompactList}\small\item\em \-X position of the object. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a3d5b3216f5d659a16f5ea9dacc5e3463}{int \hyperlink{classCreature_a3d5b3216f5d659a16f5ea9dacc5e3463}{y} ()}\label{classCreature_a3d5b3216f5d659a16f5ea9dacc5e3463}
+
+\begin{DoxyCompactList}\small\item\em \-Y position of the object. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_ada858e8e49d05e11f19f88994141e9a6}{int \hyperlink{classCreature_ada858e8e49d05e11f19f88994141e9a6}{owner} ()}\label{classCreature_ada858e8e49d05e11f19f88994141e9a6}
+
+\begin{DoxyCompactList}\small\item\em \-The owner of the creature. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a5943058c00c1028c8174c6ba2a8aa97f}{int \hyperlink{classCreature_a5943058c00c1028c8174c6ba2a8aa97f}{max\-Health} ()}\label{classCreature_a5943058c00c1028c8174c6ba2a8aa97f}
+
+\begin{DoxyCompactList}\small\item\em \-The maximum amount of health this creature can have. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a0fd41611210e3a6b2136274be9f309fd}{int \hyperlink{classCreature_a0fd41611210e3a6b2136274be9f309fd}{current\-Health} ()}\label{classCreature_a0fd41611210e3a6b2136274be9f309fd}
+
+\begin{DoxyCompactList}\small\item\em \-The current amount of health that this creature has. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a1015cf916bbc314c79ebac49e1a3f3dc}{int \hyperlink{classCreature_a1015cf916bbc314c79ebac49e1a3f3dc}{energy} ()}\label{classCreature_a1015cf916bbc314c79ebac49e1a3f3dc}
+
+\begin{DoxyCompactList}\small\item\em \-The energy level of the creature. \-This helps your max health. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_aa9fe9997f1f46ed8ea6467d48caafd87}{int \hyperlink{classCreature_aa9fe9997f1f46ed8ea6467d48caafd87}{carnivorism} ()}\label{classCreature_aa9fe9997f1f46ed8ea6467d48caafd87}
+
+\begin{DoxyCompactList}\small\item\em \-The carnivore level of the creature. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a75ee772d9dcb4f0989e53dde71f42c21}{int \hyperlink{classCreature_a75ee772d9dcb4f0989e53dde71f42c21}{herbivorism} ()}\label{classCreature_a75ee772d9dcb4f0989e53dde71f42c21}
+
+\begin{DoxyCompactList}\small\item\em \-The herbivore level of the creature. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_acd30689dadca114bd7239c0a91369252}{int \hyperlink{classCreature_acd30689dadca114bd7239c0a91369252}{speed} ()}\label{classCreature_acd30689dadca114bd7239c0a91369252}
+
+\begin{DoxyCompactList}\small\item\em \-The speed of the creature. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a1de0f285b90641250153fd1973f9fc4a}{int \hyperlink{classCreature_a1de0f285b90641250153fd1973f9fc4a}{movement\-Left} ()}\label{classCreature_a1de0f285b90641250153fd1973f9fc4a}
+
+\begin{DoxyCompactList}\small\item\em \-The amount of moves this creature has left this turn. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a9334ffd8592fd4896246d47c39f1a50e}{int \hyperlink{classCreature_a9334ffd8592fd4896246d47c39f1a50e}{defense} ()}\label{classCreature_a9334ffd8592fd4896246d47c39f1a50e}
+
+\begin{DoxyCompactList}\small\item\em \-The defense of the creature. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_ae18ab6327bf0303ce8a7cbae467e78bd}{int \hyperlink{classCreature_ae18ab6327bf0303ce8a7cbae467e78bd}{can\-Eat} ()}\label{classCreature_ae18ab6327bf0303ce8a7cbae467e78bd}
+
+\begin{DoxyCompactList}\small\item\em \-Indicated whether or not this creature can eat this turn. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a6f777566f7257c55d9bdb16cb4fd416c}{int \hyperlink{classCreature_a6f777566f7257c55d9bdb16cb4fd416c}{can\-Breed} ()}\label{classCreature_a6f777566f7257c55d9bdb16cb4fd416c}
+
+\begin{DoxyCompactList}\small\item\em \-Indicated whether or not this creature can breed this turn. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a1b29e23722ff1b64f5c85bf83ba58280}{int \hyperlink{classCreature_a1b29e23722ff1b64f5c85bf83ba58280}{parent\-I\-D} ()}\label{classCreature_a1b29e23722ff1b64f5c85bf83ba58280}
+
+\begin{DoxyCompactList}\small\item\em \-I\-D of the creature that gave birth to this one. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_a544dd080035adbb2bda1b963e7110732}{int \hyperlink{classCreature_a544dd080035adbb2bda1b963e7110732}{move} (int \hyperlink{classCreature_a356a4d67f5e39929cbd83303fd9a1a32}{x}, int \hyperlink{classCreature_a3d5b3216f5d659a16f5ea9dacc5e3463}{y})}\label{classCreature_a544dd080035adbb2bda1b963e7110732}
+
+\begin{DoxyCompactList}\small\item\em \-Command a creature to move to a specified position. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_ac287d66f19bed736fc2d3e169d68e380}{int \hyperlink{classCreature_ac287d66f19bed736fc2d3e169d68e380}{eat} (int \hyperlink{classCreature_a356a4d67f5e39929cbd83303fd9a1a32}{x}, int \hyperlink{classCreature_a3d5b3216f5d659a16f5ea9dacc5e3463}{y})}\label{classCreature_ac287d66f19bed736fc2d3e169d68e380}
+
+\begin{DoxyCompactList}\small\item\em \-Eat plant or creature at input location. \end{DoxyCompactList}\item 
+\hypertarget{classCreature_ad000357216d79a88b23bdb4c5c30bc37}{int \hyperlink{classCreature_ad000357216d79a88b23bdb4c5c30bc37}{breed} (\hyperlink{classCreature}{\-Creature} \&mate)}\label{classCreature_ad000357216d79a88b23bdb4c5c30bc37}
+
+\begin{DoxyCompactList}\small\item\em \-Breed with target adjacent creature. \-Spawn new creature at input location. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{\-Friends}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classCreature_aa60f0b258942324930410a7c2e9f3620}{std\-::ostream \& {\bfseries operator$<$$<$} (std\-::ostream \&stream, \hyperlink{classCreature}{\-Creature} ob)}\label{classCreature_aa60f0b258942324930410a7c2e9f3620}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A basic creature! 
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+\-Creature.\-h\item 
+\-Creature.\-cpp\end{DoxyCompactItemize}

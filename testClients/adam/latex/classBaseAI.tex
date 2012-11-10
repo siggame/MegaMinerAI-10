@@ -1,0 +1,160 @@
+\hypertarget{classBaseAI}{\section{\-Base\-A\-I \-Class \-Reference}
+\label{classBaseAI}\index{\-Base\-A\-I@{\-Base\-A\-I}}
+}
+
+
+\-A basic \hyperlink{classAI}{\-A\-I} interface.  
+
+
+
+
+{\ttfamily \#include $<$\-Base\-A\-I.\-h$>$}
+
+\-Inheritance diagram for \-Base\-A\-I\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classBaseAI}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classBaseAI_a19ade7391bfe101884a35f48fb840199}{int \hyperlink{classBaseAI_a19ade7391bfe101884a35f48fb840199}{turn\-Number} ()}\label{classBaseAI_a19ade7391bfe101884a35f48fb840199}
+
+\begin{DoxyCompactList}\small\item\em \-How many turns it has been since the beginning of the round. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a16aab1036653c8f8fb5370cf2f6a3e10}{int \hyperlink{classBaseAI_a16aab1036653c8f8fb5370cf2f6a3e10}{player\-I\-D} ()}\label{classBaseAI_a16aab1036653c8f8fb5370cf2f6a3e10}
+
+\begin{DoxyCompactList}\small\item\em \hyperlink{classPlayer}{\-Player} \-Number; either 0 or 1. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a50d3091db33b93c6f7c2d11dd64b4c7a}{int \hyperlink{classBaseAI_a50d3091db33b93c6f7c2d11dd64b4c7a}{game\-Number} ()}\label{classBaseAI_a50d3091db33b93c6f7c2d11dd64b4c7a}
+
+\begin{DoxyCompactList}\small\item\em \-What number game this is for the server. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_acef275d421ba8018d14071a1383b3769}{int \hyperlink{classBaseAI_acef275d421ba8018d14071a1383b3769}{map\-Width} ()}\label{classBaseAI_acef275d421ba8018d14071a1383b3769}
+
+\begin{DoxyCompactList}\small\item\em \-The width of the map. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_aab7aa00684066902ce65247ea7d86ff5}{int \hyperlink{classBaseAI_aab7aa00684066902ce65247ea7d86ff5}{map\-Height} ()}\label{classBaseAI_aab7aa00684066902ce65247ea7d86ff5}
+
+\begin{DoxyCompactList}\small\item\em \-The height of the map. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a1cb2d2fe7d5037b0fc7b15fc9974549a}{int \hyperlink{classBaseAI_a1cb2d2fe7d5037b0fc7b15fc9974549a}{health\-Per\-Breed} ()}\label{classBaseAI_a1cb2d2fe7d5037b0fc7b15fc9974549a}
+
+\begin{DoxyCompactList}\small\item\em \-The amount of energy required from each creature in order to breed. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a0a88ba2664989791479eb6db7701ecd4}{int \hyperlink{classBaseAI_a0a88ba2664989791479eb6db7701ecd4}{health\-Per\-Move} ()}\label{classBaseAI_a0a88ba2664989791479eb6db7701ecd4}
+
+\begin{DoxyCompactList}\small\item\em \-The amount of energy required to try to move. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_ac8abbaaa98a16af78ade9a88b2e60e72}{int \hyperlink{classBaseAI_ac8abbaaa98a16af78ade9a88b2e60e72}{energy\-Per\-Turn} ()}\label{classBaseAI_ac8abbaaa98a16af78ade9a88b2e60e72}
+
+\begin{DoxyCompactList}\small\item\em \-The amount of energy lost from the passage of time. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a69d9a796f6bce6fd0fd867fb431a28f7}{int {\bfseries get\-Plant\-At\-Location} (int x, int y)}\label{classBaseAI_a69d9a796f6bce6fd0fd867fb431a28f7}
+
+\item 
+\hypertarget{classBaseAI_a93a9442dc12894d620cfce077f2ee188}{int \hyperlink{classBaseAI_a93a9442dc12894d620cfce077f2ee188}{get\-Creature\-At\-Location} (int x, int y)}\label{classBaseAI_a93a9442dc12894d620cfce077f2ee188}
+
+\begin{DoxyCompactList}\small\item\em \-Comment. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a3a42d0a07351f47bf7da03ea554e5cdc}{int \hyperlink{classBaseAI_a3a42d0a07351f47bf7da03ea554e5cdc}{health\-Per\-Turn} ()}\label{classBaseAI_a3a42d0a07351f47bf7da03ea554e5cdc}
+
+\begin{DoxyCompactList}\small\item\em the health a creature loses each turn \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a300f24da2d5098f308fb0483e1e47ce5}{int \hyperlink{classBaseAI_a300f24da2d5098f308fb0483e1e47ce5}{base\-Health} ()}\label{classBaseAI_a300f24da2d5098f308fb0483e1e47ce5}
+
+\begin{DoxyCompactList}\small\item\em \-The base amount of health that each creature starts with. \end{DoxyCompactList}\item 
+\hypertarget{classBaseAI_a3f2806936e6e65d76218e04b057e05f4}{{\bfseries \-Base\-A\-I} (\-Connection $\ast$c)}\label{classBaseAI_a3f2806936e6e65d76218e04b057e05f4}
+
+\item 
+virtual const char $\ast$ \hyperlink{classBaseAI_aef082fbf306fec04515ed5ed3b1ba582}{username} ()=0
+\item 
+virtual const char $\ast$ \hyperlink{classBaseAI_a9251e20447917cda64ad1487b903456f}{password} ()=0
+\item 
+virtual void \hyperlink{classBaseAI_a90ce8becd6f2e32c2cc32d41145e88df}{init} ()=0
+\item 
+virtual bool \hyperlink{classBaseAI_ad60148e7e9e450ce47432b07b4db1ed6}{run} ()=0
+\item 
+virtual void \hyperlink{classBaseAI_a60c8246a859ba2dba84b70239bc129bc}{end} ()=0
+\item 
+\hypertarget{classBaseAI_ac6303df0fece47e29b77dd0aa0aa4fe8}{bool {\bfseries start\-Turn} ()}\label{classBaseAI_ac6303df0fece47e29b77dd0aa0aa4fe8}
+
+\end{DoxyCompactItemize}
+\subsection*{\-Protected \-Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classBaseAI_a40585cc4b7c885978fffa3b1a23cb7ce}{\-Connection $\ast$ {\bfseries c}}\label{classBaseAI_a40585cc4b7c885978fffa3b1a23cb7ce}
+
+\item 
+\hypertarget{classBaseAI_a3b8aa65327b20a507f3e4bc81b902056}{std\-::vector$<$ \hyperlink{classMappable}{\-Mappable} $>$ {\bfseries mappables}}\label{classBaseAI_a3b8aa65327b20a507f3e4bc81b902056}
+
+\item 
+\hypertarget{classBaseAI_adef7ed8df13e70237d7d50bb1f6977d9}{std\-::vector$<$ \hyperlink{classCreature}{\-Creature} $>$ {\bfseries creatures}}\label{classBaseAI_adef7ed8df13e70237d7d50bb1f6977d9}
+
+\item 
+\hypertarget{classBaseAI_a63fc63cfe667448d5c834871f324c110}{std\-::vector$<$ \hyperlink{classPlant}{\-Plant} $>$ {\bfseries plants}}\label{classBaseAI_a63fc63cfe667448d5c834871f324c110}
+
+\item 
+\hypertarget{classBaseAI_a6b181b9b964fa5ed999264f935b8b107}{std\-::vector$<$ \hyperlink{classPlayer}{\-Player} $>$ {\bfseries players}}\label{classBaseAI_a6b181b9b964fa5ed999264f935b8b107}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-A basic \hyperlink{classAI}{\-A\-I} interface. 
+
+\-This class implements most the code an \hyperlink{classAI}{\-A\-I} would need to interface with the lower-\/level game code. \-A\-Is should extend this class to get a lot of boiler-\/plate code out of the way \-The provided \hyperlink{classAI}{\-A\-I} class does just that. 
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classBaseAI_a60c8246a859ba2dba84b70239bc129bc}{\index{\-Base\-A\-I@{\-Base\-A\-I}!end@{end}}
+\index{end@{end}!BaseAI@{\-Base\-A\-I}}
+\subsubsection[{end}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf \-Base\-A\-I\-::end} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classBaseAI_a60c8246a859ba2dba84b70239bc129bc}
+\-This function is called after the last turn. 
+
+\-Implemented in \hyperlink{classAI_a67b00a8dd5c6d73db2e4e2332826462e}{\-A\-I}.
+
+\hypertarget{classBaseAI_a90ce8becd6f2e32c2cc32d41145e88df}{\index{\-Base\-A\-I@{\-Base\-A\-I}!init@{init}}
+\index{init@{init}!BaseAI@{\-Base\-A\-I}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}virtual void {\bf \-Base\-A\-I\-::init} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classBaseAI_a90ce8becd6f2e32c2cc32d41145e88df}
+\-This function is run once, before your first turn. 
+
+\-Implemented in \hyperlink{classAI_a8c8e3a635791abaa61585357e6a25f63}{\-A\-I}.
+
+\hypertarget{classBaseAI_a9251e20447917cda64ad1487b903456f}{\index{\-Base\-A\-I@{\-Base\-A\-I}!password@{password}}
+\index{password@{password}!BaseAI@{\-Base\-A\-I}}
+\subsubsection[{password}]{\setlength{\rightskip}{0pt plus 5cm}virtual const char$\ast$ {\bf \-Base\-A\-I\-::password} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classBaseAI_a9251e20447917cda64ad1487b903456f}
+\-Make this your password, which should be provided. 
+
+\-Implemented in \hyperlink{classAI_aa4e58e11bbbdb040e6b12f8706763a00}{\-A\-I}.
+
+\hypertarget{classBaseAI_ad60148e7e9e450ce47432b07b4db1ed6}{\index{\-Base\-A\-I@{\-Base\-A\-I}!run@{run}}
+\index{run@{run}!BaseAI@{\-Base\-A\-I}}
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}virtual bool {\bf \-Base\-A\-I\-::run} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classBaseAI_ad60148e7e9e450ce47432b07b4db1ed6}
+\-This function is called each time it is your turn \-Return true to end your turn, return false to ask the server for updated information 
+
+\-Implemented in \hyperlink{classAI_a3c4746756b699cee5225597506521a39}{\-A\-I}.
+
+\hypertarget{classBaseAI_aef082fbf306fec04515ed5ed3b1ba582}{\index{\-Base\-A\-I@{\-Base\-A\-I}!username@{username}}
+\index{username@{username}!BaseAI@{\-Base\-A\-I}}
+\subsubsection[{username}]{\setlength{\rightskip}{0pt plus 5cm}virtual const char$\ast$ {\bf \-Base\-A\-I\-::username} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}pure virtual\mbox{]}}}}\label{classBaseAI_aef082fbf306fec04515ed5ed3b1ba582}
+\-Make this your username, which should be provided. 
+
+\-Implemented in \hyperlink{classAI_a529ac74a6f88a82abb1edd87847203e1}{\-A\-I}.
+
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+\-Base\-A\-I.\-h\item 
+\-Base\-A\-I.\-cpp\end{DoxyCompactItemize}

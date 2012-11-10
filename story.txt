@@ -1,0 +1,14 @@
+The galaxy is at war. Warp Gates have revolutionized how battles are fought
+across space, and humanity is thrown to the brink of savagery.  Two immortal
+biologists, one from the revered Blue Empire,  and another from the infamous
+Red Republic, decide that they are above this form of warfare. They form a
+gentlemen.s agreement to look for an unconquered planet and decide which one
+is the better scientist. They look across the neutral territories and find
+on some remote planet called Eeyarth islands similar to the Galapagos
+Islands.  These islands are filled with simple creatures, but they hold vast
+evolutionary potential. The Biologists agree that the best way to decide who
+is better is to hold a Battle of the Species! They each claim dominion of
+half of the creatures on the planet, and try to raise the superior species.
+Over generations, whoever raises the most deadly or resilient species will
+claim victory. They must adapt and evolve. You must compete, and avoid
+segfaults. 

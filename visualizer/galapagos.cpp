@@ -186,7 +186,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defense" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
+    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Energy" << "Health/Size" << "Max Health" << "Carnivorism" << "Herbivorism" << "Speed" << "Defense" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID" << "Growth Rate" << "Turns to Grow";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -255,6 +255,8 @@ namespace visualizer
         turn[p.second.id]["ID"] = p.second.id;
         turn[p.second.id]["Type"] = "Plant";
         turn[p.second.id]["Health/Size"] = p.second.size;
+        turn[p.second.id]["Growth Rate"] = p.second.growthRate;
+        turn[p.second.id]["Turns to Grow"] = p.second.turnsUntilGrowth;
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
       }
@@ -356,13 +358,13 @@ namespace visualizer
         turn[p.second.id]["Type"] = "Creature";
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
-        turn[p.second.id]["Energy/Size"] = p.second.energy;
-        turn[p.second.id]["Health"] = p.second.currentHealth;
+        turn[p.second.id]["Energy"] = p.second.energy;
+        turn[p.second.id]["Health/Size"] = p.second.currentHealth;
         turn[p.second.id]["Max Health"] = p.second.maxHealth;
         turn[p.second.id]["Carnivorism"] = p.second.carnivorism;
         turn[p.second.id]["Herbivorism"] = p.second.herbivorism;
         turn[p.second.id]["Speed"] = p.second.speed;
-        turn[p.second.id]["Defence"] = p.second.defense;
+        turn[p.second.id]["Defense"] = p.second.defense;
         turn[p.second.id]["Moves Left"] = p.second.movementLeft;
         turn[p.second.id]["Can Breed"] = p.second.canBreed ? "Yes" : "No";
         turn[p.second.id]["Can Eat"] = p.second.canEat ? "Yes" : "No";

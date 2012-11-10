@@ -46,12 +46,12 @@ public:
   ////Comment
   int getPlantAtLocation(int x,int y);
   ///Comment
-  int getCreatureAtLocation(int x,int y);  
+  int getCreatureAtLocation(int x,int y);
   /// the health a creature loses each turn
   int healthPerTurn();
   ///The base amount of health that each creature starts with
   int baseHealth();
-  
+
   BaseAI(Connection* c);
   virtual ~BaseAI();
   ///
@@ -71,6 +71,8 @@ public:
   ///This function is called after the last turn.
   virtual void end() = 0;
 
+  friend void testEat(Creature* c,int xadj,int yadj,int playerID,
+                      std::vector<Creature>& cs);
 
   bool startTurn();
 };

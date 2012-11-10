@@ -1,0 +1,101 @@
+\hypertarget{classAI}{\section{\-A\-I \-Class \-Reference}
+\label{classAI}\index{\-A\-I@{\-A\-I}}
+}
+
+
+\-The class implementing gameplay logic.  
+
+
+
+
+{\ttfamily \#include $<$\-A\-I.\-h$>$}
+
+\-Inheritance diagram for \-A\-I\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classAI}
+\end{center}
+\end{figure}
+\subsection*{\-Public \-Member \-Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{classAI_ae37d6a193873f7e35deb19671bf45a14}{{\bfseries \-A\-I} (\-Connection $\ast$c)}\label{classAI_ae37d6a193873f7e35deb19671bf45a14}
+
+\item 
+virtual const char $\ast$ \hyperlink{classAI_a529ac74a6f88a82abb1edd87847203e1}{username} ()
+\item 
+virtual const char $\ast$ \hyperlink{classAI_aa4e58e11bbbdb040e6b12f8706763a00}{password} ()
+\item 
+virtual void \hyperlink{classAI_a8c8e3a635791abaa61585357e6a25f63}{init} ()
+\item 
+virtual bool \hyperlink{classAI_a3c4746756b699cee5225597506521a39}{run} ()
+\item 
+virtual void \hyperlink{classAI_a67b00a8dd5c6d73db2e4e2332826462e}{end} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{\-Detailed \-Description}
+\-The class implementing gameplay logic. 
+
+\subsection{\-Member \-Function \-Documentation}
+\hypertarget{classAI_a67b00a8dd5c6d73db2e4e2332826462e}{\index{\-A\-I@{\-A\-I}!end@{end}}
+\index{end@{end}!AI@{\-A\-I}}
+\subsubsection[{end}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-A\-I\-::end} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classAI_a67b00a8dd5c6d73db2e4e2332826462e}
+\-This function is called after the last turn. 
+
+\-Implements \hyperlink{classBaseAI_a60c8246a859ba2dba84b70239bc129bc}{\-Base\-A\-I}.
+
+\hypertarget{classAI_a8c8e3a635791abaa61585357e6a25f63}{\index{\-A\-I@{\-A\-I}!init@{init}}
+\index{init@{init}!AI@{\-A\-I}}
+\subsubsection[{init}]{\setlength{\rightskip}{0pt plus 5cm}void {\bf \-A\-I\-::init} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classAI_a8c8e3a635791abaa61585357e6a25f63}
+\-This function is run once, before your first turn. 
+
+\-Implements \hyperlink{classBaseAI_a90ce8becd6f2e32c2cc32d41145e88df}{\-Base\-A\-I}.
+
+\hypertarget{classAI_aa4e58e11bbbdb040e6b12f8706763a00}{\index{\-A\-I@{\-A\-I}!password@{password}}
+\index{password@{password}!AI@{\-A\-I}}
+\subsubsection[{password}]{\setlength{\rightskip}{0pt plus 5cm}const char $\ast$ {\bf \-A\-I\-::password} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classAI_aa4e58e11bbbdb040e6b12f8706763a00}
+\-Make this your password, which should be provided. 
+
+\-Implements \hyperlink{classBaseAI_a9251e20447917cda64ad1487b903456f}{\-Base\-A\-I}.
+
+\hypertarget{classAI_a3c4746756b699cee5225597506521a39}{\index{\-A\-I@{\-A\-I}!run@{run}}
+\index{run@{run}!AI@{\-A\-I}}
+\subsubsection[{run}]{\setlength{\rightskip}{0pt plus 5cm}bool {\bf \-A\-I\-::run} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classAI_a3c4746756b699cee5225597506521a39}
+\-This function is called each time it is your turn \-Return true to end your turn, return false to ask the server for updated information 
+
+\-Implements \hyperlink{classBaseAI_ad60148e7e9e450ce47432b07b4db1ed6}{\-Base\-A\-I}.
+
+\hypertarget{classAI_a529ac74a6f88a82abb1edd87847203e1}{\index{\-A\-I@{\-A\-I}!username@{username}}
+\index{username@{username}!AI@{\-A\-I}}
+\subsubsection[{username}]{\setlength{\rightskip}{0pt plus 5cm}const char $\ast$ {\bf \-A\-I\-::username} (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily  \mbox{[}virtual\mbox{]}}}}\label{classAI_a529ac74a6f88a82abb1edd87847203e1}
+\-Make this your username, which should be provided. 
+
+\-Implements \hyperlink{classBaseAI_aef082fbf306fec04515ed5ed3b1ba582}{\-Base\-A\-I}.
+
+
+
+\-The documentation for this class was generated from the following files\-:\begin{DoxyCompactItemize}
+\item 
+\-A\-I.\-h\item 
+\-A\-I.\-cpp\end{DoxyCompactItemize}
