@@ -90,7 +90,7 @@ namespace visualizer
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     // ugly
     string water_tiles[] = { "tile_water", "tile_lava", "tile_toxic", "tile_space" };
-    float waterT = game->options->getNumber("Enable Water Movement") * t;
+    float waterT = game->options->getNumber("Enable Ocean Animation") * t;
     // Draw the water!
     for(int x = -Galapagos::IslandOffset(); x < m_Map->GetWidth()+Galapagos::IslandOffset(); x++)
     {
@@ -329,7 +329,7 @@ namespace visualizer
     {
       game->renderer->drawTexturedQuad( textPos, -Galapagos::IslandOffset(), fBarLength , 0.5f, "healthbar");
       game->renderer->setColor( Color(0,0,0,1) );
-      game->renderer->drawQuad( float(m_HUD->mapWidth)/2.0f - 0.05f, -Galapagos::IslandOffset(), 0.1f, 0.75f );
+      game->renderer->drawQuad( float(m_HUD->mapWidth)/2.0f - 0.05f, -Galapagos::IslandOffset(), 0.1f, 0.5f );
       game->renderer->setColor(PlayerColor(m_HUD->playerID));
     }
 
