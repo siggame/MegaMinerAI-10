@@ -17,11 +17,13 @@ public:
   Creature* findAdjacentEnemy(Creature* & c);
   Creature* findAdjacentFriend(Creature* & c);
   Plant* findAdjacentPlant(Creature* & c);
-  void stupidMove(Creature* & c);
+  void stupidMove(Creature* & c, int destx, int desty);
   bool goLeft(Creature* & c);
   bool goRight(Creature* & c);
   bool goUp(Creature* & c);
   bool goDown(Creature* & c);
+  int findEnemyQuadrant();
+  int findPlantQuadrant();
 };
 
 #endif

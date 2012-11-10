@@ -25,21 +25,47 @@ int BaseAI::mapHeight()
 {
   return getMapHeight(c);
 }
-/*
-int BaseAI::energyPerBreed()
+int BaseAI::healthPerBreed()
 {
-  return getEnergyPerBreed(c);
+  return getHealthPerBreed(c);
+}
+int BaseAI::healthPerMove()
+{
+  return getHealthPerMove(c);
+}
+int BaseAI::healthPerTurn()
+{
+  return getHealthPerTurn(c);
+}
+int BaseAI::baseHealth()
+{
+  return getBaseHealth(c);
 }
 
-int BaseAI::energyPerAction()
+int BaseAI::getPlantAtLocation(int x, int y)
 {
-  return getEnergyPerAction(c);
+  for(int ii=0; ii<plants.size();ii++)
+  {
+    if (plants[ii].x() == x && plants[ii].y() == y)
+    {		
+    	return ii;
+    }
+  }
+  return -1;
 }
-int BaseAI::energyPerTurn()
+
+int BaseAI::getCreatureAtLocation(int x, int y)
 {
-  return getEnergyPerTurn(c);
+  for(int ii=0; ii<creatures.size();ii++)
+  {
+    if (creatures[ii].x() == x && creatures[ii].y() == y)
+    {
+      return ii;
+    }
+  }
+  return -1;
 }
-*/
+
 bool BaseAI::startTurn()
 {
   static bool initialized = false;

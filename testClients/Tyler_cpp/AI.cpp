@@ -170,12 +170,10 @@ bool AI::goDown(Creature* & c)
    return false;
 }
 
-void AI::stupidMove(Creature* & c)
+void AI::stupidMove(Creature* & c, int destx, int desty)
 {
    int moves = 0;
    int max = (c -> movementLeft() / 2) + 1;
-   int centerx = mapWidth() / 2;
-   int centery = mapHeight() / 2;
    bool right = true;
    bool up = false;
    bool left = false;
@@ -188,7 +186,7 @@ void AI::stupidMove(Creature* & c)
       int x = c -> x();
       int y = c -> y();
       
-      if((centery - y > centerx - x && centery - y > 0 && trial == 0) || (badrun == 4 && trial != 0))
+      if((desty - y > destx - x && desty - y > 0 && trial == 0) || (badrun == 4 && trial != 0))
       {
          if(goDown(c))
          {
@@ -202,7 +200,7 @@ void AI::stupidMove(Creature* & c)
             trial++;
          }
       }
-      else if((centerx - x > centery - y && centerx - x > 0 && trial == 0) || (badrun == 1 && trial != 0))
+      else if((destx - x > desty - y && destx - x > 0 && trial == 0) || (badrun == 1 && trial != 0))
       {
          if(goRight(c))
          {
@@ -216,7 +214,7 @@ void AI::stupidMove(Creature* & c)
             trial++;
          }
       }
-      else if((centerx - x > centery - y && centery - y < 0 && trial == 0) || (badrun == 2 && trial != 0))
+      else if((destx - x > desty - y && desty - y < 0 && trial == 0) || (badrun == 2 && trial != 0))
       {
          if(goUp(c))
          {
@@ -230,7 +228,7 @@ void AI::stupidMove(Creature* & c)
             trial++;
          }
       }
-      else if((((centery - y > centerx - x && centerx - x < 0) || centerx - x == centery - y) && trial == 0) || (badrun == 3 && trial != 0))
+      else if((((desty - y > destx - x && destx - x < 0) || destx - x == desty - y) && trial == 0) || (badrun == 3 && trial != 0))
       {
          if(goLeft(c))
          {
@@ -251,6 +249,114 @@ void AI::stupidMove(Creature* & c)
    }
 }
 
+int AI::findEnemyQuadrant()
+{
+   int first = 0;
+   int second = 0;
+   int third = 0;
+   int fourth = 0;
+   int max = 0;
+   int quad = 0;
+   int centerx = mapWidth() / 2;
+   int centery = mapHeight() / 2;
+   
+   for(int i = 0; i < creatures.size(); i++)
+   {
+      if(creatures[i].owner() != playerID())
+      {
+         if(creatures[i].x() > centerx && creatures[i].y() < centery)
+         {
+            first++;
+            if(first > max)
+            {
+               max = first;
+               quad = 1;
+            }
+         }
+         else if(creatures[i].x() < centerx && creatures[i].y() < centery)
+         {
+            second++;
+            if(second > max)
+            {
+               max = second;
+               quad = 2;
+            }
+         }
+         else if(creatures[i].x() < centerx && creatures[i].y() > centery)
+         {
+            third++;
+            if(third > max)
+            {
+               max = third;
+               quad = 3;
+            }
+         }
+         else
+         {
+            fourth++;
+            if(fourth > max)
+            {
+               max = fourth;
+               quad = 4;
+            }
+         }
+      }
+   }
+   return quad;
+}
+
+int AI::findPlantQuadrant()
+{
+   int first = 0;
+   int second = 0;
+   int third = 0;
+   int fourth = 0;
+   int max = 0;
+   int quad = 0;
+   int centerx = mapWidth() / 2;
+   int centery = mapHeight() / 2;
+   
+   for(int i = 0; i < plants.size(); i++)
+   {
+      if(plants[i].x() > centerx && plants[i].y() < centery)
+      {
+         first++;
+         if(first > max)
+         {
+            max = first;
+            quad = 1;
+         }
+      }
+      else if(plants[i].x() < centerx && plants[i].y() < centery)
+      {
+         second++;
+         if(second > max)
+         {
+            max = second;
+            quad = 2;
+         }
+      }
+      else if(plants[i].x() < centerx && plants[i].y() > centery)
+      {
+         third++;
+         if(third > max)
+         {
+            max = third;
+            quad = 3;
+         }
+      }
+      else
+      {
+         fourth++;
+         if(fourth > max)
+         {
+            max = fourth;
+            quad = 4;
+         }
+      }
+   }
+   return quad;
+}
 
 //This function is run once, before your first turn.
 void AI::init(){}
@@ -263,21 +369,33 @@ bool AI::run()
   Creature* myCreatures[100];
   Creature* enemies[100];
   Creature* bestCreatures[5];
+  
+  
   int numMyCreatures = 0;
   int numEnemies = 0;
   int position1 = 0;
   int position2 = 0;
+  
+  
   // dudes with max stats
   int maxStrength = 0;
   int maxHerbivore = 0;
   int maxCarnivore = 0;
   int maxSpeedster = 0;
   int maxShield = 0;
-  int bestlocx = mapWidth() / 2;
-  int bestlocy = mapHeight() / 2;
-  int plantx = -1;
-  int planty = -1;
+  
+  
+  int centerx = mapWidth() / 2;
+  int centery = mapHeight() / 2;
+  int plantx = 0;
+  int planty = 0;
   float dist = mapWidth();
+  
+  int pquadrant = findPlantQuadrant();
+  int equadrant = findEnemyQuadrant();
+  int enemiesx = 0;
+  int enemiesy = 0;
+  
    
   for(int i = 0; i < creatures.size(); i++)
   {
@@ -320,31 +438,85 @@ bool AI::run()
     }
   }
   /*
-  for(int i = 0; i < plants.size(); i++)
+  switch(equadrant)
   {
-    float plantdist = distance(plants[i].x(), bestlocx, plants[i].y(), bestlocy);
-    if(plantdist < dist)
+    case 1:
+      enemiesx = centerx + (centerx / 2);
+      enemiesy = centery / 2;
+      break;
+    case 2:
+      enemiesx = centerx / 2;
+      enemiesy = centery / 2;
+      break;
+    case 3:
+      enemiesx = centerx / 2;
+      enemiesy = centery + (centery / 2);
+      break;
+    case 4:
+      enemiesx = centerx + (centerx / 2);
+      enemiesy = centery + (centery / 2);
+      break;
+  }
+  */
+  for(int i = 0; i < numEnemies; i++)
+  {
+    int enx = enemies[i] -> x();
+    int eny = enemies[i] -> y();
+    if(equadrant == 1)
     {
-      dist = plantdist;
-      plantx = plants[i].x();
-      planty = plants[i].y();
+      if(enx >= centerx && eny <= centery)
+      {
+         enemiesx = enx;
+         enemiesy = eny;
+      }
+    }
+    else if(equadrant == 2)
+    {
+      if(enx <= centerx && eny <= centery)
+      {
+         enemiesx = enx;
+         enemiesy = eny;
+      }
+    }
+    else if(equadrant == 3)
+    {
+      if(enx <= centerx && eny >= centery)
+      {
+         enemiesx = enx;
+         enemiesy = eny;
+      }
+    }
+    else if(equadrant == 4)
+    {
+      if(enx >= centerx && eny >= centery)
+      {
+         enemiesx = enx;
+         enemiesy = eny;
+      }
     }
   }
   
-  float munchies = distance(bestCreatures[1] -> x(), plantx, bestCreatures[1] -> y(), planty);
-  if(munchies == 1)
+  
+  
+  switch(pquadrant)
   {
-    bestCreatures[1] -> eat(plantx, planty);
+    case 1:
+      plantx = centerx + (centerx / 2);
+      planty = centery / 2;
+      break;
+    case 2:
+      plantx = centerx / 2;
+      planty = centery / 2;
+      break;
+    case 3:
+      plantx = centerx / 2;
+      planty = centery + (centery / 2);
+      break;
+    case 4:
+      plantx = centerx + (centerx / 2);
+      planty = centery + (centery / 2);
+      break;
   }
-  else
-  {
-    int movesLeft = bestCreatures[1] -> movementLeft() / 3;
-    while(movesLeft > 0 && munchies > 1)
-    {
-      pathfind(bestCreatures[1], bestCreatures[1] -> x(), bestCreatures[1] -> y(), plantx, planty, movesLeft);
-    }
-  }
-  */
   
   for(int i = 0; i < numMyCreatures; i++)
   {
@@ -374,7 +546,12 @@ bool AI::run()
       }
     }
     
-    stupidMove(myCreatures[i]);
+    if(carn > 3)
+      stupidMove(myCreatures[i], enemiesx, enemiesy);
+    else if(herb > 3)
+      stupidMove(myCreatures[i], plantx, planty);
+    else
+      stupidMove(myCreatures[i], centerx, centery);
     
     if(myCreatures[i] -> canBreed())
     {
@@ -382,11 +559,19 @@ bool AI::run()
       if(mate != NULL)
       {
          myCreatures[i] -> breed(*mate);
-         stupidMove(mate);
+         stupidMove(myCreatures[i], centerx, centery);
       }
     }
-    stupidMove(myCreatures[i]);
     
+    /*
+    if(carn > 3)
+      stupidMove(myCreatures[i], enemiesx, enemiesy);
+    if(herb > 3)
+      stupidMove(myCreatures[i], plantx, planty);
+    if(herb <= 3 && carn <= 3)
+      stupidMove(myCreatures[i], centerx, centery);
+    //stupidMove(myCreatures[i], enemiesx, enemiesy);
+    */
    
   }
   
