@@ -394,7 +394,34 @@ namespace visualizer
       {
         int mapWidth = m_game->states[0].mapWidth;
         int mapHeight = m_game->states[0].mapHeight;
-        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight);
+        // make their winnign creature
+        SmartPointer<Creature> creature = new Creature();
+        creature->energy = 0;
+        creature->defense = 0;
+        creature->carnivorism = 0;
+        creature->herbivorism = 0;
+        creature->speed = 0;
+        int n = 0;
+        for( auto& p : m_game->states[ state-1 ].creatures )
+        {
+          if(p.second.owner == m_game->winner)
+          {
+            n++;
+            creature->energy += p.second.energy;
+            creature->defense += p.second.defense;
+            creature->carnivorism += p.second.carnivorism;
+            creature->herbivorism += p.second.herbivorism;
+            creature->speed += p.second.speed;
+          }
+        }
+
+        creature->energy /= n;
+        creature->defense /= n;
+        creature->carnivorism /= n;
+        creature->herbivorism /= n;
+        creature->speed /= n;
+
+        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight, creature);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
         turn.addAnimatable( ss );
 

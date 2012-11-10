@@ -125,13 +125,14 @@ namespace visualizer
 
     struct SplashScreen : public Animatable
     {
-      SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
+      SplashScreen(string win, string msg, int id, int w, int h, Creature* c) : winner(win), reason(msg), winnerID(id), width(w), height(h), creature(c) {}
 
       string winner;
       string reason;
       int winnerID;
       int width;
       int height;
+      Creature* creature;
     };
     
     struct EatAnimation : public Animatable
