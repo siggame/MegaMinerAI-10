@@ -9,6 +9,8 @@
 namespace visualizer
 {
 
+
+
   static Color PlayerColor(int id, float trans = 1.0f)
   {
     return id == 0 ? Color( 0.8, 0.1, 0.1, trans ) : Color( 0.1, 0.1, 0.8, trans );
