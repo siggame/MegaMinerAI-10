@@ -62,10 +62,10 @@ namespace visualizer
             tile.texture = "grass";
         }*/
 
-				if(tile.turn - game->timeManager->getTurn() > 3)
-				{
-					tile.turn = -1;
-				}
+        if(tile.turn - game->timeManager->getTurn() > 3)
+        {
+            tile.turn = -1;
+        }
 
         if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
         {
@@ -285,13 +285,27 @@ namespace visualizer
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
-    int x = m_HUD->playerID * m_HUD->mapWidth;
+
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
 
+    string timeString = toString(m_HUD->time);
+    int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f));
+    int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width - 1);
+
+    for(int i = islandPos; i <= (width + islandPos); ++i)
+    {
+        for(int j = m_HUD->mapHeight + 1; j <= m_HUD->mapHeight + 3; ++j)
+        {
+            game->renderer->drawAnimQuad( i, j, 1, 1, "tile_ground", 0 );
+        }
+    }
+
+    int textPos = m_HUD->playerID * m_HUD->mapWidth;
+
     game->renderer->setColor( PlayerColor( m_HUD->playerID) );
-    game->renderer->drawText( x, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
-    game->renderer->drawText( x, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
-    game->renderer->drawText( x, m_HUD->mapHeight + 3, "Roboto", toString(m_HUD->time), 3.0f, alignment);
+    game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
+    game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
+    game->renderer->drawText( textPos, m_HUD->mapHeight + 3, "Roboto", timeString, 3.0f, alignment);
 
   }
 

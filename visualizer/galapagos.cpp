@@ -186,7 +186,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defence" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
+    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defense" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
