@@ -103,12 +103,24 @@ namespace visualizer
 
         if(tile.turn - game->timeManager->getTurn() > 3)
         {
-          tile.turn = -1;
+            tile.turn = -1;
         }
 
         if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
         {
-          game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
+            game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
+        }
+        else
+        {
+          game->renderer->setColor(Color(1,1,1,1));
+          game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
+        }
+        
+
+        if((tile.turn - 1) == game->timeManager->getTurn())
+        {
+            game->renderer->setColor(Color(1,1,1,t));
+            game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
         }
 
       }
