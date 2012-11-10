@@ -58,13 +58,13 @@ namespace visualizer
 
   void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, IGame* game)
   {
+    //cout << "FULL creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_body" , creature->energy-1);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_etc" , 0);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_leg" , creature->speed - 1);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arm" , creature->herbivorism - 1);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armor" , creature->defense - 1);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_head" , creature->carnivorism - 1);
-
   }
 
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
@@ -271,6 +271,8 @@ namespace visualizer
     // Draw the actual winner's name in their color
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
     game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
+
+    //DrawFullCreature(m_SplashScreen->creature, m_SplashScreen->width/2.0f - 5, m_SplashScreen->height/2.0f + 2, 10, 10, game);
   }
 
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
@@ -281,7 +283,6 @@ namespace visualizer
 
     string timeString = "Time: ";
     timeString += toString(99999999);
-    cout << "timeString: " << timeString << endl;
     string idString = "ID: ";
     idString += toString(m_HUD->playerID);
     int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f)) + 1;
@@ -298,7 +299,6 @@ namespace visualizer
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 3, "Roboto", timeString, 3.0f, alignment);
-
   }
 
 
