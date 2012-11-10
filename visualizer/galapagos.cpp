@@ -138,6 +138,7 @@ namespace visualizer
   {
     std::hash<std::string> hasher;
     unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+    cout << "rand seed: " << seed;
     srand(seed);
     
     //cout<<"Seed: "<<seed<<endl;
@@ -195,8 +196,12 @@ namespace visualizer
 
     std::stack<SmartPointer<Animatable>> turnAni;
     SmartPointer<Map> map = new Map(m_game->states[1].mapWidth,m_game->states[1].mapHeight,m_GUIHeight,0.6f,0,0);
-    map->groundTile = rand()%10;
-    map->waterTile = rand()%4;
+    int r = rand()%10;
+    map->groundTile = r;
+    cout << "ground tile: " << r << endl;
+    map->waterTile = r;
+    r = rand()%4;
+    cout << "water tile: " << r << endl;
     map->addKeyFrame( new DrawMap( map ) );
 
     // Look through each turn in the gamelog
