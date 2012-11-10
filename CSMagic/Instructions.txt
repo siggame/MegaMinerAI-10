@@ -1,0 +1,2 @@
+1. Simply drop the files into the MegaMiner10\client\csharp directory.
+2. Questions? Ask Chester Gregg.
