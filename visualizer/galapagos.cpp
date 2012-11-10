@@ -148,11 +148,10 @@ namespace visualizer
   void Galapagos::SeedRand() const
   {
     //std::hash<std::string> hasher;
-    unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
-    cout << "RAND seed is: " << seed << endl;
-    srand(seed);
-    
-    //cout<<"Seed: "<<seed<<endl;
+    //unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+    unsigned int uiTime = time(NULL);
+    cout << "RAND seed is: " << uiTime << endl;
+    srand(uiTime);
   }
 
   void Galapagos::loadGamelog( std::string gamelog )
