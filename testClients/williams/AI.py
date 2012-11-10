@@ -176,19 +176,22 @@ class AI(BaseAI):
   #If health is very high, breed
   def defaultActions(self,creature):   
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
+    nearestAlly = self.findNearestFriendlyBreedableCreatureXY(creature)
     if creature.canEat:
       self.eatWeakAlly(creature)
-    if creature.herbivorism > nearestEnemy.carnivorism*2:
+    if nearestEnemy is not None and creature.herbivorism > nearestEnemy.carnivorism*2:
       if creature.currentHealth < creature.maxHealth*.65 and creature.canEat:
         self.findAndEatPlant(creature)
-      elif self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
+      elif nearestEnemy is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
         self.findNearestEnemyAndEat(creature)
     else:
-      if self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
+      if nearestEnemy is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
         self.findNearestEnemyAndEat(creature)
       elif creature.currentHealth < creature.maxHealth*.65 and creature.canEat:
         self.findAndEatPlant(creature)
-    if creature.currentHealth >= creature.maxHealth*.65 and creature.currentHealth > self.healthPerBreed + 15 and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) >= 6:
+    if creature.currentHealth >= creature.maxHealth*.65 and creature.currentHealth > self.healthPerBreed + 15 \
+    and nearestAlly is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) >= 6 \
+    and self.distance(creature.x, creature.y, nearestAlly.x, nearestAlly.y) <= 6:
       self.findClosestAllyAndBreed(creature)   
     if creature.canEat:
       self.findNearestEnemyAndEat(creature)
