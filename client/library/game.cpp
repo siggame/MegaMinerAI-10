@@ -397,7 +397,7 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
    return 0;
   }
   //they have to be adjacent 
-  else if(abs(object->x-mate->x)+abs(object->y+mate->y)!=1)
+  else if(abs(object->x-mate->x)+abs(object->y-mate->y)!=1)
   {
    return 0;
   }

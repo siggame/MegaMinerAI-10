@@ -99,7 +99,7 @@ class AI(BaseAI):
       closedSet.add(current);closedTup.add(current[1])
       openTup.remove(current[1])
       for neighbor in self.adjacent(current[1][0],current[1][1]):#,[(startX,startY),(goalX,goalY)]):
-       if self.getObject(neighbor[0],neighbor[1])==[] or (neighbor[0],neighbor[1])==(goalX,goalY) or (neighbor[0],neighbor[1])==(startX,startY):
+       if self.getObject(neighbor[0],neighbor[1])==[] or (neighbor[0],neighbor[1])==(goalX,goalY):# or (neighbor[0],neighbor[1])==(startX,startY):
         if neighbor in closedTup:
          continue
         g = current[3]+self.distance(neighbor[0],neighbor[1],current[1][0],current[1][1])
@@ -191,6 +191,7 @@ class AI(BaseAI):
     for life in self.plants+self.creatures:
       self.addGrid(life.x,life.y,life)
           
+    families = [creature for creature in self.creatures if creature.owner == self.playerID and len(self.grid[creature.x][creature.y])>1]
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (self.maxStat(creature)=="herb" or self.maxStat(creature)=="speed")]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and self.maxStat(creature)=="carn" and creature not in herbivores]
     breeders = [creature for creature in self.creatures if creature.owner == self.playerID and creature not in carnivores]
