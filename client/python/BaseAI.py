@@ -94,12 +94,16 @@ class BaseAI:
   def __init__(self, connection):
     self.connection = connection
     
+  #If there is a plant at location (x,y), returns the index of that plant.
+  #If there is no plant there, returns -1.    
   def getPlantAtLocation(self,x,y):
     for plant in self.plants:
       if plant.x == x and plant.y == y:
         return self.plants.index(plant)
     return -1
-  
+    
+  #If there is a creature at location (x,y), returns the index of that creature.
+  #If there is no creature there, returns -1.
   def getCreatureAtLocation(self,x,y):
     for creature in self.creatures:
       if creature.x == x and creature.y == y:

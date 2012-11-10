@@ -186,7 +186,7 @@ namespace visualizer
     
     // Build the Debug Table's Headers
     QStringList header;
-    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defence" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
+    header << "ID" << "Owner" << "Type" << "X" << "Y" << "Health/Size" << "Max Health" << "Energy" << "Carnivorism" << "Herbivorism" << "Speed" << "Defense" << "Moves Left" << "Can Breed" << "Can Eat" << "Parent ID";
     gui->setDebugHeader( header );
     timeManager->setNumTurns( 0 );
 
@@ -232,7 +232,7 @@ namespace visualizer
       for( auto& p : m_game->states[ state ].players )
       {
         auto player = p.second;
-        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time );
+        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time, map->groundTile );
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
       }
@@ -394,7 +394,36 @@ namespace visualizer
       {
         int mapWidth = m_game->states[0].mapWidth;
         int mapHeight = m_game->states[0].mapHeight;
-        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight);
+        // make their winnign creature
+        SmartPointer<Creature> creature = new Creature();
+        creature->energy = 0;
+        creature->defense = 0;
+        creature->carnivorism = 0;
+        creature->herbivorism = 0;
+        creature->speed = 0;
+        int n = 0;
+        for( auto& p : m_game->states[ state-1 ].creatures )
+        {
+          if(p.second.owner == m_game->winner)
+          {
+            n++;
+            creature->energy += p.second.energy;
+            creature->defense += p.second.defense;
+            creature->carnivorism += p.second.carnivorism;
+            creature->herbivorism += p.second.herbivorism;
+            creature->speed += p.second.speed;
+          }
+        }
+
+        creature->energy /= n;
+        creature->defense /= n;
+        creature->carnivorism /= n;
+        creature->herbivorism /= n;
+        creature->speed /= n;
+
+        //cout << "winner's avg creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
+
+        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight, creature);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
         turn.addAnimatable( ss );
 
