@@ -203,9 +203,6 @@ class Match(DefaultGameWorld):
     else:
       return "Game is over."
 
-    for obj in self.objects.values():
-      obj.nextTurn()
-
     self.checkWinner()
     if self.winner is None:
       self.sendStatus([self.turn] +  self.spectators)
@@ -233,6 +230,10 @@ class Match(DefaultGameWorld):
     
     self.jsonAnimations = []
     self.animations = ["animations"]
+    
+    for obj in self.objects.values():
+      obj.nextTurn()
+      
     return True
 
   def checkWinner(self):
@@ -240,14 +241,34 @@ class Match(DefaultGameWorld):
     player2 = self.objects.players[1]
     p1c = sum(creature.owner == player1.id for creature in self.objects.creatures)
     p2c = sum(creature.owner == player2.id for creature in self.objects.creatures)
-    if p1c == 0 or p2c == 0 or self.turnNumber >= self.turnLimit - 1:
+    if p1c == 0 or p2c == 0 or self.turnNumber >= self.turnLimit:
       if p1c > p2c:
         self.declareWinner(self.players[0], "Player 1 wins through creature domination")
       elif p1c < p2c:
         self.declareWinner(self.players[1], "Player 2 wins through creature domination")
       #Defaults player 1 as winner if both players have same number of creatures at end
       else:
-        self.declareWinner(random.choice(self.players), "The game was a tie.")       
+        p1stats = 0
+        p2stats = 0
+        for creature in self.objects.creatures:
+          if creature.owner == player1.id:
+            p1stats += creature.energy
+            p1stats += creature.carnivorism
+            p1stats += creature.herbivorism
+            p1stats += creature.defense
+            p1stats += creature.speed
+          else:
+            p2stats += creature.energy
+            p2stats += creature.carnivorism
+            p2stats += creature.herbivorism
+            p2stats += creature.defense
+            p2stats += creature.speed
+        if p1stats > p2stats:
+          self.declareWinner(self.players[0], "Player 1 wins through creature quality supereriority")
+        elif p1stats < p2stats:
+          self.declareWinner(self.players[0], "Player 2 wins through creature quality supereriority")
+        else:
+          self.declareWinner(random.choice(self.players), "The game was a tie.")       
 
 
   def declareWinner(self, winner, reason=''):

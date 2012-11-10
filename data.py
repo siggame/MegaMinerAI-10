@@ -8,12 +8,12 @@ gameName = "Galapagos"
 globals = [
   Variable('turnNumber', int, 'How many turns it has been since the beginning of the round'),
   Variable('playerID', int, 'Player Number; either 0 or 1'),
-  Variable('gameNumber', int, 'What number game this is for the server'),
+  Variable('gameNumber', int, 'What game number this is for the server'),
   Variable('mapWidth', int, 'The width of the map'),
   Variable('mapHeight', int, 'The height of the map'),
-  Variable('healthPerBreed', int, 'The amount of energy required from each creature in order to breed.'),
-  Variable('healthPerMove', int, 'The amount of energy required to try to move.'),
-  Variable('healthPerTurn', int, 'The amount of energy lost from the passage of time.'),
+  Variable('healthPerBreed', int, 'The amount of energy required from -each- creature in order to breed.'),
+  Variable('healthPerMove', int, 'The amount of energy required to move.'),
+  Variable('healthPerTurn', int, 'The amount of energy lost after each of your turns.'),
   Variable('baseHealth', int, 'The base amount of health that each creature starts with'),
 ]
 
@@ -39,7 +39,7 @@ Plant = Model('Plant',
   parent=Mappable,
   data=[
     Variable('size', int, 'The size of the plant'),
-    Variable('growthRate', int, 'The number of turns it takes this plant to grow in size.'),
+    Variable('growthRate', int, 'The total number of turns it takes this plant to grow in size.'),
     Variable('turnsUntilGrowth', int, 'The number of turns left until this plant will grow again.'),
   ],
   doc="A basic plant!",
@@ -51,12 +51,12 @@ Creature = Model('Creature',
     Variable('owner', int, 'The owner of the creature'),
     Variable('maxHealth', int, 'The maximum amount of health this creature can have'),
     Variable('currentHealth', int, 'The current amount of health that this creature has.'),
-    Variable('energy', int, 'The energy level of the creature. This helps your max health'),
-    Variable('carnivorism', int, 'The carnivore level of the creature'),
-    Variable('herbivorism', int, 'The herbivore level of the creature'),
-    Variable('speed', int, 'The speed of the creature'),
-    Variable('movementLeft', int, 'The amount of moves this creature has left this turn'),
-    Variable('defense', int, 'The defense of the creature'),
+    Variable('energy', int, 'The energy level of the creature. This increases your max health'),
+    Variable('carnivorism', int, 'The carnivore level of the creature. This increases damage to other other creatures and health restored on kill.'),
+    Variable('herbivorism', int, 'The herbivore level of the creature. This increases health restored from eating plants'),
+    Variable('speed', int, 'The speed of the creature. This determines how many times a creature can move in one turn.'),
+    Variable('movementLeft', int, 'The amount of moves this creature has left this turn.'),
+    Variable('defense', int, 'The defense of the creature. This reduces the amount of damage this creature takes from being eaten.'),
     Variable('canEat', int, 'Indicated whether or not this creature can eat this turn.'),
     Variable('canBreed', int, 'Indicated whether or not this creature can breed this turn.'),
     Variable('parentID', int, 'ID of the creature that gave birth to this one.'),
@@ -73,7 +73,7 @@ Creature = Model('Creature',
 Creature.addFunctions(
   [
     Function ('breed', [Variable('mate', Creature)], 
-    doc='Breed with target adjacent creature. Spawn new creature at input location'),
+    doc='Breed with target adjacent creature. New creature will be spawned under the calling creature.'),
   ]
 )
 
