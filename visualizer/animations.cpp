@@ -20,6 +20,11 @@ namespace visualizer
   {
   }
 
+  float clamp(float n, float low, float high)
+  {
+    return n < low ? low : n > high ? high : n;
+  }
+
   void DrawIsland(float atX, float atY, float atWidth, float atHeight, int tile, IGame* game)
   {
     game->renderer->setColor(Color(1,1,1,1));
@@ -67,7 +72,7 @@ namespace visualizer
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 0);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 1);
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_legs_front" , creature->speed - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arms" , int(std::floor( float(creature->herbivorism - creature->carnivorism + 9) / 18.0f * 11.0f )+0.5f ));
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arms" , clamp(int(std::floor( float(creature->herbivorism - creature->carnivorism + 9) / 18.0f * 11.0f +0.5f) ),0,10) );
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armors" , creature->defense - 1);
     game->renderer->setColor( Color(1, 1, 1, color.a) );
     game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_spikes" , creature->defense - 1);
