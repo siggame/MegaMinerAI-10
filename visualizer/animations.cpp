@@ -56,15 +56,32 @@ namespace visualizer
     }
   }
 
-  void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, IGame* game)
+  void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, Color color, IGame* game)
   {
-    //cout << "FULL creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_body" , creature->energy-1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_etc" , 0);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_leg" , creature->speed - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arm" , creature->herbivorism - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armor" , creature->defense - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_head" , creature->carnivorism - 1);
+    game->renderer->setColor(color);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_legs_back" , creature->speed - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_tails" , creature->energy-1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 2);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 0);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_legs_front" , creature->speed - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arms" , int(std::floor( float(creature->carnivorism - creature->herbivorism + 9) / 18.0f * 11.0f )+0.5f ));
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armors" , creature->defense - 1);
+    game->renderer->setColor( Color(1, 1, 1, color.a) );
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_spikes" , creature->defense - 1);
+    game->renderer->setColor(color);
+    if( creature->carnivorism == 1 && creature->herbivorism > 1 )
+    {
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_jaws" , 10);
+    }
+    else
+    {
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_jaws" , creature->carnivorism - 1);
+      game->renderer->setColor( Color(1, 1, 1, color.a) );
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_teeth" , creature->carnivorism - 1);
+    }
+    game->renderer->setColor( Color(1, 1, 1, color.a) );
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_eyes" , creature->herbivorism - 1);
   }
 
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
@@ -206,8 +223,7 @@ namespace visualizer
 	//(*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
     (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile(game->timeManager->getTurn() + 3);
 
-    game->renderer->setColor( PlayerColor(m_Creature->owner) );
-    DrawFullCreature(m_Creature, posX, posY, 1, 1, game);
+    DrawFullCreature(m_Creature, posX, posY, 1, 1, PlayerColor(m_Creature->owner), game);
 
     // draw the health bar
     if( game->options->getNumber("Show Health Bars") > 0.0f)
