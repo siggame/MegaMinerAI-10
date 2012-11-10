@@ -138,7 +138,6 @@ namespace visualizer
   {
     std::hash<std::string> hasher;
     unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
-    cout << "RAND seed is: " << seed << endl;
     srand(seed);
     
     //cout<<"Seed: "<<seed<<endl;
@@ -415,6 +414,16 @@ namespace visualizer
 
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
+
+        // Player talk
+        for( auto& t : m_game->states[state].animations[ p.first ] )
+        {
+          parser::playerTalk &talk = (parser::playerTalk&)*t;
+          stringstream talkstring;
+          talkstring << "(" << state << ") " << talk.message;
+          //playerTalks[ player.first ] = talkstring.str();
+          turn[-1]["TALK"] = talkstring.str().c_str();
+        }
       }
 
       if(((float)state / (float)m_game->states.size()) > 0.95f)
