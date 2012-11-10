@@ -30,33 +30,44 @@ class AI(BaseAI):
       return []
     
   def removeGrid(self,target):
-    self.grid[target.x][target.y]=[]
+    self.grid[target.x][target.y].remove(target)
     
-  def addGrid(self,creature):
-    self.grid[creature.x][creature.y].append(creature)
+  def addGrid(self,x,y,target):
+    self.grid[x][y].append(target)
     
   def moveTo(self,creature,target):
      path = self.pathFind(creature.x,creature.y,target.x,target.y)
      if path != None:
        while creature.movementLeft>0 and len(path)>0:
          next = path.pop()
-         if next!=(creature.x,creature.y) and creature.movementLeft>0 and creature.currentHealth>self.healthPerMove:
+         if next!=(creature.x,creature.y) and creature.movementLeft>0 and creature.currentHealth>3*self.healthPerMove:
            self.removeGrid(creature)
            creature.move(next[0],next[1])
-           self.addGrid(creature)
+           self.addGrid(creature.x,creature.y,creature)
       
   def distance(self,sourceX,sourceY,destX,destY):
     return math.sqrt((sourceX-destX)**2+(sourceY-destY)**2)
     
-  def maxStat(self,creature):
+  def statDict(self,creature):
+   return {"herb":creature.herbivorism,"carn":creature.carnivorism,"speed":creature.speed,"defense":creature.defense,"energy":creature.energy}
+  
+  def maxStat(self,creature,breeding=False):
     dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}
+    if breeding and 10 in dict:
+      del dict[10]
     return dict[max(dict)]
-
+   
+  def minStat(self,creature,breeding=False):
+    dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}  
+    return dict[min(dict)]
+    
   def findNearest(self,source,list,ignore=[]):
     d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform not in ignore}
-    return d[min(d)]      
-  
-  
+    try:
+      return d[min(d)]      
+    except ValueError:
+      return None
+      
   def adjacent(self,x,y):
     adj = []
     if x+1<self.mapWidth:
@@ -116,13 +127,35 @@ class AI(BaseAI):
          else:
           ignore.append(plant)
   
+  def checkCanBreed(self,creature):
+    if creature.canBreed and creature.currentHealth>self.healthPerBreed+self.healthPerTurn:
+      return True
+     
+  def compareStats(self,mate,creature):
+    if self.minStat(mate)==self.maxStat(creature) or self.maxStat(mate)==self.minStat(creature):
+      return False 
+    return True
+  
+  def findMate(self,creature,mine):
+    mates = [mate for mate in mine if self.checkCanBreed(mate) and mate.id !=creature.id and creature.x!=mate.x and creature.y!=mate.y]
+    return self.findNearest(creature,mates)    
+    
+  def findGoodMate(self,creature,mine):
+    mates = [mate for mate in mine if self.checkCanBreed(mate) and mate.id!=creature.id]
+    for mate in mates:
+      if self.maxStat(mate,True)==self.maxStat(creature,True) or (self.compareStats(mate,creature) and len([i for i in self.statDict(creature).values() if i%2==1])>3):
+        return mate
+    return None
+    
   def herbControl(self,creature,enemies):
    plant = self.pickPlant(creature)
    if plant!=None:
      self.moveTo(creature,plant)
-     if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants:
+     if creature.canEat and self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants and isinstance(self.getObject(plant.x,plant.y),Plant):
         creature.eat(plant.x,plant.y)    
-  
+   else:
+     self.carnControl(creature,enemies)
+     
   def carnControl(self,creature,enemies):
     if creature.movementLeft>0:
         enemy = self.findNearest(creature,enemies,[creature])
@@ -134,20 +167,34 @@ class AI(BaseAI):
             self.removeGrid(enemy)
             self.creatures.remove(enemy)
   
-  def breedControl(self,creature,mine):
-    pass
-  
+  def breedControl(self,creature,mine,enemies):
+    if self.checkCanBreed(creature) and creature.currentHealth>=creature.maxHealth*.7:
+      mate = self.findGoodMate(creature,mine)
+      if mate==None:
+        mate = self.findMate(creature,mine)
+      if isinstance(mate,Creature):
+        self.moveTo(creature,mate)
+        if self.distance(creature.x,creature.y,mate.x,mate.y)==1 and mate.currentHealth>self.healthPerBreed and creature.currentHealth>self.healthPerBreed:
+          creature.breed(mate)
+          self.addGrid(creature.x,creature.y,"ToBeBred")
+    else:
+      dict = self.statDict(creature)
+      if dict['herb']>=dict['carn']:
+        self.herbControl(creature,enemies)
+      else:
+        self.carnControl(creature,enemies)
+        
   ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):  
     self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
     for life in self.plants+self.creatures:
-      self.addGrid(life)
+      self.addGrid(life.x,life.y,life)
           
     herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (self.maxStat(creature)=="herb" or self.maxStat(creature)=="speed")]  
     carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and self.maxStat(creature)=="carn" and creature not in herbivores]
     breeders = [creature for creature in self.creatures if creature.owner == self.playerID and creature not in carnivores]
-    mine= herbivores+carnivores
+    mine = herbivores+carnivores+breeders
     enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
     
     for creature in herbivores:
@@ -158,7 +205,10 @@ class AI(BaseAI):
       
     for creature in carnivores:
       self.carnControl(creature,enemies)
-      
+    
+    for creature in breeders:
+      pass
+      self.breedControl(creature,mine,enemies)
     return 1
 
   def __init__(self, conn):

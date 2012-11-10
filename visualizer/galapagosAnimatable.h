@@ -125,13 +125,21 @@ namespace visualizer
 
     struct SplashScreen : public Animatable
     {
-      SplashScreen(string win, string msg, int id, int w, int h) : winner(win), reason(msg), winnerID(id), width(w), height(h) {}
+      SplashScreen(string win, string msg, int id, int w, int h, float en, float def, float carn, float herb, float spd) : 
+        winner(win), reason(msg), winnerID(id), width(w), height(h), 
+        energy(en), defense(def), carnivorism(carn), herbivorism(herb), speed(spd)
+        {}
 
       string winner;
       string reason;
       int winnerID;
       int width;
       int height;
+      float energy;
+      float defense;
+      float carnivorism;
+      float herbivorism;
+      float speed;
     };
     
     struct EatAnimation : public Animatable
@@ -144,8 +152,11 @@ namespace visualizer
 
     struct HUD : public Animatable
     {
-      HUD(int mw, int mh, int h, string name, int id, float t) :
-          time(t), playerName(name), playerID(id), mapWidth(mw), mapHeight(mh), height(h) {}
+      HUD(int mw, int mh, int h, string name, int id, float t, int ti, int currentCrea, int totalCrea, SmartPointer<Creature> c) :
+          time(t), playerName(name), playerID(id), mapWidth(mw), mapHeight(mh), height(h),
+          tile(ti), currentCreatures(currentCrea), totalCreatures(totalCrea),
+          creature(c)
+          {}
       
       float time;
       string playerName;
@@ -153,6 +164,10 @@ namespace visualizer
       int mapWidth;
       int mapHeight;
       int height;
+      int tile;
+      int currentCreatures;
+      int totalCreatures;
+      SmartPointer<Creature> creature;
     };
 
     struct Nest : public Animatable

@@ -27,9 +27,10 @@ class Match(DefaultGameWorld):
     self.controller = controller
     DefaultGameWorld.__init__(self)
     self.scribe = Scribe(self.logPath())
-    self.jsonLogger = jsonLogger.JsonLogger(self.logPath())
-    self.jsonAnimations = []
-    self.dictLog = dict(gameName = "Galapagos", turns = [])
+    if( self.logJson ):
+      self.jsonLogger = jsonLogger.JsonLogger(self.logPath())
+      self.jsonAnimations = []
+      self.dictLog = dict(gameName = "Galapagos", turns = [])
     self.addPlayer(self.scribe, "spectator")
 
     self.turnNumber = -1
@@ -208,27 +209,28 @@ class Match(DefaultGameWorld):
       self.sendStatus([self.turn] +  self.spectators)
     else:
       self.sendStatus(self.spectators)
-      
-    self.dictLog['turns'].append(
-      dict(
-        turnNumber = self.turnNumber,
-        playerID = self.playerID,
-        gameNumber = self.gameNumber,
-        mapWidth = self.mapWidth,
-        mapHeight = self.mapHeight,
-        healthPerBreed = self.healthPerBreed,
-        healthPerMove = self.healthPerMove,
-        healthPerTurn = self.healthPerTurn,
-        baseHealth = self.baseHealth,
-        Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
-        Creatures = [i.toJson() for i in self.objects.values() if i.__class__ is Creature],
-        Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
-        Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
-        animations = self.jsonAnimations
-      )
-    )
     
-    self.jsonAnimations = []
+    if( self.logJson ):  
+      self.dictLog['turns'].append(
+        dict(
+          turnNumber = self.turnNumber,
+          playerID = self.playerID,
+          gameNumber = self.gameNumber,
+          mapWidth = self.mapWidth,
+          mapHeight = self.mapHeight,
+          healthPerBreed = self.healthPerBreed,
+          healthPerMove = self.healthPerMove,
+          healthPerTurn = self.healthPerTurn,
+          baseHealth = self.baseHealth,
+          Mappables = [i.toJson() for i in self.objects.values() if i.__class__ is Mappable],
+          Creatures = [i.toJson() for i in self.objects.values() if i.__class__ is Creature],
+          Plants = [i.toJson() for i in self.objects.values() if i.__class__ is Plant],
+          Players = [i.toJson() for i in self.objects.values() if i.__class__ is Player],
+          animations = self.jsonAnimations
+        )
+      )
+      self.jsonAnimations = []
+
     self.animations = ["animations"]
     
     for obj in self.objects.values():
@@ -278,9 +280,10 @@ class Match(DefaultGameWorld):
     
     msg = ["game-winner", self.id, self.winner.user, self.getPlayerIndex(self.winner), reason]
     
-    self.dictLog["winnerID"] =  self.getPlayerIndex(self.winner)
-    self.dictLog["winReason"] = reason
-    self.jsonLogger.writeLog( self.dictLog )
+    if( self.logJson ):
+      self.dictLog["winnerID"] =  self.getPlayerIndex(self.winner)
+      self.dictLog["winReason"] = reason
+      self.jsonLogger.writeLog( self.dictLog )
     
     self.scribe.writeSExpr(msg)
     self.scribe.finalize()
@@ -357,7 +360,8 @@ class Match(DefaultGameWorld):
     # generate the sexp
     self.animations.append(anim.toList())
     # generate the json
-    self.jsonAnimations.append(anim.toJson())
+    if( self.logJson ):
+      self.jsonAnimations.append(anim.toJson())
   
 
 
