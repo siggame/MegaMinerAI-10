@@ -306,13 +306,21 @@ namespace visualizer
     timeString = "Time: ";
     timeString += toString(m_HUD->time);
 
-
     // draw the island behind the player's HUD
     DrawIsland(islandPos, m_HUD->mapHeight + 1, width, 3, m_HUD->tile, game);
 
+    float fBarLength = m_HUD->mapWidth * (float)m_HUD->currentCreatures / (float)m_HUD->totalCreatures;
+    if(m_HUD->playerID == 1)
+    {
+        fBarLength = -fBarLength;
+    }
+
     int textPos = m_HUD->playerID * m_HUD->mapWidth;
 
-    game->renderer->setColor( PlayerColor( m_HUD->playerID) );
+    game->renderer->setColor(PlayerColor(m_HUD->playerID));
+
+    // todo: move the bar somewhere else
+    game->renderer->drawQuad( textPos, m_HUD->mapHeight, fBarLength , 0.5f);
 
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);
