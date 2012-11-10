@@ -160,6 +160,7 @@ namespace visualizer
   
   void Galapagos::SeedRand() const
   {
+    //cout<<"Seed: "<<seed<<endl;
     //std::hash<std::string> hasher;
     //unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
     //unsigned int uiTime = time(NULL);
@@ -440,6 +441,16 @@ namespace visualizer
 
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
+
+        // Player talk
+        for( auto& t : m_game->states[state].animations[ p.first ] )
+        {
+          parser::playerTalk &talk = (parser::playerTalk&)*t;
+          stringstream talkstring;
+          talkstring << "(" << state << ") " << talk.message;
+          //playerTalks[ player.first ] = talkstring.str();
+          turn[-1]["TALK"] = talkstring.str().c_str();
+        }
       }
 
       if(((float)state / (float)m_game->states.size()) > 0.95f)
