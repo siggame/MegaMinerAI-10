@@ -56,6 +56,17 @@ namespace visualizer
     }
   }
 
+  void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, IGame* game)
+  {
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_body" , creature->energy-1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_etc" , 0);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_leg" , creature->speed - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arm" , creature->herbivorism - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armor" , creature->defense - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_head" , creature->carnivorism - 1);
+
+  }
+
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
   {
 
@@ -196,18 +207,7 @@ namespace visualizer
     (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile(game->timeManager->getTurn() + 3);
 
     game->renderer->setColor( PlayerColor(m_Creature->owner) );
-
-    // for some reason commenting out these other body parts works on windows...
-    
-
-    // todo: maybe change this
-
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_body" , m_Creature->energy-1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_etc" , 0);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_leg" , m_Creature->speed - 1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_arm" , m_Creature->herbivorism - 1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_armor" , m_Creature->defense - 1);
-    game->renderer->drawAnimQuad( posX, posY, 1, 1, "creature_head" , m_Creature->carnivorism - 1);
+    DrawFullCreature(m_Creature, posX, posY, 1, 1, game);
 
     // draw the health bar
     if( game->options->getNumber("Show Health Bars") > 0.0f)
