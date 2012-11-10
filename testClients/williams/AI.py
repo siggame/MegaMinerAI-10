@@ -162,7 +162,7 @@ class AI(BaseAI):
   def eatWeakAlly(self, creature):
     for ally in self.creatures:
       if ally.owner == self.playerID:
-        if self.distance(creature.x, creature.y, ally.x, ally.y) <= creature.movementLeft + 1 and (creature.carnivorism - ally.defense)*10 <= 0:
+        if self.distance(creature.x, creature.y, ally.x, ally.y) <= creature.movementLeft + 1 and ((creature.carnivorism - ally.defense)*10 >= ally.currentHealth or ally.currentHealth <= 10):
           path = self.findPath(creature.x, creature.y, ally.x, ally.y)
           while len(path) > 0 and creature.movementLeft > 0 and self.distance(creature.x, creature.y, ally.x, ally.y) > 1 and creature.currentHealth > self.healthPerMove:
             self.grid[creature.x][creature.y].remove(creature)
@@ -176,13 +176,22 @@ class AI(BaseAI):
   #If health is very high, breed
   def defaultActions(self,creature):   
     nearestEnemy = self.findNearestEnemyCreatureXY(creature)
-    if self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
-      self.findNearestEnemyAndEat(creature)
-    elif creature.canEat:
+    nearestAlly = self.findNearestFriendlyBreedableCreatureXY(creature)
+    if creature.canEat:
       self.eatWeakAlly(creature)
-    elif creature.currentHealth < creature.maxHealth*.65 and creature.canEat:
-      self.findAndEatPlant(creature)
-    if creature.currentHealth >= creature.maxHealth*.65 and creature.currentHealth > self.healthPerBreed + 15 and creature.canBreed:
+    if nearestEnemy is not None and creature.herbivorism > nearestEnemy.carnivorism*2:
+      if creature.currentHealth < creature.maxHealth*.65 and creature.canEat:
+        self.findAndEatPlant(creature)
+      elif nearestEnemy is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
+        self.findNearestEnemyAndEat(creature)
+    else:
+      if nearestEnemy is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) <= creature.movementLeft:
+        self.findNearestEnemyAndEat(creature)
+      elif creature.currentHealth < creature.maxHealth*.65 and creature.canEat:
+        self.findAndEatPlant(creature)
+    if creature.currentHealth >= creature.maxHealth*.65 and creature.currentHealth > self.healthPerBreed + 15 \
+    and nearestAlly is not None and self.distance(creature.x, creature.y, nearestEnemy.x, nearestEnemy.y) >= 6 \
+    and self.distance(creature.x, creature.y, nearestAlly.x, nearestAlly.y) <= 6:
       self.findClosestAllyAndBreed(creature)   
     if creature.canEat:
       self.findNearestEnemyAndEat(creature)

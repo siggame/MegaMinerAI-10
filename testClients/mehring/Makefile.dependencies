@@ -1,0 +1,24 @@
+AI.o: AI.cpp AI.h BaseAI.h ../library/game.h ../library/network.h \
+ ../library/sexp/sfcompat.h ../library/sexp/sexp.h \
+ ../library/structures.h Mappable.h ../library/structures.h Creature.h \
+ Plant.h Player.h ../library/util.h
+BaseAI.o: BaseAI.cpp BaseAI.h ../library/game.h ../library/network.h \
+ ../library/sexp/sfcompat.h ../library/sexp/sexp.h \
+ ../library/structures.h Mappable.h ../library/structures.h Creature.h \
+ Plant.h Player.h
+Creature.o: Creature.cpp Creature.h ../library/structures.h Mappable.h \
+ ../library/game.h ../library/network.h ../library/sexp/sfcompat.h \
+ ../library/sexp/sexp.h ../library/structures.h
+main.o: main.cpp AI.h BaseAI.h ../library/game.h ../library/network.h \
+ ../library/sexp/sfcompat.h ../library/sexp/sexp.h \
+ ../library/structures.h Mappable.h ../library/structures.h Creature.h \
+ Plant.h Player.h ../library/network.h
+Mappable.o: Mappable.cpp Mappable.h ../library/structures.h \
+ ../library/game.h ../library/network.h ../library/sexp/sfcompat.h \
+ ../library/sexp/sexp.h ../library/structures.h
+Plant.o: Plant.cpp Plant.h ../library/structures.h Mappable.h \
+ ../library/game.h ../library/network.h ../library/sexp/sfcompat.h \
+ ../library/sexp/sexp.h ../library/structures.h
+Player.o: Player.cpp Player.h ../library/structures.h ../library/game.h \
+ ../library/network.h ../library/sexp/sfcompat.h ../library/sexp/sexp.h \
+ ../library/structures.h
