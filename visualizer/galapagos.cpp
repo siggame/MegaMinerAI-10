@@ -196,7 +196,7 @@ namespace visualizer
 
     std::stack<SmartPointer<Animatable>> turnAni;
     SmartPointer<Map> map = new Map(m_game->states[1].mapWidth,m_game->states[1].mapHeight,m_GUIHeight,0.6f,0,0);
-    int r = rand()%10;
+    int r = rand()%14;
     map->groundTile = r;
     cout << "ground tile: " << r << endl;
     map->waterTile = r;
