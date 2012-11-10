@@ -56,15 +56,32 @@ namespace visualizer
     }
   }
 
-  void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, IGame* game)
+  void DrawFullCreature(Creature* creature, float atX, float atY, float atWidth, float atHeight, Color color, IGame* game)
   {
-    //cout << "FULL creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_body" , creature->energy-1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_etc" , 0);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_leg" , creature->speed - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arm" , creature->herbivorism - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armor" , creature->defense - 1);
-    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_head" , creature->carnivorism - 1);
+    game->renderer->setColor(color);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_legs_back" , creature->speed - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_tails" , creature->energy-1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 2);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 0);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_misc" , 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_legs_front" , creature->speed - 1);
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_arms" , int(std::floor( float(creature->herbivorism - creature->carnivorism + 9) / 18.0f * 11.0f )+0.5f ));
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_armors" , creature->defense - 1);
+    game->renderer->setColor( Color(1, 1, 1, color.a) );
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_spikes" , creature->defense - 1);
+    game->renderer->setColor(color);
+    if( creature->carnivorism == 1 && creature->herbivorism > 1 )
+    {
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_jaws" , 10);
+    }
+    else
+    {
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_jaws" , creature->carnivorism - 1);
+      game->renderer->setColor( Color(1, 1, 1, color.a) );
+      game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_teeth" , creature->carnivorism - 1);
+    }
+    game->renderer->setColor( Color(1, 1, 1, color.a) );
+    game->renderer->drawAnimQuad( atX, atY, atWidth, atHeight, "creature_eyes" , creature->herbivorism - 1);
   }
 
   void DrawMap::animate( const float& t, AnimData *, IGame* game )
@@ -73,7 +90,7 @@ namespace visualizer
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     // ugly
     string water_tiles[] = { "tile_water", "tile_lava", "tile_toxic", "tile_space" };
-    float waterT = game->options->getNumber("Enable Water Movement") * t;
+    float waterT = game->options->getNumber("Enable Ocean Animation") * t;
     // Draw the water!
     for(int x = -Galapagos::IslandOffset(); x < m_Map->GetWidth()+Galapagos::IslandOffset(); x++)
     {
@@ -206,8 +223,7 @@ namespace visualizer
 	//(*m_Creature->map)(posY,posX) = Map::Tile("sand",game->timeManager->getTurn() + 3);
     (*m_Creature->map)(floor(posY+0.5f),floor(posX+0.5f)) = Map::Tile(game->timeManager->getTurn() + 3);
 
-    game->renderer->setColor( PlayerColor(m_Creature->owner) );
-    DrawFullCreature(m_Creature, posX, posY, 1, 1, game);
+    DrawFullCreature(m_Creature, posX, posY, 1, 1, PlayerColor(m_Creature->owner), game);
 
     // draw the health bar
     if( game->options->getNumber("Show Health Bars") > 0.0f)
@@ -265,42 +281,65 @@ namespace visualizer
     
     // Draw the "Winner: " text in black and why they won
     game->renderer->setColor( Color(0.0f, 0.0f, 0.0f, trans) );
-    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 4.5f, "Roboto", "Winner: ", 4.5f, IRenderer::Center);
-    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 + 1.33f, "Roboto", m_SplashScreen->reason, 3.5f, IRenderer::Center);
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 7.5f, "Roboto", "Winner: ", 4.5f, IRenderer::Center);
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 5.33f, "Roboto", m_SplashScreen->reason, 3.5f, IRenderer::Center);
 
     // Draw the actual winner's name in their color
     game->renderer->setColor( PlayerColor( m_SplashScreen->winnerID, trans ) );
-    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 2, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
+    game->renderer->drawText( m_SplashScreen->width / 2, m_SplashScreen->height / 2 - 3, "Roboto", m_SplashScreen->winner, 7.25f, IRenderer::Center);
 
-    //DrawFullCreature(m_SplashScreen->creature, m_SplashScreen->width/2.0f - 5, m_SplashScreen->height/2.0f + 2, 10, 10, game);
+    SmartPointer<Creature> creature = new Creature();
+    creature->energy = std::floor(m_SplashScreen->energy+0.5f);
+    creature->defense = std::floor(m_SplashScreen->defense+0.5f);
+    creature->carnivorism = std::floor(m_SplashScreen->carnivorism+0.5f);
+    creature->herbivorism = std::floor(m_SplashScreen->herbivorism+0.5f);
+    creature->speed = std::floor(m_SplashScreen->speed+0.5f);
+    DrawFullCreature(creature, m_SplashScreen->width/2.0f - 5, m_SplashScreen->height/2.0f - 1, 10, 10, PlayerColor( m_SplashScreen->winnerID, trans + 0.2f ), game);
   }
 
   void DrawHUD::animate(const float& t, AnimData*, IGame* game )
   {
     game->renderer->setColor( Color(1.0f, 1.0f, 1.0f, 1.0f) );
-
+    const int lines = 3;
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
 
-    string timeString = "Time: ";
-    timeString += toString(99999999);
-    string idString = "ID: ";
-    idString += toString(m_HUD->playerID);
-    int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f)) + 1;
-    int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width);
-    timeString = "Time: ";
-    timeString += toString(m_HUD->time);
+    string timeString = "Time: " + toString(99999999);
+    string idString = "ID: " + toString(m_HUD->playerID);
 
+    int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f)) + 1 + lines;
+    int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width);
+    timeString = "Time: " + toString(m_HUD->time);
 
     // draw the island behind the player's HUD
-    DrawIsland(islandPos, m_HUD->mapHeight + 1, width, 3, m_HUD->tile, game);
+    DrawIsland(islandPos, m_HUD->mapHeight + 1, width, lines, m_HUD->tile, game);
+
+    float fBarLength = m_HUD->mapWidth * (float)m_HUD->currentCreatures / (float)m_HUD->totalCreatures;
+    if(m_HUD->playerID == 1)
+    {
+        fBarLength = -fBarLength;
+    }
 
     int textPos = m_HUD->playerID * m_HUD->mapWidth;
 
-    game->renderer->setColor( PlayerColor( m_HUD->playerID) );
+    game->renderer->setColor(PlayerColor(m_HUD->playerID));
+
+    if( game->options->getNumber("Show Biomass Bar") > 0 )
+    {
+      game->renderer->drawTexturedQuad( textPos, -Galapagos::IslandOffset(), fBarLength , 0.5f, "healthbar");
+      game->renderer->setColor( Color(0,0,0,1) );
+      game->renderer->drawQuad( float(m_HUD->mapWidth)/2.0f - 0.05f, -Galapagos::IslandOffset(), 0.1f, 0.5f );
+      game->renderer->setColor(PlayerColor(m_HUD->playerID));
+    }
+
+    textPos += lines * (m_HUD->playerID == 0 ? 1 : -1);
 
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 3, "Roboto", timeString, 3.0f, alignment);
+    if( m_HUD->creature->energy > 0 )
+    {
+      DrawFullCreature(m_HUD->creature, textPos - (m_HUD->playerID == 0 ? lines : 0), m_HUD->mapHeight + 1, lines, lines, PlayerColor(m_HUD->playerID), game);
+    }
   }
 
 

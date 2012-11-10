@@ -7,13 +7,6 @@
     <maxvalue>1</maxvalue>
   </option>
   <option>
-    <key>Enable Lighting</key>
-    <type>Integer</type>
-    <value>0</value>
-    <minvalue>0</minvalue>
-    <maxvalue>1</maxvalue>
-  </option>
-  <option>
     <key>Enable Meteors</key>
     <type>Integer</type>
     <value>1</value>
@@ -21,14 +14,14 @@
     <maxvalue>1</maxvalue>
   </option>
   <option>
-    <key>Enable Sun</key>
+    <key>Enable Ocean Animation</key>
     <type>Integer</type>
-    <value>0</value>
+    <value>1</value>
     <minvalue>0</minvalue>
     <maxvalue>1</maxvalue>
   </option>
   <option>
-    <key>Enable Water Movement</key>
+    <key>Show Biomass Bar</key>
     <type>Integer</type>
     <value>1</value>
     <minvalue>0</minvalue>
