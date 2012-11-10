@@ -133,11 +133,22 @@ namespace visualizer
   {
     return m_selectedUnitIDs;
   }
+
+  unsigned long hash(char *str)
+  {
+      unsigned long hash = 5381;
+      int c;
+
+      while (c = *str++)
+          hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+      return hash;
+  }
   
   void Galapagos::SeedRand() const
   {
-    std::hash<std::string> hasher;
-    unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+    //std::hash<std::string> hasher;
+    unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
     srand(seed);
     
     //cout<<"Seed: "<<seed<<endl;
