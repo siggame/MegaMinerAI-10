@@ -52,9 +52,6 @@ class AI(BaseAI):
     dict = {creature.herbivorism:"herb",creature.carnivorism:"carn",creature.speed:"speed",creature.energy:"energy",creature.defense:"defense"}
     return dict[max(dict)]
 
-  def oldgetObject(self,x,y):
-    return [lifeform for lifeform in self.creatures+self.plants if lifeform.x == x and lifeform.y == y]
-    
   def findNearest(self,source,list,ignore=[]):
     d = {self.distance(source.x,source.y,lifeform.x,lifeform.y):lifeform for lifeform in list if lifeform not in ignore}
     return d[min(d)]      
@@ -71,19 +68,6 @@ class AI(BaseAI):
     if y+1<self.mapHeight:
         adj.append((x,y+1))
     return adj  
-  
-  def Oldadjacent(self,x,y,points):
-    walls = [(lifeform.x,lifeform.y) for lifeform in self.plants+self.creatures if (lifeform.x,lifeform.y) not in points or isinstance(lifeform,Plant) and lifeform.size==0]
-    adj = []
-    if x+1<self.mapWidth and (x+1,y) not in walls:
-        adj.append((x+1,y))
-    if y-1>=0 and (x,y-1) not in walls:
-        adj.append((x,y-1))
-    if x-1>=0 and (x-1,y) not in walls:
-        adj.append((x-1,y))
-    if y+1<self.mapHeight and (x,y+1) not in walls:
-        adj.append((x,y+1))
-    return adj
   
   def pathFind(self,startX,startY,goalX,goalY):
     closedSet = set();closedTup=set()
@@ -102,7 +86,6 @@ class AI(BaseAI):
               node = closed
         return path
       closedSet.add(current);closedTup.add(current[1])
-      #open.remove(current);
       openTup.remove(current[1])
       for neighbor in self.adjacent(current[1][0],current[1][1]):#,[(startX,startY),(goalX,goalY)]):
        if self.getObject(neighbor[0],neighbor[1])==[] or (neighbor[0],neighbor[1])==(goalX,goalY) or (neighbor[0],neighbor[1])==(startX,startY):
@@ -132,32 +115,16 @@ class AI(BaseAI):
            return plant
          else:
           ignore.append(plant)
-        
-  ##This function is called each time it is your turn
-  ##Return true to end your turn, return false to ask the server for updated information
-  def run(self):  
-    self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
-    for life in self.plants+self.creatures:
-      self.addGrid(life)
-          
-    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.herbivorism >=3 or creature.speed>=4)]  
-    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and (creature.carnivorism >=5 or creature.energy>=5) and creature not in herbivores] 
-    enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
-    
-    for creature in herbivores:
-     if len(self.plants)>0:
-       plant = self.pickPlant(creature)
-       if plant!=None:
-         self.moveTo(creature,plant)
-         if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants:
-            creature.eat(plant.x,plant.y)
-       # if plant.size==0 and creature.movementLeft>0 and self.distance(plant.x,plant.y,creature.x,creature.y)==1 and not isinstance(self.getObject(plant.x,plant.y),Creature):
-          # creature.move(plant.x,plant.y)
-          # self.removeGrid(plant)
-          # self.plants.remove(plant)
-          
-    for creature in carnivores:
-      if creature.movementLeft>0:
+  
+  def herbControl(self,creature,enemies):
+   plant = self.pickPlant(creature)
+   if plant!=None:
+     self.moveTo(creature,plant)
+     if self.distance(plant.x,plant.y,creature.x,creature.y)==1 and plant.size>0 and plant in self.plants:
+        creature.eat(plant.x,plant.y)    
+  
+  def carnControl(self,creature,enemies):
+    if creature.movementLeft>0:
         enemy = self.findNearest(creature,enemies,[creature])
         if self.avail(enemy):
           self.moveTo(creature,enemy)
@@ -166,6 +133,32 @@ class AI(BaseAI):
           if creature.currentHealth<=0:
             self.removeGrid(enemy)
             self.creatures.remove(enemy)
+  
+  def breedControl(self,creature,mine):
+    pass
+  
+  ##This function is called each time it is your turn
+  ##Return true to end your turn, return false to ask the server for updated information
+  def run(self):  
+    self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
+    for life in self.plants+self.creatures:
+      self.addGrid(life)
+          
+    herbivores = [creature for creature in self.creatures if creature.owner == self.playerID and (self.maxStat(creature)=="herb" or self.maxStat(creature)=="speed")]  
+    carnivores = [creature for creature in self.creatures if creature.owner == self.playerID and self.maxStat(creature)=="carn" and creature not in herbivores]
+    breeders = [creature for creature in self.creatures if creature.owner == self.playerID and creature not in carnivores]
+    mine= herbivores+carnivores
+    enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
+    
+    for creature in herbivores:
+     if len(self.plants)>0:
+       self.herbControl(creature,enemies)
+     else:
+      self.carnControl(creature)
+      
+    for creature in carnivores:
+      self.carnControl(creature,enemies)
+      
     return 1
 
   def __init__(self, conn):
