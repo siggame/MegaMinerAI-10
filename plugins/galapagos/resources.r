@@ -1,7 +1,7 @@
 font DroidSansMono textures/fonts/DroidSansMono.png DroidSansMono.dat
 font Roboto textures/fonts/Roboto.png Roboto.dat
 texture grass textures/grass.png
-texture sand textures/sand.jpg 
+texture sand textures/sand.png
 animation creature_body textures/set_body.png
 animation creature_arm textures/set_arm.png
 animation creature_leg textures/set_leg.png
