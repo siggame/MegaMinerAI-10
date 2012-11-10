@@ -1,6 +1,11 @@
 #include "AI.h"
 #include "util.h"
 #include <cmath>
+#include <cstdlib>
+
+//This is Adam Harter's AI.
+//I don't recomend copying the style; it's awful and terrible, but I don't care.
+//Good luck reading this, dude.
 
 AI::AI(Connection* conn) : BaseAI(conn) {}
 
@@ -36,16 +41,20 @@ Mappable* findNearest(Creature* c,std::vector<Plant>& plants,
                       std::vector<Creature>& creatures,int owner)
 {
    Mappable* returnP;
-   float dist=9999999999999999;
+   int dist=999999;
+   //Make formula better(?)
    for(int i=0;i<plants.size();i++)
    {
       float checkdist;
-      checkdist=sqrt(pow(plants[i].x()-c->x(),2)+pow(plants[i].y()-c->y(),2))
-                /(c->herbivorism()*5);
-      if(checkdist<dist)
+      if(plants[i].size()>0)
       {
-         dist=checkdist;
-         returnP=&plants[i];
+         checkdist=(abs(c->x()-plants[i].x())+abs(c->y()-plants[i].y()))*3
+                   -5*c->herbivorism();
+         if(checkdist<dist)
+         {
+            dist=checkdist;
+            returnP=&plants[i];
+         }
       }
    }
    for(int i=0;i<creatures.size();i++)
@@ -53,9 +62,20 @@ Mappable* findNearest(Creature* c,std::vector<Plant>& plants,
       if(creatures[i].owner()!=owner)
       {
          float checkdist;
-         checkdist=sqrt(pow(creatures[i].x()-c->x(),2)+
-                        pow(creatures[i].y()-c->y(),2))
-                   /(c->carnivorism()*10);
+         checkdist=(abs(c->x()-creatures[i].x())+abs(c->y()-creatures[i].y()))*3
+                   -(10*(c->carnivorism()-creatures[i].defense()));
+
+         int damage=10*(c->carnivorism()-creatures[i].defense());
+         int distance=abs(c->x()-creatures[i].x())+abs(c->y()-creatures[i].y());
+
+
+         if(damage>=creatures[i].currentHealth()&&
+            distance-1<=c->movementLeft()&&
+            c->currentHealth()/3>c->movementLeft())
+         {
+            return &creatures[i];
+         }
+
          if(checkdist<dist)
          {
             dist=checkdist;
@@ -106,6 +126,32 @@ int getIndex(Mappable* m,std::vector<Plant>& plants,
    return -1;
 }
 
+//this function is amazingly awful
+void testEat(Creature* c,int xadj,int yadj,int playerID,
+             std::vector<Creature>& cs,AI* a)
+{
+   if(a->getCreatureAtLocation(c->x()+xadj,c->y()+yadj)==-1||
+      cs[a->getCreatureAtLocation(c->x()+xadj,c->y()+yadj)].owner()!=playerID)
+   {
+      c->eat(c->x()+xadj,c->y()+yadj);
+   }
+}
+
+bool safe(std::vector<Creature>& cs,Creature* c,int playerID)
+{
+   for(int i=0;i<cs.size();i++)
+   {
+      if(cs[i].owner()!=playerID)
+      {
+         int distance=abs(cs[i].x()-c->x())+abs(cs[i].y()-c->y());
+         if(distance<=cs[i].speed())
+         {
+            return false;
+         }
+      }
+   }
+   return true;
+}
 
 //This function is called each time it is your turn.
 //Return true to end your turn, return false to ask the server for updated information.
@@ -118,82 +164,85 @@ bool AI::run()
       {
          best=&creatures[i];
          yum=findNearest(best,plants,creatures,playerID());
-         taken[getIndex(yum,plants,creatures)]=true;
+         int distance=abs(yum->x()-best->x())+abs(yum->y()-best->y());
+         bool eatStuff=best->movementLeft()<=distance;
+         //add actual path finding... maybe
          for(int i=best->movementLeft();i>0;i--)
          {
-            bool horizontalPass=true;
-            if(yum->x()<best->x())
+            if(abs(yum->x()-best->x())+abs(yum->y()-best->y())!=1)
             {
-               horizontalPass=best->move(best->x()-1,best->y());
-            }
-            else if(yum->x()>best->x())
-            {
-               horizontalPass=best->move(best->x()+1,best->y());
-            }
-            if(!horizontalPass||yum->y()<best->y())
-            {
-               best->move(best->x(),best->y()-1);
-            }
-            else if(!horizontalPass||yum->y()>best->y())
-            {
-               best->move(best->x(),best->y()+1);
-            }
-            if(best->canEat())
-            {
-               if(best->maxHealth()-best->energy()>=5*best->herbivorism())
+               if(eatStuff)
                {
-                  best->eat(yum->x(),yum->y());
+                  testEat(best,-1, 0,playerID(),creatures,this);
+                  testEat(best, 1, 0,playerID(),creatures,this);
+                  testEat(best, 0,-1,playerID(),creatures,this);
+                  testEat(best, 0, 1,playerID(),creatures,this);
                }
+               bool horizontalPass=true;
+               bool verticalPass=true;
+               bool moved;
+               if(yum->x()<best->x())
+               {
+                  horizontalPass=best->move(best->x()-1,best->y());
+               }
+               else if(yum->x()>best->x())
+               {
+                  horizontalPass=best->move(best->x()+1,best->y());
+               }
+               if(!horizontalPass||yum->y()<best->y())
+               {
+                  verticalPass=best->move(best->x(),best->y()-1);
+               }
+               else if(!horizontalPass||yum->y()>best->y())
+               {
+                  verticalPass=best->move(best->x(),best->y()+1);
+               }
+            }
+         }
+         if(getPlantAtLocation(yum->x(),yum->y())==-1)
+         {
+            best->eat(yum->x(),yum->y());
+         }
+         else
+         {
+            if(best->maxHealth()-best->currentHealth()>=best->herbivorism()*5)
+            {
+               best->eat(yum->x(),yum->y());
+            }
+         }
+         if(distance!=1)
+         {
+            testEat(best,-1, 0,playerID(),creatures,this);
+            testEat(best, 1, 0,playerID(),creatures,this);
+            testEat(best, 0,-1,playerID(),creatures,this);
+            testEat(best, 0, 1,playerID(),creatures,this);
+         }
+         if(safe(creatures,best,playerID()))
+         {
+            int stuff=getCreatureAtLocation(best->x()+1,best->y());
+            if(stuff!=-1)
+            {
+               best->breed(creatures[stuff]);
+            }
+            stuff=getCreatureAtLocation(best->x()-1,best->y());
+            if(stuff!=-1)
+            {
+               best->breed(creatures[stuff]);
+            }
+            stuff=getCreatureAtLocation(best->x(),best->y()+1);
+            if(stuff!=-1)
+            {
+               best->breed(creatures[stuff]);
+            }
+            stuff=getCreatureAtLocation(best->x(),best->y()-1);
+            if(stuff!=-1)
+            {
+               best->breed(creatures[stuff]);
             }
          }
       }
    }
    return true;
-   /*
-  //Iterate through every creature
-  for(int ii=0;ii<creatures.size();ii++)
-  { //if I own the creature
-    if (creatures[ii].owner() == playerID())
-    { //check if there is a plant to that creature's left
-      int plantIn = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
-      //if there is no plant to my left, or there is a plant of size 0, and there is no creature to my left
-      if ((plantIn == -1 || (plantIn !=1 && plants[plantIn].size()==0)) && getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y()) == -1)
-      { //if x is in the range of the map, and y is in the range of the map
-        if(0<=creatures[ii].x()+1 && creatures[ii].x()+1<mapWidth() && 0<=creatures[ii].y() && creatures[ii].y()<mapHeight())
-        { //if I have ennough health to move, and have movment left
-          if (creatures[ii].currentHealth()>healthPerMove() && creatures[ii].movementLeft()>0)
-	  { //move creature to the left by incrementing its x cooridinate, and not changing its y
-	    creatures[ii].move(creatures[ii].x()+1,creatures[ii].y());
-          }
-	}
-      }
-
-      //check if there is a plant to my left
-      plantIn = getPlantAtLocation(creatures[ii].x()+1,creatures[ii].y());
-      //check if there is a creature to my left
-      int creatIn = getCreatureAtLocation(creatures[ii].x()+1,creatures[ii].y());
-      //if there is a plant to my left, and its size is > 0, and this creature has not already eaten this turn
-      if (plantIn != -1 && plants[plantIn].size()>0 && creatures[ii].canEat()==1)
-      {
-        //eat the plant, using its x and y
-        creatures[ii].eat(plants[plantIn].x(),plants[plantIn].y());
-      }
-      //else if there is a creature to my left, and it is not my creature and this creature has not eaten yet
-      else if (creatIn!=-1 && creatures[creatIn].owner()!=playerID() && creatures[ii].canEat()==1)
-      { //take a bite out of this creature
-        creatures[ii].eat(creatures[creatIn].x(),creatures[creatIn].y());
-      }
-      //else if there is a creature to my left, and it is my creature, and neither has bred this turn
-      else if (creatIn!=-1 && creatures[creatIn].owner()==playerID() && creatures[ii].canBreed()==1 && creatures[creatIn].canBreed()==1)
-      { //if both creatures have enough health to breed
-        if (creatures[ii].currentHealth()>healthPerBreed() && creatures[creatIn].currentHealth()>healthPerBreed())
-        { //breed with this creature
-          creatures[ii].breed(creatures[creatIn]);
-        }
-      }
-    }
-  }
-  */
 }
 
 //This function is run once, after your last turn.
