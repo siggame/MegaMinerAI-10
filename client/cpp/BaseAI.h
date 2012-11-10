@@ -43,15 +43,17 @@ public:
   int healthPerMove();
   ///The amount of energy lost from the passage of time.
   int energyPerTurn();
-  ////Comment
+  ///If there is a plant at location (x,y), returns the index of that plant.
+  ///If there is no plant, returns -1.
   int getPlantAtLocation(int x,int y);
-  ///Comment
-  int getCreatureAtLocation(int x,int y);  
+  ///If there is a creature at location (x,y), returns the index of that creature.
+  ///If there is no creature, returns -1.
+  int getCreatureAtLocation(int x,int y);
   /// the health a creature loses each turn
   int healthPerTurn();
   ///The base amount of health that each creature starts with
   int baseHealth();
-  
+
   BaseAI(Connection* c);
   virtual ~BaseAI();
   ///

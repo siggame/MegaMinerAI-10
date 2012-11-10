@@ -133,7 +133,8 @@ public abstract class BaseAI
     int value = Client.getBaseHealth(connection);
     return value;
   }
-  
+  ///If there is a creature at location (x,y), returns the index of that creature.
+  ///If there is no creature, returns -1.
   public int getCreatureAtLocation(int x, int y)
   {
     for(int ii=0;ii<creatures.Length;ii++)
@@ -145,7 +146,8 @@ public abstract class BaseAI
     }
     return -1;
   }
-  
+  ///If there is a plant at location (x,y), returns the index of that plant.
+  ///If there is no plant, returns -1.
   public int getPlantAtLocation(int x, int y)
   {
     for(int ii=0;ii<plants.Length;ii++)
