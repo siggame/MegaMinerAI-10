@@ -304,7 +304,7 @@ namespace visualizer
     game->renderer->setColor(PlayerColor(m_HUD->playerID));
 
     // todo: move the bar somewhere else
-    game->renderer->drawQuad( textPos, m_HUD->mapHeight, fBarLength , 1.0f);
+    game->renderer->drawQuad( textPos, m_HUD->mapHeight, fBarLength , 0.5f);
 
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);

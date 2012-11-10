@@ -140,7 +140,7 @@ namespace visualizer
     unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
     srand(seed);
     
-    cout<<"Seed: "<<seed<<endl;
+    //cout<<"Seed: "<<seed<<endl;
   }
 
   void Galapagos::loadGamelog( std::string gamelog )
@@ -259,7 +259,7 @@ namespace visualizer
         turn[p.second.id]["Y"] = p.second.y;
       }
 
-      unsigned int CreatureTotals[2] = {0,0};
+      unsigned int creatureTotals[2] = {0,0};
       
       // for each creature in the current turn
       for( auto& p : m_game->states[ state ].creatures )
@@ -343,7 +343,7 @@ namespace visualizer
         creature->canBreed = p.second.canBreed;
         creature->parentID = p.second.parentID;
 
-        CreatureTotals[creature->owner]++;
+        creatureTotals[creature->owner]++;
 
         creature->map = map;
 
@@ -375,7 +375,7 @@ namespace visualizer
       {
         auto player = p.second;
         SmartPointer<HUD> hud = new HUD(m_game->states[0].mapWidth, m_game->states[0].mapHeight,
-                                        m_GUIHeight, player.playerName, player.id, player.time, map->groundTile, CreatureTotals[player.id], m_game->states[state].creatures.size());
+                                        m_GUIHeight, player.playerName, player.id, player.time, map->groundTile, creatureTotals[player.id], m_game->states[state].creatures.size());
 
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
