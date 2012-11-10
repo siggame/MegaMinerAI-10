@@ -19,7 +19,7 @@ public abstract class BaseAI
   {
     connection = c;
   }
-    
+
   ///
   ///Make this your username, which should be provided.
   public abstract String username();
@@ -123,7 +123,8 @@ public abstract class BaseAI
   {
     return Client.INSTANCE.getBaseHealth(connection);
   }
-
+  ///If there is a creature at location (x,y), returns the index of that creature.
+  ///If there is no creature there, returns -1.
   int getCreatureAtLocation(int x, int y)
   {
     for(int ii=0;ii<creatures.length;ii++)
@@ -135,7 +136,8 @@ public abstract class BaseAI
     }
     return -1;
   }
-  
+  ///If there is a plant at location (x,y), returns the index of that plant.
+  ///If there is no plant there, returns -1.
   int getPlantAtLocation(int x, int y)
   {
     for(int ii=0;ii<plants.length;ii++)
