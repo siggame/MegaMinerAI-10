@@ -144,8 +144,8 @@ namespace visualizer
 
     struct HUD : public Animatable
     {
-      HUD(int mw, int mh, int h, string name, int id, float t) :
-          time(t), playerName(name), playerID(id), mapWidth(mw), mapHeight(mh), height(h) {}
+      HUD(int mw, int mh, int h, string name, int id, float t, int ti) :
+          time(t), playerName(name), playerID(id), mapWidth(mw), mapHeight(mh), height(h), tile(ti) {}
       
       float time;
       string playerName;
@@ -153,6 +153,7 @@ namespace visualizer
       int mapWidth;
       int mapHeight;
       int height;
+      int tile;
     };
 
     struct Nest : public Animatable

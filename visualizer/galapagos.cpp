@@ -232,7 +232,7 @@ namespace visualizer
       for( auto& p : m_game->states[ state ].players )
       {
         auto player = p.second;
-        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time );
+        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time, map->groundTile );
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
       }

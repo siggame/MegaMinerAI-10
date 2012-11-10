@@ -4,6 +4,7 @@
 #include "glm/gtx/fast_square_root.hpp"
 #include <sstream>
 #include <string>
+#include <math.h>
 
 namespace visualizer
 {
@@ -17,99 +18,65 @@ namespace visualizer
   {
   }
 
-  void DrawMap::animate( const float& t, AnimData *, IGame* game )
+  void DrawIsland(float atX, float atY, float atWidth, float atHeight, int tile, IGame* game)
   {
-
-    /*int middleY = m_Map->GetHeight() / 2;
-    
-    bool bLighting = game->options->getNumber("Enable Lighting") > 0.0f;
-    bool bSunEffect = bLighting && (game->options->getNumber("Enable Sun") > 0.0f);
-    float color = 1.0f;
-    
-    if(bLighting)
+    game->renderer->setColor(Color(1,1,1,1));
+    for(int x = -Galapagos::IslandOffset() + atX; x < atX+atWidth+Galapagos::IslandOffset(); x++)
     {
-      color = linearTween(t,m_Map->GetPrevMapColor(),m_Map->GetMapColor() - m_Map->GetPrevMapColor(),1.0);
-    }*/
-
-    //game->renderer->setColor(Color(1,1,0.5f,1));
-    for (int x = 0; x < m_Map->GetWidth(); x++)
-    {
-      for (int y = 0; y < m_Map->GetHeight(); y++)
+      // draw the island sides
+      if( x >= atX && x < atX+atWidth )
       {
-        Map::Tile& tile = (*m_Map)(y,x);
-        /*float r = 0.8f;
-        float g = 0.8f;
-        
-        if(bLighting)
-        {
-          float d = 1.0f;
-          
-          if(bSunEffect)
-          {
-            d = glm::fastInverseSqrt((float)((m_Map->GetxPos() - x)*(m_Map->GetxPos() - x)+(middleY-y)*(middleY-y)))*10.0f;
-          }
-          
-          r = color*d;
-          g = color;
-        }*/
-        
-        //game->renderer->setColor( Color(r, g, 0.2f,1.0f ) );
-
-        game->renderer->setColor(Color(1,1,0.5f,1.0f));
-
-        /*if((tile.turn - game->timeManager->getTurn()) > 3)
-        {
-            tile.texture = "grass";
-        }*/
-
-        if(tile.turn - game->timeManager->getTurn() > 3)
-        {
-            tile.turn = -1;
-        }
-
-        if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
-        {
-            game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
-        }
-        else
-        {
-          game->renderer->setColor(Color(1,1,1,1));
-          game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
-        }
-        
-
-        if((tile.turn - 1) == game->timeManager->getTurn())
-        {
-            game->renderer->setColor(Color(1,1,1,t));
-            game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", m_Map->groundTile );
-        }
-
+        game->renderer->drawAnimQuad( x, -Galapagos::IslandOffset() + atY, 1, 1, "island_sides", 1);
+        game->renderer->drawAnimQuad( x, atY+atHeight, 1, 1, "island_sides", 0);
       }
     }
+
+    for(int y = -Galapagos::IslandOffset() + atY; y < atY+atHeight+Galapagos::IslandOffset(); y++)
+    {
+      // draw the island sides
+      if( y >= atY && y < atY+atHeight )
+      {
+        game->renderer->drawAnimQuad( -Galapagos::IslandOffset() + atX, y, 1, 1, "island_sides", 2);
+        game->renderer->drawAnimQuad( atX+atWidth, y, 1, 1, "island_sides", 3);
+      }
+    }
+
+    // draw the island side corners
+    game->renderer->drawAnimQuad( atX-1, atY-1, 1, 1, "island_sides", 6);
+    game->renderer->drawAnimQuad( atX+atWidth, atY-1, 1, 1, "island_sides", 7);
+    game->renderer->drawAnimQuad( atX-1, atY+atHeight, 1, 1, "island_sides", 4);
+    game->renderer->drawAnimQuad( atX+atWidth, atY+atHeight, 1, 1, "island_sides", 5);
+
+    for( int x = atX; x < atX+atWidth; x++ )
+    {
+      for( int y = atY; y < atY+atHeight; y++ )
+      {
+        game->renderer->drawAnimQuad( x, y, 1, 1, "tile_ground", tile );
+      }
+    }
+  }
+
+  void DrawMap::animate( const float& t, AnimData *, IGame* game )
+  {
 
     game->renderer->setColor( Color( 1, 1, 1, 1 ) );
     // ugly
     string water_tiles[] = { "tile_water", "tile_lava", "tile_toxic", "tile_space" };
+    float waterT = game->options->getNumber("Enable Water Movement") * t;
     // Draw the water!
     for(int x = -Galapagos::IslandOffset(); x < m_Map->GetWidth()+Galapagos::IslandOffset(); x++)
     {
       // top and bottom
       for(int y = 0; y < Galapagos::IslandOffset(); y++)
       {
-        game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
-        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
-      }
-      // draw the island sides
-      if( x >= 0 && x < m_Map->GetWidth() )
-      {
-        game->renderer->drawAnimQuad( x, -1, 1, 1, "island_sides", 1);
-        game->renderer->drawAnimQuad( x, m_Map->GetHeight(), 1, 1, "island_sides", 0);
+        game->renderer->drawSubTexturedQuad( x, y - Galapagos::IslandOffset(), 1, 1, waterT*0.5f, waterT*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight(), 1, 1, waterT*0.5f, waterT*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
 
       // behind the HUD
       for(int y = 0; y < m_Map->GetHUDHeight(); y++)
       {
-        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight() + Galapagos::IslandOffset(), 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
+        game->renderer->drawSubTexturedQuad( x, y + m_Map->GetHeight() + Galapagos::IslandOffset(), 1, 1, waterT*0.5f, waterT*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
     }
 
@@ -118,22 +85,34 @@ namespace visualizer
       // left and right
       for(int x = 0; x < Galapagos::IslandOffset(); x++)
       {
-        game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
-        game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, t*0.5f, t*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
-      }
-      // draw the island sides
-      if( y >= 0 && y < m_Map->GetHeight() )
-      {
-        game->renderer->drawAnimQuad( -1, y, 1, 1, "island_sides", 2);
-        game->renderer->drawAnimQuad( m_Map->GetWidth(), y, 1, 1, "island_sides", 3);
+        game->renderer->drawSubTexturedQuad( x - Galapagos::IslandOffset(), y, 1, 1, waterT*0.5f, waterT*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
+        game->renderer->drawSubTexturedQuad( x + m_Map->GetWidth(), y, 1, 1, waterT*0.5f, waterT*0.5f, 0.5f, 0.5f, water_tiles[m_Map->waterTile] );
       }
     }
 
-    // draw the island side corners
-    game->renderer->drawAnimQuad( -1, -1, 1, 1, "island_sides", 6);
-    game->renderer->drawAnimQuad( m_Map->GetWidth(), -1, 1, 1, "island_sides", 7);
-    game->renderer->drawAnimQuad( -1, m_Map->GetHeight(), 1, 1, "island_sides", 4);
-    game->renderer->drawAnimQuad( m_Map->GetWidth(), m_Map->GetHeight(), 1, 1, "island_sides", 5);
+    DrawIsland(0,0,m_Map->GetWidth(),m_Map->GetHeight(),m_Map->groundTile,game);
+
+    // Draw the tiles creatures have moved over
+    for (int x = 0; x < m_Map->GetWidth(); x++)
+    {
+      for (int y = 0; y < m_Map->GetHeight(); y++)
+      {
+        Map::Tile& tile = (*m_Map)(y,x);
+
+        game->renderer->setColor(Color(1,1,0.5f,1.0f));
+
+        if(tile.turn - game->timeManager->getTurn() > 3)
+        {
+          tile.turn = -1;
+        }
+
+        if( tile.turn > game->timeManager->getTurn() /*&& (tile.turn - game->timeManager->getTurn() <= 3)*/)
+        {
+          game->renderer->drawTexturedQuad( x, y, 1, 1, "sand");
+        }
+
+      }
+    }
 
     // Draw the grid
     if( game->options->getNumber("Show Grid") > 0.0f )
@@ -269,7 +248,7 @@ namespace visualizer
     float trans = t > 0.8f ? 0.8f : t;
 
     // Draw the backgroudn fading to white
-    game->renderer->setColor( Color(1.0f, .2f, .2f, trans) );
+    game->renderer->setColor( Color(0.8f, 0.8f, 0.8f, trans) );
     game->renderer->drawQuad(0, 0, m_SplashScreen->width, m_SplashScreen->height);
     
     // Draw the "Winner: " text in black and why they won
@@ -288,23 +267,24 @@ namespace visualizer
 
     auto alignment = m_HUD->playerID == 0 ? IRenderer::Left : IRenderer::Right;
 
-    string timeString = toString(m_HUD->time);
-    int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f));
-    int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width - 1);
+    string timeString = "Time: ";
+    timeString += toString(99999999);
+    cout << "timeString: " << timeString << endl;
+    string idString = "ID: ";
+    idString += toString(m_HUD->playerID);
+    int width = std::max((int)game->renderer->textWidth("Roboto",m_HUD->playerName,3.0f),(int)game->renderer->textWidth("Roboto",timeString,3.0f)) + 1;
+    int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width);
+    timeString = "Time: ";
+    timeString += toString(m_HUD->time);
 
-    for(int i = islandPos; i <= (width + islandPos); ++i)
-    {
-        for(int j = m_HUD->mapHeight + 1; j <= m_HUD->mapHeight + 3; ++j)
-        {
-            game->renderer->drawAnimQuad( i, j, 1, 1, "tile_ground", 0 );
-        }
-    }
+    // draw the island behind the player's HUD
+    DrawIsland(islandPos, m_HUD->mapHeight + 1, width, 3, m_HUD->tile, game);
 
     int textPos = m_HUD->playerID * m_HUD->mapWidth;
 
     game->renderer->setColor( PlayerColor( m_HUD->playerID) );
     game->renderer->drawText( textPos, m_HUD->mapHeight + 1, "Roboto", m_HUD->playerName, 3.0f, alignment);
-    game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", toString(m_HUD->playerID), 3.0f, alignment);
+    game->renderer->drawText( textPos, m_HUD->mapHeight + 2, "Roboto", idString, 3.0f, alignment);
     game->renderer->drawText( textPos, m_HUD->mapHeight + 3, "Roboto", timeString, 3.0f, alignment);
 
   }
