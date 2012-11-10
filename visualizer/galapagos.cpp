@@ -16,7 +16,20 @@ namespace visualizer
   {
     float fRand = rand() / (RAND_MAX + 1.0f);
     return fRand*(b - a) + a;
-  } 
+  }
+
+  unsigned int xor128()
+  {
+      static unsigned int x = 123456789;
+      static unsigned int y = 362436069;
+      static unsigned int z = 521288629;
+      static unsigned int w = 88675123;
+      unsigned int t;
+
+      t = x ^ (x << 11);
+      x = y; y = z; z = w;
+      return w = w ^ (w >> 19) ^ (t ^ (t >> 8));
+  }
   
   Galapagos::Galapagos()
   {
@@ -133,14 +146,26 @@ namespace visualizer
   {
     return m_selectedUnitIDs;
   }
+
+  unsigned long hash(char *str)
+  {
+      unsigned long hash = 5381;
+      int c;
+
+      while (c = *str++)
+          hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+      return hash;
+  }
   
   void Galapagos::SeedRand() const
   {
-    std::hash<std::string> hasher;
-    unsigned int seed = hasher(m_game->states[0].players[0].playerName) + hasher(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
-    srand(seed);
-    
     //cout<<"Seed: "<<seed<<endl;
+    //std::hash<std::string> hasher;
+    //unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+    //unsigned int uiTime = time(NULL);
+    //cout << "RAND seed is: " << uiTime << endl;
+   // srand(uiTime);
   }
 
   void Galapagos::loadGamelog( std::string gamelog )
@@ -196,10 +221,12 @@ namespace visualizer
     std::stack<SmartPointer<Animatable>> turnAni;
     SmartPointer<Map> map = new Map(m_game->states[1].mapWidth,m_game->states[1].mapHeight,m_GUIHeight,0.6f,0,0);
     
-    int r = rand()%10;
+    //unsigned int hashcode = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+
+    int r = xor128()%10;
     map->groundTile = r;
     cout << "ground tile: " << r << endl;
-    r = rand()%4;
+    r = xor128()%4;
     map->waterTile = r;
     cout << "water tile: " << r << endl;
     map->addKeyFrame( new DrawMap( map ) );
@@ -428,7 +455,7 @@ namespace visualizer
 
       if(((float)state / (float)m_game->states.size()) > 0.95f)
       {
-          int metNum = rand() % 5;
+          int metNum = xor128() % 5;
           for(int i = 0; i < metNum; ++i)
           {
               SmartPointer<SpriteAnimation> meteorAni = new SpriteAnimation(GetRandFloat(0.0f,m_game->states[0].mapWidth),
