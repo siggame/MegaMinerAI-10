@@ -374,8 +374,36 @@ namespace visualizer
       for( auto& p : m_game->states[ state ].players )
       {
         auto player = p.second;
+        // find that player's average creature
+        SmartPointer<Creature> creature = new Creature();
+        creature->energy = 0;
+        creature->defense = 0;
+        creature->carnivorism = 0;
+        creature->herbivorism = 0;
+        creature->speed = 0;
+        int n = 0;
+        for( auto& p : m_game->states[ state ].creatures )
+        {
+          if(p.second.owner == player.id)
+          {
+            n++;
+            creature->energy += p.second.energy;
+            creature->defense += p.second.defense;
+            creature->carnivorism += p.second.carnivorism;
+            creature->herbivorism += p.second.herbivorism;
+            creature->speed += p.second.speed;
+          }
+        }
+
+        n = std::max(n,1);
+        creature->energy /= n;
+        creature->defense /= n;
+        creature->carnivorism /= n;
+        creature->herbivorism /= n;
+        creature->speed /= n;
+
         SmartPointer<HUD> hud = new HUD(m_game->states[0].mapWidth, m_game->states[0].mapHeight,
-                                        m_GUIHeight, player.playerName, player.id, player.time, map->groundTile, creatureTotals[player.id], m_game->states[state].creatures.size());
+                                        m_GUIHeight, player.playerName, player.id, player.time, map->groundTile, creatureTotals[player.id], m_game->states[state].creatures.size(), creature);
 
         hud->addKeyFrame(new DrawHUD( hud ) );
         turn.addAnimatable( hud );
@@ -402,34 +430,31 @@ namespace visualizer
         int mapHeight = m_game->states[0].mapHeight;
         // make their winnign creature
         SmartPointer<Creature> creature = new Creature();
-        creature->energy = 0;
-        creature->defense = 0;
-        creature->carnivorism = 0;
-        creature->herbivorism = 0;
-        creature->speed = 0;
         int n = 0;
+        float e = 0, d = 0, c = 0, h = 0, s = 0;
         for( auto& p : m_game->states[ state-1 ].creatures )
         {
           if(p.second.owner == m_game->winner)
           {
             n++;
-            creature->energy += p.second.energy;
-            creature->defense += p.second.defense;
-            creature->carnivorism += p.second.carnivorism;
-            creature->herbivorism += p.second.herbivorism;
-            creature->speed += p.second.speed;
+            e += p.second.energy;
+            d += p.second.defense;
+            c += p.second.carnivorism;
+            h += p.second.herbivorism;
+            s += p.second.speed;
           }
         }
 
-        creature->energy /= n;
-        creature->defense /= n;
-        creature->carnivorism /= n;
-        creature->herbivorism /= n;
-        creature->speed /= n;
+        n = std::max(n,1);
+        e /= n;
+        d /= n;
+        c /= n;
+        h /= n;
+        s /= n;
 
         //cout << "winner's avg creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
 
-        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight, creature);
+        SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight, e, d, c, h, s);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
         turn.addAnimatable( ss );
 
