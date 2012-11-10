@@ -310,8 +310,10 @@ namespace visualizer
     int islandPos = m_HUD->playerID * (m_HUD->mapWidth - width);
     timeString = "Time: " + toString(m_HUD->time);
 
+    bool bArena = game->options->getString( "Game Mode" ).compare( "arena" );
+
     // draw the island behind the player's HUD
-    DrawIsland(islandPos, m_HUD->mapHeight + 1, width, lines, m_HUD->tile, game);
+    DrawIsland(islandPos, m_HUD->mapHeight + 1, width, lines, bArena ? 6 : m_HUD->tile, game);
 
     float fBarLength = m_HUD->mapWidth * (float)m_HUD->currentCreatures / (float)m_HUD->totalCreatures;
     if(m_HUD->playerID == 1)
