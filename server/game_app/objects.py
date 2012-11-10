@@ -34,8 +34,8 @@ class Creature(Mappable):
     self.speed = speed
     self.movementLeft = movementLeft
     self.defense = defense
-    self.canEat = True
-    self.canBreed = True
+    self.canEat = False
+    self.canBreed = False
     self.parentID = parentID
 
   def toList(self):
