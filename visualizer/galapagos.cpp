@@ -228,15 +228,6 @@ namespace visualizer
           turnAni.pop();
       }
 
-      // for each player in the current turn, draw them on the HUD
-      for( auto& p : m_game->states[ state ].players )
-      {
-        auto player = p.second;
-        SmartPointer<HUD> hud = new HUD( m_game->states[0].mapWidth, m_game->states[0].mapHeight, m_GUIHeight, player.playerName, player.id, player.time, map->groundTile );
-        hud->addKeyFrame(new DrawHUD( hud ) );
-        turn.addAnimatable( hud );
-      }
-
       // for each stacked unit (mother and child), draw a nest (below them)
       for( auto& a : m_game->states[ state ].creatures )
       {
@@ -267,6 +258,8 @@ namespace visualizer
         turn[p.second.id]["X"] = p.second.x;
         turn[p.second.id]["Y"] = p.second.y;
       }
+
+      unsigned int CreatureTotals[2] = {0,0};
       
       // for each creature in the current turn
       for( auto& p : m_game->states[ state ].creatures )
@@ -350,6 +343,8 @@ namespace visualizer
         creature->canBreed = p.second.canBreed;
         creature->parentID = p.second.parentID;
 
+        CreatureTotals[creature->owner]++;
+
         creature->map = map;
 
         creature->addKeyFrame( new DrawCreature( creature ) );
@@ -374,6 +369,17 @@ namespace visualizer
         turn[p.second.id]["Parent ID"] = p.second.parentID;
 
       } // end of creating creatures for this turn
+
+      // for each player in the current turn, draw them on the HUD
+      for( auto& p : m_game->states[ state ].players )
+      {
+        auto player = p.second;
+        SmartPointer<HUD> hud = new HUD(m_game->states[0].mapWidth, m_game->states[0].mapHeight,
+                                        m_GUIHeight, player.playerName, player.id, player.time, map->groundTile, CreatureTotals[player.id], m_game->states[state].creatures.size());
+
+        hud->addKeyFrame(new DrawHUD( hud ) );
+        turn.addAnimatable( hud );
+      }
 
       if(((float)state / (float)m_game->states.size()) > 0.95f)
       {
