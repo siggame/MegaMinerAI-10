@@ -149,9 +149,9 @@ namespace visualizer
   {
     //std::hash<std::string> hasher;
     //unsigned int seed = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
-    unsigned int uiTime = time(NULL);
-    cout << "RAND seed is: " << uiTime << endl;
-    srand(uiTime);
+    //unsigned int uiTime = time(NULL);
+    //cout << "RAND seed is: " << uiTime << endl;
+   // srand(uiTime);
   }
 
   void Galapagos::loadGamelog( std::string gamelog )
@@ -207,10 +207,12 @@ namespace visualizer
     std::stack<SmartPointer<Animatable>> turnAni;
     SmartPointer<Map> map = new Map(m_game->states[1].mapWidth,m_game->states[1].mapHeight,m_GUIHeight,0.6f,0,0);
     
-    int r = rand()%10;
+    unsigned int hashcode = hash(m_game->states[0].players[0].playerName) + hash(m_game->states[0].players[1].playerName) + m_game->states[0].gameNumber;
+
+    int r = hashcode%10;
     map->groundTile = r;
     cout << "ground tile: " << r << endl;
-    r = rand()%4;
+    r = hashcode%4;
     map->waterTile = r;
     cout << "water tile: " << r << endl;
     map->addKeyFrame( new DrawMap( map ) );
