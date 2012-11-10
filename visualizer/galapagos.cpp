@@ -421,6 +421,8 @@ namespace visualizer
         creature->herbivorism /= n;
         creature->speed /= n;
 
+        //cout << "winner's avg creature  e " << creature->energy << "  d " << creature->defense << "  c " << creature->carnivorism << "  h " << creature->herbivorism << "   s " << creature->speed << endl;
+
         SmartPointer<SplashScreen> ss = new SplashScreen(m_game->states[0].players[m_game->winner].playerName, m_game->winReason, m_game->winner, mapWidth, mapHeight, creature);
         ss->addKeyFrame( new DrawSplashScreen( ss ) );
         turn.addAnimatable( ss );
