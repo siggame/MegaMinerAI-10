@@ -204,6 +204,10 @@ class Match(DefaultGameWorld):
     else:
       return "Game is over."
 
+    if self.winner is None:
+      for obj in self.objects.values():
+        obj.nextTurn()  
+      
     self.checkWinner()
     if self.winner is None:
       self.sendStatus([self.turn] +  self.spectators)
@@ -232,9 +236,6 @@ class Match(DefaultGameWorld):
       self.jsonAnimations = []
 
     self.animations = ["animations"]
-    
-    for obj in self.objects.values():
-      obj.nextTurn()
       
     return True
 
@@ -274,6 +275,7 @@ class Match(DefaultGameWorld):
 
 
   def declareWinner(self, winner, reason=''):
+    del self.grid
     print "Game", self.id, "over"
     self.winner = winner
     self.sendStatus(self.spectators)
@@ -297,7 +299,8 @@ class Match(DefaultGameWorld):
     self.sendStatus([self.players[self.playerID]])
     self.playerID ^= 1
     self.turn = None
-    self.objects.delete()
+    self.objects.clear()
+    self.grid = None
 
   def logPath(self):
     return "logs/" + str(self.id)

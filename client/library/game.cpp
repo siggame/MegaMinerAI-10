@@ -240,7 +240,7 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
    return 0;
   }
   //Cannot move out of bounds
-  else if((x<0||x>c->mapWidth)||(y<0||y>c->mapHeight))
+  else if((x<0||x>=c->mapWidth)||(y<0||y>=c->mapHeight))
   {
     return 0;
   }
