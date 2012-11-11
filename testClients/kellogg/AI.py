@@ -207,6 +207,7 @@ class AI(BaseAI):
     
     
     for creature in families:
+      print "-------------------------------------------------------------------------------------------------------------------"
       self.moveAway(creature)
       
     for creature in herbivores:
