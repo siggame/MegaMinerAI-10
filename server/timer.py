@@ -25,10 +25,13 @@ def install():
         games.remove(self)
       # calls the turn update
       result = func(self)
-      # gives the player who is about to go some more time
-      self.objects.players[aboutToGo].time += self.timeInc
-      # records the start of the turn
-      self.turnStartTime = time()
+      if self.winner is None:
+        # gives the player who is about to go some more time
+        self.objects.players[aboutToGo].time += self.timeInc
+        # records the start of the turn
+        self.turnStartTime = time()
+      else:
+        games.remove(self)
       return result
     return inner
 
