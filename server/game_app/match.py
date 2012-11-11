@@ -274,6 +274,7 @@ class Match(DefaultGameWorld):
 
 
   def declareWinner(self, winner, reason=''):
+    del self.grid
     print "Game", self.id, "over"
     self.winner = winner
     self.sendStatus(self.spectators)
