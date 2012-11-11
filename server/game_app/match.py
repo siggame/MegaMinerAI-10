@@ -297,6 +297,7 @@ class Match(DefaultGameWorld):
     self.sendStatus([self.players[self.playerID]])
     self.playerID ^= 1
     self.turn = None
+    self.objects.delete()
 
   def logPath(self):
     return "logs/" + str(self.id)
