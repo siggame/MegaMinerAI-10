@@ -244,6 +244,10 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   {
     return 0;
   }
+  else if(object->currentHealth<=c->healthPerMove)
+  {
+    return 0;
+  }
   else if (abs(object->x-x) + abs(object->y-y)!=1)
   {
    return 0;
@@ -275,7 +279,6 @@ DLLEXPORT int creatureMove(_Creature* object, int x, int y)
   //Apply new movement
   object->x = x;
   object->y = y;
-  //here is a thing for reasons  
   return 1;
 }
 
@@ -306,11 +309,11 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
     return 0;
   }
   //can only eat once per turn
-  else if (!(object->canEat))
+  else if (object->canEat==false)
   {
     return 0;
   }
-  bool looking = true;
+  bool looking = 1;
   //see what it is you're trying to eat, if anything is there
   if(looking)
   {
@@ -318,13 +321,13 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
     {
       if(c->Creatures[ii].x == x && c->Creatures[ii].y == y)
       {
-        int damage = object->carnivorism-c->Creatures[ii].defense;
+        int damage = (object->carnivorism-c->Creatures[ii].defense)*10;
         //damage has to be at least one because of reasons
-        if (damage<1)
+        if (damage<10)
         {
-          damage = 1;
+          damage = 10;
         }
-        c->Creatures[ii].currentHealth -=damage;
+        c->Creatures[ii].currentHealth-=damage;
         //check if you killed it
         if(c->Creatures[ii].currentHealth<=0)
         {
@@ -334,8 +337,8 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
             object->currentHealth = object->maxHealth;
           }
         }
-        object->canEat=false;
-        looking=false;
+        object->canEat=0;
+        looking=0;
         return 1;
       }
     }
@@ -357,8 +360,8 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
           object->currentHealth=object->maxHealth;
         }
         c->Plants[ii].size-=1;
-        object->canEat=false;
-        looking=false;
+        object->canEat=0;
+        looking=0;
         return 1;
       }
     }
@@ -411,10 +414,10 @@ DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
   {
    return 0;
   }
-  object->canBreed = false;
-  mate->canBreed = false;
-  object->canEat= false;
-  mate->canEat = false;
+  object->canBreed = 0;
+  mate->canBreed = 0;
+  object->canEat= 0;
+  mate->canEat = 0;
   object->movementLeft = 0;
   mate->movementLeft = 0;
   object->currentHealth-=c->healthPerBreed;
