@@ -309,67 +309,54 @@ DLLEXPORT int creatureEat(_Creature* object, int x, int y)
     return 0;
   }
   //can only eat once per turn
-  else if (object->canEat==false)
+  else if (object->canEat == 0)
   {
     return 0;
   }
-  bool looking = 1;
-  //see what it is you're trying to eat, if anything is there
-  if(looking)
+  for(int ii=0;ii<c->CreatureCount;ii++)
   {
-    for(int ii=0;ii<c->CreatureCount;ii++)
+    if(c->Creatures[ii].x == x && c->Creatures[ii].y == y)
     {
-      if(c->Creatures[ii].x == x && c->Creatures[ii].y == y)
+      int damage = (object->carnivorism-c->Creatures[ii].defense)*10;
+      //damage has to be at least one because of reasons
+      if (damage<10)
       {
-        int damage = (object->carnivorism-c->Creatures[ii].defense)*10;
-        //damage has to be at least one because of reasons
-        if (damage<10)
-        {
-          damage = 10;
-        }
-        c->Creatures[ii].currentHealth-=damage;
-        //check if you killed it
-        if(c->Creatures[ii].currentHealth<=0)
-        {
-          object->currentHealth+=object->carnivorism*10;
-          if(object->currentHealth>object->maxHealth)
-          {
-            object->currentHealth = object->maxHealth;
-          }
-        }
-        object->canEat=0;
-        looking=0;
-        return 1;
+        damage = 10;
       }
+      c->Creatures[ii].currentHealth-=damage;
+      //check if you killed it
+      if(c->Creatures[ii].currentHealth<=0)
+      {
+        object->currentHealth+=object->carnivorism*10;
+        if(object->currentHealth>object->maxHealth)
+        {
+          object->currentHealth = object->maxHealth;
+        }
+      }
+      object->canEat=0;
+      return 1;
     }
   }
-  if(looking)
-  { 
-    for(int ii=0;ii<c->PlantCount;ii++)
+  for(int ii=0;ii<c->PlantCount;ii++)
+  {
+    if(c->Plants[ii].x == x && c->Plants[ii].y == y)
     {
-      if(c->Plants[ii].x == x && c->Plants[ii].y == y)
+      //plant has to have size>0 to be eaten
+      if(c->Plants[ii].size == 0)
       {
-        //plant has to have size>0 to be eaten
-        if(c->Plants[ii].size == 0)
-        {
-          return 0;
-        }
-        object->currentHealth+=object->herbivorism*5;
-        if(object->currentHealth > object->maxHealth)
-        {
-          object->currentHealth=object->maxHealth;
-        }
-        c->Plants[ii].size-=1;
-        object->canEat=0;
-        looking=0;
-        return 1;
+        return 0;
       }
+      object->currentHealth+=object->herbivorism*5;
+      if(object->currentHealth > object->maxHealth)
+      {
+        object->currentHealth=object->maxHealth;
+      }
+      c->Plants[ii].size-=1;
+      object->canEat=0;
+      return 1;
     }
   }
-  if(looking)
-  {
-    return 0;
-  }
+  return 0;
 }
 
 DLLEXPORT int creatureBreed(_Creature* object, _Creature* mate)
