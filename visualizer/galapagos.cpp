@@ -520,6 +520,14 @@ namespace visualizer
           timeManager->play();
         }
       }
+      else
+      {
+        timeManager->setNumTurns(state);
+        animationEngine->registerGame( this, this );
+        animationEngine->registerGame(this, this);
+        timeManager->setTurn(0);
+        timeManager->play();
+      }
     }    
     
     if(!m_suicide)
