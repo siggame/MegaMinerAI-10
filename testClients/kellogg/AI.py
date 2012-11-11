@@ -183,8 +183,15 @@ class AI(BaseAI):
         self.herbControl(creature,enemies)
       else:
         self.carnControl(creature,enemies)
-        
-  ##This function is called each time it is your turn
+    
+  def moveAway(self,creature):
+    for space in self.adjacent(creature.x,creature.y):
+      if 0<=creature.x+space[0]<self.mapWidth and 0<=creature.y+space[1]<self.mapHeight:
+        if self.getObject(creature.x+space[0],creature.y+space[1])==[]:
+          creature.move(creature.x+space[0],creature.y+space[1])
+          return
+
+        ##This function is called each time it is your turn
   ##Return true to end your turn, return false to ask the server for updated information
   def run(self):  
     self.grid = [[[] for _ in range(self.mapHeight)] for _ in range(self.mapWidth)]
@@ -198,11 +205,15 @@ class AI(BaseAI):
     mine = herbivores+carnivores+breeders
     enemies = [creature for creature in self.creatures if creature.owner != self.playerID]
     
+    
+    for creature in families:
+      self.moveAway(creature)
+      
     for creature in herbivores:
      if len(self.plants)>0:
        self.herbControl(creature,enemies)
      else:
-      self.carnControl(creature)
+      self.carnControl(creature,enemies)
       
     for creature in carnivores:
       self.carnControl(creature,enemies)
