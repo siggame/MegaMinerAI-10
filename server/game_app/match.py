@@ -204,6 +204,10 @@ class Match(DefaultGameWorld):
     else:
       return "Game is over."
 
+    if self.winner is None:
+      for obj in self.objects.values():
+        obj.nextTurn()  
+      
     self.checkWinner()
     if self.winner is None:
       self.sendStatus([self.turn] +  self.spectators)
@@ -232,9 +236,6 @@ class Match(DefaultGameWorld):
       self.jsonAnimations = []
 
     self.animations = ["animations"]
-    if self.winner is None:
-      for obj in self.objects.values():
-        obj.nextTurn()
       
     return True
 
