@@ -12,8 +12,3 @@ half of the creatures on the planet, and try to raise the superior species.
 Over generations, whoever raises the most deadly or resilient species will
 claim victory. They must adapt and evolve. You must compete, and avoid
 segfaults.    
-
-
-
-
-Adam
